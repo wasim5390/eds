@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        app:layout_constraintBottom_toTopOf="@+id/bottomview"
+
+        >
+
+        <android.support.design.card.MaterialCardView
+            android:id="@+id/btnInputView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:cardUseCompatPadding="true"
+            app:cardElevation="3dp"
+            app:cardCornerRadius="0dp"
+            app:contentPadding="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            >
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                >
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/black"
+                    android:text="@string/outlet_name"
+                    android:textSize="14sp"
+
+
+                    />
+
+                <TextView
+                    android:id="@+id/remarks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:paddingTop="5dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/remarks"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvName"
+
+                    />
+
+
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Eat Drink Food Point"
+                    android:textSize="14sp"
+                    android:layout_marginStart="10dp"
+                    app:layout_constraintStart_toEndOf="@+id/name"
+                    app:layout_constraintTop_toTopOf="@+id/name" />
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/tvRemarks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter Remarks Here"
+                    android:layout_marginStart="10dp"
+                    android:textSize="14sp"
+                    android:minHeight="80dp"
+                    android:gravity="top"
+                    android:focusableInTouchMode="true"
+                    android:background="@drawable/input_bg"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/remarks"
+                    app:layout_constraintTop_toTopOf="@+id/remarks" />
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.design.card.MaterialCardView>
+        <LinearLayout
+            android:id="@+id/topBtnView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/btnInputView"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:weightSum="10"
+            >
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnShowPlanogram"
+                android:layout_width="0dp"
+                android:layout_weight="4.5"
+                android:layout_height="wrap_content"
+                android:theme="@style/PositiveButton"
+                android:text="@string/show_planogram"
+                />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnAssetVerification"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4.5"
+                android:theme="@style/PositiveButton"
+                android:text="@string/cooler_verification"
+
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/topBtnView"
+            >
+
+
+        <HorizontalScrollView
+            android:id="@+id/rvBeforeMerchandize"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:nestedScrollingEnabled="true"
+            tools:listitem="@layout/outlet_list_item"
+            />
+
+            <HorizontalScrollView
+            android:id="@+id/rvAfterMerchandize"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal"
+                android:nestedScrollingEnabled="true"
+            android:layout_marginTop="5dp"
+
+            tools:listitem="@layout/outlet_list_item"/>
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/bottomview"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:weightSum="10"
+            >
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnBeforeMerchandize"
+                android:layout_width="0dp"
+                android:layout_weight="4.5"
+                android:layout_height="wrap_content"
+                android:theme="@style/PositiveButton"
+                android:text="@string/before_merchandize"
+                />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnAfterMerchandize"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4.5"
+                android:theme="@style/PositiveButton"
+                android:text="@string/after_merchandize"
+
+                />
+        </LinearLayout>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnNext"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:theme="@style/PositiveButton"
+            android:text="@string/next"
+            android:textSize="22sp"
+            />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

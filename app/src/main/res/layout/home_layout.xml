@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnCount="2"
+        android:rowCount="3"
+        android:useDefaultMargins="true"
+        >
+        <LinearLayout
+            android:id="@+id/btnStartDay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:background="@color/colorPrimary"
+            android:orientation="vertical"
+            android:gravity="center"
+            >
+
+            <TextView
+                android:id="@+id/tvStartDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:drawableTop="@drawable/ic_timer_start"
+                android:drawablePadding="5dp"
+                android:textColor="@color/colorAccent"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/start_day"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/btnDownload"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:background="@color/colorAccent"
+            android:orientation="vertical"
+            android:gravity="center"
+            >
+
+            <TextView
+                android:id="@+id/tvDownload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:drawableTop="@drawable/ic_cloud_download"
+                android:drawablePadding="5dp"
+                android:textColor="@color/colorPrimary"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/download"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/btnPlannedCall"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+
+            >
+            <TextView
+                android:id="@+id/tvPlannedCalls"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:drawableTop="@drawable/ic_planned_calls"
+                android:drawablePadding="5dp"
+                android:textColor="@color/colorPrimary"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/planned_calls"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/btnReports"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+
+            >
+            <TextView
+                android:id="@+id/tvReport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:drawableTop="@drawable/ic_reports"
+                android:drawablePadding="5dp"
+                android:textColor="@color/colorAccent"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/reports"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnEndDay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+
+            >
+            <TextView
+                android:id="@+id/tvEndDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:drawableTop="@drawable/ic_timer_end"
+                android:drawablePadding="5dp"
+                android:textColor="@color/colorAccent"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/end_day"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnUpload"
+
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+
+            >
+            <TextView
+                android:id="@+id/tvUpload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:drawableTop="@drawable/ic_cloud_upload"
+                android:drawablePadding="5dp"
+                android:textColor="@color/colorPrimary"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/upload"/>
+        </LinearLayout>
+    </GridLayout>
+</android.support.constraint.ConstraintLayout>

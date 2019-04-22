@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="60dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <android.support.design.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="0dp"
+                app:contentPadding="5dp"
+                android:layout_margin="2dp"
+                >
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    >
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textColor="@color/black"
+                        android:text="@string/name"
+                        android:textSize="14sp"
+
+
+                        />
+
+                    <TextView
+                        android:id="@+id/address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="@string/address"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvName"
+
+                        />
+                    <TextView
+                        android:id="@+id/last_sale"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/last_sale"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvAddress" />
+                    <TextView
+                        android:id="@+id/last_sale_qty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/last_sale_qty"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textColor="@color/black"
+                        android:paddingEnd="10dp"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvLastSale" />
+                    <TextView
+                        android:id="@+id/last_sale_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/last_sale_date"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/last_sale_qty" />
+                    <TextView
+                        android:id="@+id/channel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/channel"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/last_sale_date" />
+                    <TextView
+                        android:id="@+id/visits"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total_visits"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/channel" />
+
+                    <android.support.constraint.Barrier
+                        android:id="@+id/barrier3"
+                        android:layout_height="wrap_content"
+                        app:barrierDirection="right"
+                        app:constraint_referenced_ids="name,visits,last_sale_qty,last_sale,address,last_sale_date"
+
+                        tools:layout_editor_absoluteX="123dp"
+                        android:layout_width="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tvName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Eat Drink Food Pointk"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toEndOf="@+id/barrier3"
+                        app:layout_constraintTop_toTopOf="@+id/name" />
+
+                    <TextView
+                        android:id="@+id/tvAddress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ground floor, shop #12"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toEndOf="@+id/barrier3"
+                        app:layout_constraintTop_toTopOf="@+id/address" />
+
+                    <TextView
+                        android:id="@+id/tvLastSale"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="27500.00"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toEndOf="@+id/barrier3"
+                        app:layout_constraintTop_toTopOf="@+id/last_sale" />
+
+
+                    <TextView
+                        android:id="@+id/tvLastSaleQty"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="6 Carton"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toEndOf="@+id/barrier3"
+                        app:layout_constraintTop_toTopOf="@+id/last_sale_qty" />
+
+
+                    <TextView
+                        android:id="@+id/tvLastSaleDate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="1-4-2019"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toEndOf="@+id/barrier3"
+                        app:layout_constraintTop_toTopOf="@+id/last_sale_date" />
+
+
+                    <TextView
+                        android:id="@+id/tvChannel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Channel name"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toEndOf="@+id/barrier3"
+                        app:layout_constraintTop_toTopOf="@+id/channel" />
+
+
+                    <TextView
+                        android:id="@+id/tvTotalVisit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="20"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toEndOf="@+id/barrier3"
+                        app:layout_constraintTop_toTopOf="@+id/visits" />
+
+                </android.support.constraint.ConstraintLayout>
+            </android.support.design.card.MaterialCardView>
+
+            <android.support.design.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="0dp"
+                app:contentPadding="5dp"
+                android:layout_margin="2dp"
+                android:background="@color/white"
+
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="5dp"
+                    >
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/pop_status"
+                    android:textSize="14sp"
+                    android:paddingStart="5dp"
+                    android:textColor="@color/black"
+                    />
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/pop_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/pop_array"
+                        android:paddingEnd="40dp"
+                        android:overlapAnchor="false"
+                        android:background="@drawable/spinner_dropdown"
+
+                        />
+                </LinearLayout>
+            </android.support.design.card.MaterialCardView>
+
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnOk"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_gravity="bottom"
+        android:layout_margin="10dp"
+        android:theme="@style/PositiveButton"
+        android:text="@string/next"
+        android:textSize="22sp"
+        />
+</android.support.design.widget.CoordinatorLayout>

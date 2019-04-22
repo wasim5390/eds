@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="60dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <android.support.design.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="0dp"
+                app:contentPadding="5dp"
+                android:layout_margin="2dp"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:weightSum="30"
+                        >
+                        <TextView
+                            android:id="@+id/asset_code"
+                            android:layout_width="0dp"
+                            android:layout_weight="10"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textColor="@color/black"
+                            android:text="@string/asset_code"
+                            android:textSize="14sp"
+
+
+                            />
+
+                        <TextView
+                            android:id="@+id/verfication"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="10"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="@string/verification"
+                            android:textColor="@color/black"
+                            android:gravity="center"
+                            android:textSize="14sp"
+
+
+                            />
+
+
+
+                        <TextView
+                            android:id="@+id/reason"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/reason"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textColor="@color/black"
+                            android:layout_weight="10"
+                            android:textSize="14sp"
+                            android:gravity="center"
+                           />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="30"
+                        android:layout_marginTop="10dp"
+                        >
+                        <TextView
+                            android:id="@+id/tvAssetCode"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="10"
+                            android:text="RBL1709181"
+                            android:textSize="14sp"
+
+                          />
+
+                        <TextView
+                            android:id="@+id/tvVerification"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="10"
+                            android:text="Pending"
+                            android:textSize="14sp"
+                            android:gravity="center"
+
+                            />
+
+                        <android.support.v7.widget.AppCompatSpinner
+                            android:id="@+id/spinnerReason"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="10"
+                            android:gravity="center"
+                            android:overlapAnchor="false"
+                            android:entries="@array/asset_verification"
+
+
+                            />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </android.support.design.card.MaterialCardView>
+
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnScanBarcode"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_gravity="bottom"
+        android:layout_margin="10dp"
+        android:theme="@style/PositiveButton"
+        android:text="@string/scan_barcode"
+        android:textSize="22sp"
+        />
+</android.support.design.widget.CoordinatorLayout>
