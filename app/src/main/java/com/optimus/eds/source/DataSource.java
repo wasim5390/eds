@@ -3,6 +3,7 @@ package com.optimus.eds.source;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.telecom.Call;
 
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
@@ -19,8 +20,8 @@ import io.reactivex.Single;
 
 public interface DataSource {
 
-   Single<List<Route>> getRoutes(String userId);
+   LiveData<List<Route>> getRoutes(String userId);
 
-   Single<List<Outlet>> getOutlets(String routeId);
+   LiveData<List<Outlet>> getOutlets(String routeId);
 
 }

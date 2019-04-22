@@ -56,4 +56,12 @@
     <string name="avl_stk">Avl Stock</string>
     <string name="wh_stk">Wh Stock</string>
     <string name="order">Order</string>
+    <string name="promotions">Promotions</string>
+    <string name="available_promotions">Available Promotions</string>
+    <string name="outlet_location">Outlet Location:</string>
+    <string name="your_location">Your Location:</string>
+    <string name="distance">Distance:</string>
+    <string name="reach_to_specific_outlet_and_try_again">Reach to specific Outlet and try again</string>
+    <string name="incorrect_location">Location Mismatch!</string>
+    <string name="order_booking">Order Booking</string>
 </resources>

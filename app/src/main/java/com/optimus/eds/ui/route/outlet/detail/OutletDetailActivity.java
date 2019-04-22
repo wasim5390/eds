@@ -1,31 +1,33 @@
 package com.optimus.eds.ui.route.outlet.detail;
 
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.arch.persistence.room.util.StringUtil;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationProvider;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatSpinner;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
 
 import com.optimus.eds.db.entities.Outlet;
 
+import com.optimus.eds.model.CustomObject;
+import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.route.merchandize.OutletMerchandizeActivity;
 import com.optimus.eds.utils.Util;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -150,8 +152,27 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         btnOk.setAlpha(enable?1.0f:0.5f);
     }
 
+    @OnClick(R.id.btnPromotions)
+    public void onPromotionsClick(){
+        List<CustomObject> objects = new ArrayList<>();
+        objects.add(new CustomObject(125L,"16 Free-345 ml with jumbo case"));
+        AlertDialogManager.getInstance().showListAlertDialog(this, object -> {
+            Toast.makeText(this, object.getText(), Toast.LENGTH_SHORT).show();
+        }, objects);
+    }
+
     @OnClick(R.id.btnOk)
     public void onOkClick(){
+        Location location = new Location("Current Location");
+        location.setLatitude(31.4148103);
+        location.setLongitude(74.2533637);
+
+        Location outletLocation = new Location("Outlet Location");
+        outletLocation.setLatitude(31.5237925);
+        outletLocation.setLongitude(74.3580681);
+        double distance = location.distanceTo(outletLocation);
+       // if(distance<20)
+      //  AlertDialogManager.getInstance().showLocationMissMatchAlertDialog(this,location,outletLocation);
         OutletMerchandizeActivity.start(this,outletId);
     }
 }

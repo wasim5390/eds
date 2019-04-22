@@ -240,7 +240,20 @@
                 </LinearLayout>
             </android.support.design.card.MaterialCardView>
 
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnPromotions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="2dp"
+                android:theme="@style/PositiveButton"
+                android:text="@string/promotions"
+                android:textSize="22sp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
 
+                />
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

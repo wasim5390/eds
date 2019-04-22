@@ -27,7 +27,7 @@
                 android:gravity="center"
                 android:drawableTop="@drawable/ic_timer_start"
                 android:drawablePadding="5dp"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/white"
                 android:fontFamily="@font/roboto_medium"
                 android:textSize="16sp"
                 android:text="@string/start_day"/>
@@ -51,7 +51,7 @@
                 android:gravity="center"
                 android:drawableTop="@drawable/ic_cloud_download"
                 android:drawablePadding="5dp"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/white"
                 android:fontFamily="@font/roboto_medium"
                 android:textSize="16sp"
                 android:text="@string/download"/>
@@ -73,7 +73,7 @@
                 android:gravity="center"
                 android:drawableTop="@drawable/ic_planned_calls"
                 android:drawablePadding="5dp"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/white"
                 android:fontFamily="@font/roboto_medium"
                 android:textSize="16sp"
                 android:text="@string/planned_calls"/>
@@ -95,7 +95,7 @@
                 android:gravity="center"
                 android:drawableTop="@drawable/ic_reports"
                 android:drawablePadding="5dp"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/white"
                 android:fontFamily="@font/roboto_medium"
                 android:textSize="16sp"
                 android:text="@string/reports"/>
@@ -118,7 +118,7 @@
                 android:gravity="center"
                 android:drawableTop="@drawable/ic_timer_end"
                 android:drawablePadding="5dp"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/white"
                 android:fontFamily="@font/roboto_medium"
                 android:textSize="16sp"
                 android:text="@string/end_day"/>
@@ -142,7 +142,7 @@
                 android:gravity="center"
                 android:drawableTop="@drawable/ic_cloud_upload"
                 android:drawablePadding="5dp"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/white"
                 android:fontFamily="@font/roboto_medium"
                 android:textSize="16sp"
                 android:text="@string/upload"/>

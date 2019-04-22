@@ -42,7 +42,7 @@ public class OutletListRepository  {
 
 
 
-    public Single<List<Outlet>> getOutlets(Long routeId){
+    public LiveData<List<Outlet>> getOutlets(Long routeId){
         return outletDao.findAllOutletsForRoute(routeId);
     }
     public LiveData<List<Route>> getRoutes(){

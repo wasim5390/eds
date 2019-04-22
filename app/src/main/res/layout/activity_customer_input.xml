@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"
 
-            android:paddingBottom="100dp"
+            android:paddingBottom="130dp"
             android:fillViewport="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
@@ -206,19 +206,21 @@
                     android:layout_margin="2dp"
                     android:backgroundTint="@android:color/transparent"
                     >
-                    <LinearLayout
+                    <android.support.constraint.ConstraintLayout
                         android:id="@+id/signature_view"
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
                         >
+
                         <TextView
                             android:id="@+id/signature"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/btnClearSignature"
+                            app:layout_constraintBottom_toBottomOf="@+id/btnClearSignature"
                             android:fontFamily="@font/roboto_italic"
                             android:textColor="@color/black"
                             android:text="@string/customer_signature"
@@ -226,24 +228,26 @@
                             android:paddingBottom="5dp"
 
                             />
+                        <android.support.v7.widget.AppCompatButton
+                            android:id="@+id/btnClearSignature"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:theme="@style/NegativeButton"
+                            android:text="@string/clear_signature"
+                            android:textSize="16sp"
+
+                            />
                         <com.github.gcacace.signaturepad.views.SignaturePad
                             android:layout_width="match_parent"
                             android:layout_height="150dp"
                             android:id="@+id/signaturePad"
                             android:background="#fff"
+                            app:layout_constraintTop_toBottomOf="@+id/btnClearSignature"
                             />
-                        <android.support.v7.widget.AppCompatButton
-                            android:id="@+id/btnClearSignature"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="right"
-                            android:layout_marginTop="5dp"
-                            android:theme="@style/NegativeButton"
-                            android:text="@string/clear_signature"
-                            android:textSize="18sp"
 
-                            />
-                    </LinearLayout>
+                    </android.support.constraint.ConstraintLayout>
                 </android.support.design.card.MaterialCardView>
 
             </LinearLayout>

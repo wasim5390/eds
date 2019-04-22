@@ -33,6 +33,8 @@
 
         <activity android:name=".ui.route.merchandize.OutletMerchandizeActivity"/>
 
+        <activity android:name=".ui.order.OrderBookingActivity"/>
+
         <activity android:name=".ui.customer_input.CustomerInputActivity"/>
 
     </application>

@@ -4,7 +4,9 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.optimus.eds.Injection;
 import com.optimus.eds.db.AppDatabase;
@@ -13,6 +15,7 @@ import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.source.API;
+import com.optimus.eds.source.ApiRepository;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.route.outlet.OutletListRepository;
 
@@ -37,11 +40,12 @@ public class HomeViewModel extends AndroidViewModel {
     private MutableLiveData<List<Outlet>> outletList;
     private MutableLiveData<List<Route>> routeList;
     private MutableLiveData<String> errorMsg;
-    private API api;
+    private ApiRepository api;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
         outletListRepository = OutletListRepository.getInstance(application);
+        api = ApiRepository.getInstance();
         AppDatabase database = AppDatabase.getDatabase(application);
         routeDao = database.routeDao();
         outletDao = database.outletDao();
@@ -59,13 +63,19 @@ public class HomeViewModel extends AndroidViewModel {
     public void onScreenCreated(){
         isLoading.setValue(true);
        // Single<List<Outlet>> visitedOutlets = outletListRepository.getOutlets(123L).map(this::visitedOutlets);
-        Single<List<Outlet>> todayOutlets = api.getOutlets("223");
+        api.getOutlets("223").observeForever(outlets -> outletList.setValue(outlets));
 
-        Single<List<Route>> todayRoutes = api.getRoutes("123");
+         api.getRoutes("123").observeForever(routes -> {
+             routeList.setValue(routes);
+         });
+         routeDao.findAllRoutes().observeForever(routes -> {
+             routeList.setValue(routes);
+         });
+         outletDao.findAllOutletsForRoute(123L).observeForever(outlets -> {
+             outletList.setValue(outlets);
+         });
 
-
-
-        Disposable routesDisposable = todayRoutes
+      /*  Disposable routesDisposable = todayRoutes
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::onSuccessRoutes, this::onError);
@@ -76,7 +86,7 @@ public class HomeViewModel extends AndroidViewModel {
                 .subscribe(this::onSuccessOutlets, this::onError);
 
         compositeDisposable.add(routesDisposable);
-        compositeDisposable.add(outletDisposable);
+        compositeDisposable.add(outletDisposable);*/
     }
 
 

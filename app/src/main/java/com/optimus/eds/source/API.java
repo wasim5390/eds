@@ -14,7 +14,7 @@ import retrofit2.http.Query;
 public interface API {
 
     @GET("routes")
-    Single<List<Route>> getRoutes(@Query("id") String userId);
+    Call<List<Route>> getRoutes(@Query("id") String userId);
 
     @GET("outlets")
     Call<List<Outlet>> getOutlets(@Query("id") String routeId);

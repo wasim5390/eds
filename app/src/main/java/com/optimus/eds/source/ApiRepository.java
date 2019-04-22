@@ -1,5 +1,6 @@
 package com.optimus.eds.source;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import com.optimus.eds.Constant;
@@ -15,6 +16,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ApiRepository implements DataSource, Constant {
+
+    private MutableLiveData<List<Outlet>> mutableOutletList = new MutableLiveData<>();
+    private MutableLiveData<List<Route>> mutableRouteList = new MutableLiveData<>();
     private static ApiRepository instance;
     public static ApiRepository getInstance() {
         if (instance == null) {
@@ -27,12 +31,39 @@ public class ApiRepository implements DataSource, Constant {
 
         }
     @Override
-    public Single<List<Route>> getRoutes(String userId) {
-        return  RetrofitHelper.getInstance().getApi().getRoutes(userId);
+    public LiveData<List<Route>> getRoutes(String userId) {
+          RetrofitHelper.getInstance().getApi().getRoutes(userId).enqueue(new Callback<List<Route>>() {
+              @Override
+              public void onResponse(Call<List<Route>> call, Response<List<Route>> response) {
+                  if(response.isSuccessful())
+                      mutableRouteList.setValue(response.body());
+              }
+
+              @Override
+              public void onFailure(Call<List<Route>> call, Throwable t) {
+                mutableRouteList.setValue(null);
+              }
+          });
+          return mutableRouteList;
     }
 
     @Override
-    public Single<List<Outlet>> getOutlets(String routeId) {
-        return  RetrofitHelper.getInstance().getApi().getOutlets(routeId);
+    public LiveData<List<Outlet>> getOutlets(String routeId) {
+        RetrofitHelper.getInstance().getApi().getOutlets(routeId).enqueue(new Callback<List<Outlet>>() {
+            @Override
+            public void onResponse(Call<List<Outlet>> call, Response<List<Outlet>> response) {
+                if(response.isSuccessful())
+                    mutableOutletList.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Outlet>> call, Throwable t) {
+                mutableOutletList.setValue(null);
+
+            }
+        });
+        return mutableOutletList;
     }
+
+
 }

@@ -24,7 +24,7 @@ public interface OutletDao {
     LiveData<List<Outlet>> findAllOutlets();
 
     @Query("SELECT * FROM Outlet WHERE mRouteId=:routeId")
-    Single<List<Outlet>> findAllOutletsForRoute(Long routeId);
+    LiveData<List<Outlet>> findAllOutletsForRoute(Long routeId);
 
     @Query("SELECT * FROM Outlet WHERE mOutletId=:id")
     LiveData<Outlet> findOutletById(Long id);

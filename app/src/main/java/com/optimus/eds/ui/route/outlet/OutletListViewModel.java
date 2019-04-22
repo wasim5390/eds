@@ -61,11 +61,8 @@ public class OutletListViewModel extends AndroidViewModel {
 
 
     public void loadOutletsFromDb(Long routeId){
-        Disposable allOutletsDisposable= repository.getOutlets(routeId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onOutletsFetched, this::onError);
-        disposable.add(allOutletsDisposable);
+      repository.getOutlets(routeId).observeForever(outlets -> outletList.setValue(outlets));
+
     }
 
     private void onRoutesFetched(List<Route> routes) {
