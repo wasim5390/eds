@@ -36,4 +36,11 @@ public interface Constant {
     //Status Codes
     int SUCCESS = 200;
     int BAD_REQUEST = 400;
+
+    interface IntentExtras {
+        String ACTION_CAMERA = "action-camera";
+        String ACTION_GALLERY = "action-gallery";
+        String IMAGE_PATH = "image-path";
+    }
+
 }

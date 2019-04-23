@@ -1,6 +1,7 @@
 package com.optimus.eds;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -78,6 +79,19 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.location_dialog_title);
         builder.setMessage(R.string.location_dialog_message);
+        builder.setPositiveButton("GOTO SETTINGS", (dialog, which) -> {
+            dialog.cancel();
+            openSettings();
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+
+    }
+
+    protected void showSettingsDialog(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Need Permissions");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
         builder.setPositiveButton("GOTO SETTINGS", (dialog, which) -> {
             dialog.cancel();
             openSettings();
