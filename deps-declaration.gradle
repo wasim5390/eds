@@ -32,6 +32,7 @@ versions.retrofit = '2.2.0'
 versions.rxjava = '2.0.1'
 versions.rxbinding = '2.0.0'
 versions.findbugs = '3.0.1'
+versions.picasso='2.71828'
 
 versions.paging = '1.0.0'
 versions.room = '1.1.1'

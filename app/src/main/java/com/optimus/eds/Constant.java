@@ -37,8 +37,10 @@ public interface Constant {
     int SUCCESS = 200;
     int BAD_REQUEST = 400;
 
-    public interface IntentExtras {
 
-        String ACTION_CAMERA = "action_camera";
+    interface IntentExtras {
+        String ACTION_CAMERA = "action-camera";
+        String ACTION_GALLERY = "action-gallery";
+        String IMAGE_PATH = "image-path";
     }
 }

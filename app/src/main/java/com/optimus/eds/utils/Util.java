@@ -38,6 +38,8 @@ public class Util {
     }
 
 
+
+
     public static boolean isValidEmail(final String email) {
         return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
 
@@ -112,6 +114,18 @@ public class Util {
             Bitmap bm = BitmapFactory.decodeFile(file.getPath());
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
             bm.compress(Bitmap.CompressFormat.PNG, 100, bOut);
+            String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.DEFAULT);
+            encoded = "data:image/png;base64,"+encoded;
+            return encoded;
+        }
+        return null;
+    }
+
+    public static String compressBitmap(File file){
+        if (file.exists() && file.length() > 0) {
+            Bitmap bm = BitmapFactory.decodeFile(file.getPath());
+            ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.JPEG, 80, bOut);
             String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.DEFAULT);
             encoded = "data:image/png;base64,"+encoded;
             return encoded;

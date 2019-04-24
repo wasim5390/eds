@@ -1,6 +1,7 @@
 package com.optimus.eds.ui.camera;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,29 +14,40 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.optimus.eds.BaseActivity;
+import com.optimus.eds.BuildConfig;
 import com.optimus.eds.Constant;
 import com.optimus.eds.R;
-import com.optimus.eds.utils.PermissionUtil;
+import com.optimus.eds.utils.Util;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.Closeable;
 import java.io.File;
-
+import java.io.FileOutputStream;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Created By apple on 4/23/19
+ */
 public class ImageCropperActivity extends BaseActivity {
 
     public static final String TAG = "ImageCropperActivity";
+
+    public static final int REQUEST_CODE_PICK_GALLERY = 0x1;
     public static final int REQUEST_CODE_TAKE_PICTURE = 0x2;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
@@ -51,7 +63,6 @@ public class ImageCropperActivity extends BaseActivity {
     //File for capturing camera images
     private File mFileTemp;
 
-    private boolean isIdentity;
 
 
     @Override
@@ -62,27 +73,48 @@ public class ImageCropperActivity extends BaseActivity {
     @Override
     public void created(Bundle savedInstanceState) {
         ButterKnife.bind(this);
-        setToolbar("Take Picture");
+        setToolbar(getString(R.string.crop_image));
         mContentResolver = getContentResolver();
-        isIdentity=getIntent().getBooleanExtra("IDENTITY",false);
-        mImageView.setCropShape(isIdentity? CropImageView.CropShape.RECTANGLE:CropImageView.CropShape.OVAL);
-        mImageView.setFixedAspectRatio(!isIdentity);
-        PermissionUtil.requestPermission(this, Manifest.permission.CAMERA, new PermissionUtil.PermissionCallback() {
+
+        mImageView.setFixedAspectRatio(false);
+        requestCameraPermission(savedInstanceState);
+    }
+
+
+    /**
+     * Requesting camera, permission
+     * Once the permission granted, starts camera
+     * On permanent denial opens settings dialog
+     */
+    private void requestCameraPermission(final Bundle savedInstanceState) {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ,Manifest.permission.READ_EXTERNAL_STORAGE
+                ).withListener(new MultiplePermissionsListener() {
             @Override
-            public void onPermissionsGranted(String permission) {
-                proceedToCrop(savedInstanceState);
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                // check if all permissions are granted
+                if (report.areAllPermissionsGranted()) {
+                    proceedToCrop(savedInstanceState);
+                }
+
+                // check for permanent denial of any permission
+                if (report.isAnyPermissionPermanentlyDenied()) {
+                    // show alert dialog navigating to Settings
+                    showSettingsDialog(ImageCropperActivity.this);
+                }
             }
 
             @Override
-            public void onPermissionsGranted() {
-
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                token.continuePermissionRequest();
             }
+        })
+                .onSameThread()
+                .check();
 
-            @Override
-            public void onPermissionDenied() {
-
-            }
-        });
     }
 
 
@@ -101,6 +133,11 @@ public class ImageCropperActivity extends BaseActivity {
                     case Constant.IntentExtras.ACTION_CAMERA:
                         getIntent().removeExtra("ACTION");
                         takePic();
+                        return;
+                    case Constant.IntentExtras.ACTION_GALLERY:
+                        getIntent().removeExtra("ACTION");
+                        pickImage();
+                        mImageUri = Util.getImageUri(mImagePath);
                         return;
                 }
             }
@@ -123,8 +160,7 @@ public class ImageCropperActivity extends BaseActivity {
         boolean saved = saveOutput();
         if (saved) {
             Intent intent = new Intent();
-
-           // intent.putExtra(isIdentity? IntentExtras.IMAGE_PATH_ID:Constant.IntentExtras.IMAGE_PATH, mImagePath);
+            intent.putExtra(Constant.IntentExtras.IMAGE_PATH, mImagePath);
             setResult(RESULT_OK, intent);
             finish();
         } else {
@@ -142,7 +178,15 @@ public class ImageCropperActivity extends BaseActivity {
             // Create an image file name
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String imageFileName = "JPEG_" + timeStamp + "_";
-            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+            String folder = Environment.getExternalStorageDirectory() + File.separator + "EDS/Images/";
+            //Create Dir folder if it does not exist
+            File storageDir = new File(folder);
+
+            if (!storageDir.exists()) {
+                storageDir.mkdirs();
+            }
+
             File  image = File.createTempFile(imageFileName, ".jpg", storageDir);
             mImagePath = image.getAbsolutePath();
             return image;
@@ -163,9 +207,8 @@ public class ImageCropperActivity extends BaseActivity {
 
             // Continue only if the File was successfully created
             if (mFileTemp != null) {
-
                 Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.optimus.eds.fileprovider",
+                        BuildConfig.APPLICATION_ID + ".provider",
                         mFileTemp);
                 mImageUri = photoURI;
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -178,7 +221,17 @@ public class ImageCropperActivity extends BaseActivity {
         }
     }
 
-
+    /**
+     * Choose pic from gallery
+     */
+    private void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
+        try {
+            startActivityForResult(intent, REQUEST_CODE_PICK_GALLERY);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "No image source available", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
@@ -200,6 +253,27 @@ public class ImageCropperActivity extends BaseActivity {
                 errored();
             }
 
+        } else if (requestCode == REQUEST_CODE_PICK_GALLERY) {
+            if (resultCode == RESULT_CANCELED) {
+                userCancelled();
+                return;
+            } else if (resultCode == RESULT_OK) {
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(result.getData()); // Got the bitmap .. Copy it to the temp file for cropping
+                    FileOutputStream fileOutputStream = new FileOutputStream(mFileTemp);
+                    Util.copyStream(inputStream, fileOutputStream);
+                    fileOutputStream.close();
+                    inputStream.close();
+                    mImagePath = mFileTemp.getPath();
+                    mImageUri = Util.getImageUri(mImagePath);
+                    mImageView.setImageUriAsync(mImageUri);
+                } catch (Exception e) {
+                    errored();
+                }
+            } else {
+                errored();
+            }
+
         }
     }
 
@@ -216,7 +290,7 @@ public class ImageCropperActivity extends BaseActivity {
             try {
                 outputStream = mContentResolver.openOutputStream(mImageUri);
                 if (outputStream != null) {
-                    croppedImage.compress(mOutputFormat, 90, outputStream);
+                    croppedImage.compress(mOutputFormat, 80, outputStream);
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -256,8 +330,8 @@ public class ImageCropperActivity extends BaseActivity {
         finish();
     }
 
-    @OnClick(R.id.btnRetake)
-    public void retakeImage(){
+    @OnClick({R.id.uploadAnotherImage})
+    public void upNavigate(){
         userCancelled();
     }
 

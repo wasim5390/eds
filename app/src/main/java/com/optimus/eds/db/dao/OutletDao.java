@@ -8,14 +8,9 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
 import com.optimus.eds.db.entities.Outlet;
-
-
 import java.util.List;
-
-import io.reactivex.Single;
-
-import static android.arch.persistence.room.OnConflictStrategy.IGNORE;
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
+
 
 @Dao
 public interface OutletDao {
