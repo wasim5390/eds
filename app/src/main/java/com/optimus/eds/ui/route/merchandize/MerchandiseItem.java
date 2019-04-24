@@ -13,7 +13,6 @@ public class MerchandiseItem implements Serializable {
 
     int id;
     String path;
-
     int type;
 
     public int getId() {

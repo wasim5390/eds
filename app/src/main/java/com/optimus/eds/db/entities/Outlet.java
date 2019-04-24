@@ -7,8 +7,6 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
 import com.google.gson.annotations.SerializedName;
-import com.optimus.eds.db.converters.AssetConverter;
-import com.optimus.eds.db.converters.OutletConverter;
 import com.optimus.eds.ui.route.Asset;
 
 import java.io.Serializable;

@@ -119,6 +119,18 @@ public class Util {
         return null;
     }
 
+    public static String compressBitmap(File file){
+        if (file.exists() && file.length() > 0) {
+            Bitmap bm = BitmapFactory.decodeFile(file.getPath());
+            ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.JPEG, 80, bOut);
+            String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.DEFAULT);
+            encoded = "data:image/png;base64,"+encoded;
+            return encoded;
+        }
+        return null;
+    }
+
     public static int dpToPx(int dp)
     {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);

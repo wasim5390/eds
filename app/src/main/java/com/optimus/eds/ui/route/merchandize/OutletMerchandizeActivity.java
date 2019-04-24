@@ -1,11 +1,19 @@
 package com.optimus.eds.ui.route.merchandize;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.Constant;
@@ -14,11 +22,22 @@ import com.optimus.eds.ui.order.OrderBookingActivity;
 import com.optimus.eds.utils.ImageCropperActivity;
 import java.io.File;
 import java.util.List;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class OutletMerchandizeActivity extends BaseActivity {
 
+    @BindView(R.id.rv_merchandise_images)
+    RecyclerView recyclerView;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+    @BindView(R.id.btnAfterMerchandize)
+    Button btnAfterMerchandize;
+    @BindView(R.id.btnNext)
+    Button btnNext;
+    private MerchandiseAdapter merchandiseAdapter;
     private Long outletId;
     private static final int REQUEST_CODE_IMAGE = 0x0005;
 
@@ -40,19 +59,62 @@ public class OutletMerchandizeActivity extends BaseActivity {
     public void created(Bundle savedInstanceState) {
         ButterKnife.bind(this);
         setToolbar(getString(R.string.merchandizing));
+        initMerchandiseAdapter();
         outletId =  getIntent().getLongExtra("OutletId",0);
         viewModel = ViewModelProviders.of(this).get(MerchandiseViewModel.class);
 
         viewModel.getmMerchandise().observe(this, merchandiseItems -> {
-
+            updateMerchandiseList(merchandiseItems);
         });
 
+        viewModel.isLoading().observe(this, this::setProgress);
+
+        viewModel.enableAfterMerchandiseButton().observe(this, aBoolean -> {
+            btnAfterMerchandize.setEnabled(aBoolean);
+            btnAfterMerchandize.setAlpha(aBoolean?1.0f:0.5f);
+        });
+        viewModel.enableNextButton().observe(this, aBoolean -> {
+            btnNext.setEnabled(aBoolean);
+            btnNext.setAlpha(aBoolean?1.0f:0.5f);
+        });
+
+
+        viewModel.lessImages().observe(this, aBoolean ->{
+            Toast.makeText(OutletMerchandizeActivity.this,"At least 3 images required",Toast.LENGTH_LONG).show();
+        });
+    }
+
+    public void removeImage(MerchandiseItem item){
+        viewModel.removeImage(item);
+    }
+
+    private void updateMerchandiseList(List<MerchandiseItem> merchandiseItems) {
+        merchandiseAdapter.populateMerchandise(merchandiseItems);
+    }
+
+    private void setProgress(boolean isLoading) {
+        if (isLoading) {
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            OrderBookingActivity.start(this,outletId);
+        }
+    }
+
+    private void initMerchandiseAdapter() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setNestedScrollingEnabled(false);
+        merchandiseAdapter = new MerchandiseAdapter(this);
+        recyclerView.setAdapter(merchandiseAdapter);
+        recyclerView.setNestedScrollingEnabled(false);
     }
 
     @OnClick(R.id.btnNext)
     public void onNextClick(){
         viewModel.insertMerchandiseIntoDB(outletId);
-//        OrderBookingActivity.start(this,outletId);
     }
 
     @OnClick(R.id.btnBeforeMerchandize)

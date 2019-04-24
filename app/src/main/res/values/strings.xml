@@ -19,6 +19,7 @@
     <string name="last_sale_qty">Last Sale Quantity:</string>
     <string name="address">Address:</string>
     <string name="outlet_summary">Outlet Summary</string>
+    <string name="crop_image">Crop Image</string>
     <string name="outlets">Outlets</string>
     <string name="outlet_code">Outlet code: %s</string>
     <string name="route_code">Route Code:</string>

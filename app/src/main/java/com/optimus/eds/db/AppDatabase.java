@@ -8,6 +8,7 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
 import com.optimus.eds.db.converters.AssetConverter;
+import com.optimus.eds.db.converters.MerchandiseItemConverter;
 import com.optimus.eds.db.converters.OutletConverter;
 import com.optimus.eds.db.dao.MerchandiseDao;
 import com.optimus.eds.db.dao.OutletDao;
@@ -18,7 +19,7 @@ import com.optimus.eds.db.entities.Route;
 
 
 @Database(entities = {Route.class, Outlet.class, Merchandise.class}, version = 1, exportSchema = false)
-@TypeConverters({OutletConverter.class, AssetConverter.class})
+@TypeConverters({OutletConverter.class, MerchandiseItemConverter.class, AssetConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;

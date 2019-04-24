@@ -1,6 +1,7 @@
 package com.optimus.eds.db.entities;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
 import com.optimus.eds.ui.route.merchandize.MerchandiseItem;
 
@@ -14,22 +15,25 @@ import java.util.List;
 @Entity(tableName = "Merchandise")
 public class Merchandise implements Serializable {
 
+    @PrimaryKey
     private Long mOutletId;
-    private List<MerchandiseItem> merchandiseItems;
 
-    public Long getmOutletId() {
+    private List<MerchandiseItem> mMerchandiseItems;
+
+
+    public Long getOutletId() {
         return mOutletId;
     }
 
-    public void setmOutletId(Long mOutletId) {
+    public void setOutletId(Long mOutletId) {
         this.mOutletId = mOutletId;
     }
 
     public List<MerchandiseItem> getMerchandiseItems() {
-        return merchandiseItems;
+        return mMerchandiseItems;
     }
 
-    public void setMerchandiseItems(List<MerchandiseItem> merchandiseItems) {
-        this.merchandiseItems = merchandiseItems;
+    public void setMerchandiseItems(List<MerchandiseItem> mMerchandiseItems) {
+        this.mMerchandiseItems = mMerchandiseItems;
     }
 }

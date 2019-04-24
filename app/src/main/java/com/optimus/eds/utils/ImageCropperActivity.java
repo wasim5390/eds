@@ -72,6 +72,7 @@ public class ImageCropperActivity extends BaseActivity {
     @Override
     public void created(Bundle savedInstanceState) {
         ButterKnife.bind(this);
+        setToolbar(getString(R.string.crop_image));
         mContentResolver = getContentResolver();
 
         mImageView.setFixedAspectRatio(false);
@@ -288,7 +289,7 @@ public class ImageCropperActivity extends BaseActivity {
             try {
                 outputStream = mContentResolver.openOutputStream(mImageUri);
                 if (outputStream != null) {
-                    croppedImage.compress(mOutputFormat, 90, outputStream);
+                    croppedImage.compress(mOutputFormat, 80, outputStream);
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
