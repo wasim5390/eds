@@ -4,12 +4,16 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Patterns;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -60,6 +64,30 @@ public class Util {
         calendar.setTimeInMillis(date);
         return calendar.getTime();
     }
+
+    /**
+     * get uri from file path
+     * @param path
+     * @return
+     */
+    public static Uri getImageUri(String path) {
+        return Uri.fromFile(new File(path));
+    }
+
+    /**
+     * copy stream up-to 2 mb
+     * @param input
+     * @param output
+     * @throws IOException
+     */
+    public static void copyStream(InputStream input, OutputStream output) throws IOException {
+        byte[] buffer = new byte[2048];
+        int bytesRead;
+        while ((bytesRead = input.read(buffer)) != -1) {
+            output.write(buffer, 0, bytesRead);
+        }
+    }
+
 
 
     /**

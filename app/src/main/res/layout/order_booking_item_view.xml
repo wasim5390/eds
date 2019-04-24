@@ -63,7 +63,7 @@
 
 
         <EditText
-            android:id="@+id/order"
+            android:id="@+id/orderQty"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="10"

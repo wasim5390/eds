@@ -135,59 +135,6 @@ public class OutletListViewModel extends AndroidViewModel {
 
 
 
-/*
-        Route route = new Route();
-        route.setRouteId(101023L);
-        route.setOutlet(outletList);
-        route.setRouteName("Barkat Market");
-
-        routeList.add(route);
-        List<Outlet> joharTownList = new ArrayList<>(outletList);
-        joharTownList.remove(0);
-        joharTownList.remove(8);
-        route = new Route();
-        route.setRouteId(203653L);
-        route.setOutlet(joharTownList);
-        route.setRouteName("Johar Town");
-        routeList.add(route);
-       Completable.create(new CompletableOnSubscribe() {
-            @Override
-            public void subscribe(CompletableEmitter e) throws Exception {
-                repository.insertRoutes(routeList);
-                e.onComplete();
-            }
-        }).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                fetchOutletsFromDb();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });*/
-
-
-
-/*    repository.getRoutes("23", new DataSource.GetDataCallback<RouteResponseModel>() {
-        @Override
-        public void onDataReceived(RouteResponseModel data) {
-            routeList = data.getRouteList();
-            routeDao.insertRoutes(routeList);
-            view.onRouteListLoaded(routeList);
-        }
-
-        @Override
-        public void onFailed(int code, String message) {
-
-        }
-    });*/
     }
 
 

@@ -64,4 +64,6 @@
     <string name="reach_to_specific_outlet_and_try_again">Reach to specific Outlet and try again</string>
     <string name="incorrect_location">Location Mismatch!</string>
     <string name="order_booking">Order Booking</string>
+    <string name="save">Save</string>
+    <string name="retake_image">Take new Picture</string>
 </resources>

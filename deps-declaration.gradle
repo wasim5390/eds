@@ -19,6 +19,8 @@ versions.multidex = '1.0.1'
 versions.espresso = '2.2.2'
 versions.butterknife = '8.8.1'
 versions.circularimageview = '2.2.0'
+versions.dexter='5.0.0'
+versions.imagecropper = '2.7.0'
 versions.glide = '4.3.1'
 versions.glide_okhttp_integration = '4.3.1@aar'
 versions.gson = '2.8.2'
@@ -33,6 +35,8 @@ versions.findbugs = '3.0.1'
 
 versions.paging = '1.0.0'
 versions.room = '1.1.1'
+
+versions.sectioned_recyclerview = '1.2.0'
 
 
 ext.versions = versions
@@ -67,6 +71,7 @@ deps.espresso = "com.android.support.test.espresso:espresso-core:$versions.espre
 
 deps.circularimageview = "de.hdodenhof:circleimageview:$versions.circularimageview"
 deps.clevertap = "com.clevertap.android:clevertap-android-sdk:$versions.clevertap"
+deps.imagecropper = "com.theartofdev.edmodo:android-image-cropper:$versions.imagecropper"
 
 
 def glide = [:]
@@ -123,7 +128,7 @@ deps.support_test = support_test
 
 deps.findbugs_jsr = "com.google.code.findbugs:jsr305:$versions.findbugs"
 
-
+deps.sectioned_recyclerview = "io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:$versions.sectioned_recyclerview"
 
 
 def paging = [:]
@@ -137,5 +142,7 @@ room.compiler = "android.arch.persistence.room:compiler:$versions.room"
 room.rxjava2 = "android.arch.persistence.room:rxjava2:$versions.room"
 room.testing = "android.arch.persistence.room:testing:$versions.room"
 deps.room = room
+
+deps.dexter = "com.karumi:dexter:$versions.dexter"
 
 ext.deps = deps

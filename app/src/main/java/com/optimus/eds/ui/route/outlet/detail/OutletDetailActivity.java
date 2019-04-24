@@ -172,7 +172,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         outletLocation.setLongitude(74.3580681);
         double distance = location.distanceTo(outletLocation);
        // if(distance<20)
-      //  AlertDialogManager.getInstance().showLocationMissMatchAlertDialog(this,location,outletLocation);
+       //AlertDialogManager.getInstance().showLocationMissMatchAlertDialog(this,location,outletLocation);
         OutletMerchandizeActivity.start(this,outletId);
     }
 }

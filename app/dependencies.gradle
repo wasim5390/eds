@@ -9,6 +9,9 @@ dependencies {
     implementation deps.support_lib.cardview
     implementation deps.constraint_layout
     implementation "com.github.gcacace:signature-pad:1.2.1"
+    implementation deps.imagecropper
+    implementation deps.dexter
+    implementation deps.sectioned_recyclerview
     implementation deps.multidex
     testImplementation deps.junit
     androidTestImplementation deps.findbugs_jsr

@@ -4,61 +4,55 @@ package com.optimus.eds.db.entities;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
 
 import com.google.gson.annotations.SerializedName;
-import com.optimus.eds.db.converters.AssetConverter;
-import com.optimus.eds.db.converters.OutletConverter;
-import com.optimus.eds.ui.route.Asset;
 
 import java.io.Serializable;
-import java.util.List;
 
 
 @Entity(tableName = "Outlet")
 public class Outlet implements Serializable {
 
     @PrimaryKey
-    @SerializedName("OutletId")
+    @SerializedName("outletId")
     private Long mOutletId;
-    @SerializedName("RouteId")
+    @SerializedName("routeId")
     private Long mRouteId;
-    @SerializedName("Address")
+    @SerializedName("address")
     private String mAddress;
-    @SerializedName("Asset")
-    private List<Asset> mAsset;
-    @SerializedName("AvailableCreditLimit")
+
+    @SerializedName("availableCreditLimit")
     private Double mAvailableCreditLimit;
     @SerializedName("LastSale")
     private Double mLastSale;
-    @SerializedName("ChannelName")
+    @SerializedName("channelName")
     private String mChannelName;
-    @SerializedName("LastSaleDate")
+    @SerializedName("lastSaleDate")
     private Long mLastSaleDate;
-    @SerializedName("LastSaleQuantity")
+    @SerializedName("lastSaleQuantity")
     private String mLastSaleQuantity;
-    @SerializedName("Latitude")
+    @SerializedName("latitude")
     private Float mLatitude;
-    @SerializedName("Location")
+    @SerializedName("location")
     private String mLocation;
-    @SerializedName("Longitude")
+    @SerializedName("longitude")
     private Float mLongitude;
-    @SerializedName("OutletCode")
+    @SerializedName("outletCode")
     private String mOutletCode;
 
-    @SerializedName("OutletName")
+    @SerializedName("outletName")
     private String mOutletName;
-    @SerializedName("OutstandingCredit")
+    @SerializedName("outstandingCreditLimit")
     private Double mOutstandingCredit;
-    @SerializedName("TotalAmount")
+
+    @Ignore
     private Double mTotalAmount;
-    @SerializedName("TotalQuantity")
-    private String mTotalQuantity;
-    @SerializedName("VisitDay")
+
+    @SerializedName("visitDay")
     private Integer mVisitDay;
-    @SerializedName("VisitFrequency")
+    @SerializedName("visitFrequency")
     private Integer mVisitFrequency;
-    @SerializedName("VisitStatus")
+    @SerializedName("visitStatus")
     private Integer mVisitStatus;
 
 
@@ -75,10 +69,6 @@ public class Outlet implements Serializable {
 
     public void setAddress(String mAddress) {
         this.mAddress = mAddress;
-    }
-
-    public void setAsset(List<Asset> mAsset) {
-        this.mAsset = mAsset;
     }
 
     public void setAvailableCreditLimit(Double mAvailableCreditLimit) {
@@ -129,10 +119,6 @@ public class Outlet implements Serializable {
         this.mTotalAmount = mTotalAmount;
     }
 
-    public void setTotalQuantity(String mTotalQuantity) {
-        this.mTotalQuantity = mTotalQuantity;
-    }
-
     public void setVisitDay(Integer mVisitDay) {
         this.mVisitDay = mVisitDay;
     }
@@ -149,9 +135,6 @@ public class Outlet implements Serializable {
         return mAddress;
     }
 
-    public List<Asset> getAsset() {
-        return mAsset;
-    }
 
     public Double getAvailableCreditLimit() {
         return mAvailableCreditLimit;
@@ -203,10 +186,6 @@ public class Outlet implements Serializable {
 
     public Double getTotalAmount() {
         return mTotalAmount;
-    }
-
-    public String getTotalQuantity() {
-        return mTotalQuantity;
     }
 
     public Integer getVisitDay() {

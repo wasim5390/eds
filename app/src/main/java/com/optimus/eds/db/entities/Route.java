@@ -15,60 +15,31 @@ import java.util.List;
 @Entity(tableName = "Route")
 public class Route implements Serializable {
 
-    @SerializedName("RouteId")
+    @SerializedName("routeId")
     @PrimaryKey
     private Long mRouteId;
 
-    @SerializedName("Outlet")
-    private List<Outlet> mOutlet;
-
-    @SerializedName("RouteName")
+    @SerializedName("routeName")
     private String mRouteName;
-    @SerializedName("TotalAmount")
-    private Double mTotalAmount;
-    @SerializedName("TotalOrders")
-    private Integer mTotalOrders;
-    @SerializedName("TotalOutlets")
-    private Integer mTotalOutlets;
-    @SerializedName("TotalQuantity")
-    private String mTotalQuantity;
+
+    @SerializedName("employeeId")
+    private Integer mEmployeeId;
+
 
     /*******************Setters*********************/
     public void setRouteId(Long mRouteId) {
         this.mRouteId = mRouteId;
     }
 
-    public void setOutlet(List<Outlet> mOutlet) {
-        this.mOutlet = mOutlet;
-    }
-
     public void setRouteName(String mRouteName) {
         this.mRouteName = mRouteName;
     }
-
-    public void setTotalAmount(Double mTotalAmount) {
-        this.mTotalAmount = mTotalAmount;
+        public void setEmployeeId(Integer employeeId){
+        this.mEmployeeId = employeeId;
     }
-
-    public void setTotalOrders(Integer mTotalOrders) {
-        this.mTotalOrders = mTotalOrders;
-    }
-
-    public void setTotalOutlets(Integer mTotalOutlets) {
-        this.mTotalOutlets = mTotalOutlets;
-    }
-
-    public void setTotalQuantity(String mTotalQuantity) {
-        this.mTotalQuantity = mTotalQuantity;
-    }
-
-
 
     /******************Getters**********************/
 
-    public List<Outlet> getOutlet() {
-        return mOutlet;
-    }
 
     public Long getRouteId() {
         return mRouteId;
@@ -78,21 +49,11 @@ public class Route implements Serializable {
         return mRouteName;
     }
 
-    public Double getTotalAmount() {
-        return mTotalAmount;
+    public Integer getEmployeeId() {
+        return mEmployeeId;
     }
 
-    public Integer getTotalOrders() {
-        return mTotalOrders;
-    }
 
-    public Integer getTotalOutlets() {
-        return mTotalOutlets;
-    }
-
-    public String getTotalQuantity() {
-        return mTotalQuantity;
-    }
 
     @Override
     public String toString() {

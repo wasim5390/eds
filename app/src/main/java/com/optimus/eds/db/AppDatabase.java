@@ -10,12 +10,15 @@ import android.content.Context;
 import com.optimus.eds.db.converters.AssetConverter;
 import com.optimus.eds.db.converters.OutletConverter;
 import com.optimus.eds.db.dao.OutletDao;
+import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.db.entities.Package;
+import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.Route;
 
 
-@Database(entities = {Route.class, Outlet.class}, version = 1, exportSchema = false)
+@Database(entities = {Route.class, Outlet.class, Product.class, Package.class}, version = 1, exportSchema = false)
 @TypeConverters({OutletConverter.class, AssetConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -23,6 +26,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract RouteDao routeDao();
     public abstract OutletDao outletDao();
+    public abstract ProductsDao productsDao();
 
     public static synchronized AppDatabase getDatabase(Context context) {
         if (INSTANCE == null) {
