@@ -1,10 +1,14 @@
 package com.optimus.eds.ui.route.merchandize;
 
+import android.app.FragmentTransaction;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,7 +22,10 @@ import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.ui.order.OrderBookingActivity;
 import com.optimus.eds.ui.camera.ImageCropperActivity;
+import com.optimus.eds.ui.route.merchandize.dialog.ImageDialog;
+
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -41,6 +48,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
 
     MerchandiseViewModel viewModel;
     int type=0;
+    ImageDialog dialogFragment;
 
     public static void start(Context context,Long outletId) {
         Intent starter = new Intent(context, OutletMerchandizeActivity.class);
@@ -65,6 +73,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
             updateMerchandiseList(merchandiseItems);
         });
 
+
         viewModel.isLoading().observe(this, this::setProgress);
 
         viewModel.enableAfterMerchandiseButton().observe(this, aBoolean -> {
@@ -75,7 +84,6 @@ public class OutletMerchandizeActivity extends BaseActivity {
             btnNext.setEnabled(aBoolean);
             btnNext.setAlpha(aBoolean?1.0f:0.5f);
         });
-
 
         viewModel.lessImages().observe(this, aBoolean ->{
             Toast.makeText(OutletMerchandizeActivity.this,"At least 3 images required",Toast.LENGTH_LONG).show();
@@ -113,6 +121,19 @@ public class OutletMerchandizeActivity extends BaseActivity {
     @OnClick(R.id.btnNext)
     public void onNextClick(){
         viewModel.insertMerchandiseIntoDB(outletId);
+    }
+
+
+    @OnClick(R.id.btnShowPlanogram)
+    public void showPlanogram(){
+
+        viewModel.getImages();
+
+        viewModel.getPlanogaram().observe(this, strings -> {
+            FragmentManager fm = getSupportFragmentManager();
+            dialogFragment = ImageDialog.newInstance(strings);
+            dialogFragment.show(fm, "Dialog");
+        });
     }
 
     @OnClick(R.id.btnBeforeMerchandize)
