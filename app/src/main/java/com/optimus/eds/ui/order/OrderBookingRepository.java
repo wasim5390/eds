@@ -25,7 +25,7 @@ public class OrderBookingRepository {
     }
 
     public LiveData<Boolean> addOrder(Order order){
-        isSaving.setValue(true);
+
         Completable.create(e -> {
             orderDao.insertOrder(order);
             e.onComplete();
@@ -37,7 +37,7 @@ public class OrderBookingRepository {
 
             @Override
             public void onComplete() {
-                isSaving.setValue(false);
+                isSaving.postValue(true);
             }
 
             @Override
