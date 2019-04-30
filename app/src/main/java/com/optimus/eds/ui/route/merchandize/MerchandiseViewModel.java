@@ -29,6 +29,8 @@ public class MerchandiseViewModel extends AndroidViewModel {
     private MutableLiveData<Boolean> enableNextButton;
     private MutableLiveData<Boolean> lessImages;
 
+    private MutableLiveData<List<String>> mPlanogram;
+
     public MerchandiseViewModel(@NonNull Application application) {
         super(application);
         repository = new MerchandiseRepository(application);
@@ -39,6 +41,7 @@ public class MerchandiseViewModel extends AndroidViewModel {
         enableAfterMerchandiseButton = new MutableLiveData<>();
         enableNextButton = new MutableLiveData<>();
         lessImages = new MutableLiveData<>();
+        mPlanogram = new MutableLiveData<>();
 
         repository.isLoading().observeForever(aBoolean -> isLoading.setValue(aBoolean));
         enableAfterMerchandiseButton.setValue(false);
@@ -71,6 +74,15 @@ public class MerchandiseViewModel extends AndroidViewModel {
         }
     }
 
+    public void getImages(){
+        List<String> stringList=new ArrayList<>();
+        stringList.add("/storage/emulated/0/EDS/Images/JPEG_20190429_165907_1469908208.jpg");
+        stringList.add("/storage/emulated/0/EDS/Images/JPEG_20190429_165907_1469908208.jpg");
+
+        mPlanogram.setValue(stringList);
+    }
+
+
     public void removeImage(MerchandiseItem item){
         list.remove(item);
         mMerchandise.setValue(list);
@@ -94,5 +106,8 @@ public class MerchandiseViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<MerchandiseItem>> getmMerchandise() {
         return mMerchandise;
+    }
+    public MutableLiveData<List<String>> getPlanogaram() {
+        return mPlanogram;
     }
 }
