@@ -67,4 +67,9 @@
     <string name="order_booking">Order Booking</string>
     <string name="save">Save</string>
     <string name="retake_image">Take new Picture</string>
+    <string name="quantity">Quantity:</string>
+    <string name="rate">Rate:</string>
+    <string name="discount">Discount:</string>
+    <string name="total">Total:</string>
+
 </resources>

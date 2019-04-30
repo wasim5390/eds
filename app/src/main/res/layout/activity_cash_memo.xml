@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tool="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/tvOutletName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tool:layout_constraintTop_toTopOf="parent"
+        android:text="@string/outlet_name"
+        android:textSize="20sp"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/colorPrimaryDark"
+        android:padding="5dp"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/cashmemo_item_view"
+        tool:layout_constraintTop_toBottomOf="@+id/tvOutletName"
+        />
+    </android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>

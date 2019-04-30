@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:id="@+id/tvProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="SSRB-MIRINDA"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
+
+        />
+
+    <TextView
+        android:id="@+id/productQty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvProductName"
+        android:text="@string/quantity"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/grey"
+        android:textSize="14sp"
+        android:layout_marginTop="5dp"
+
+        />
+    <TextView
+        android:id="@+id/tvProductQty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/productQty"
+        app:layout_constraintBottom_toBottomOf="@+id/productQty"
+        android:text="5.0"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/grey"
+        android:textSize="14sp"
+
+        />
+
+
+    <TextView
+        android:id="@+id/productRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/productQty"
+        android:text="@string/rate"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/grey"
+        android:textSize="14sp"
+        android:layout_marginTop="5dp"
+
+        />
+    <TextView
+        android:id="@+id/tvProductRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/productRate"
+        app:layout_constraintBottom_toBottomOf="@+id/productRate"
+        android:text="56.03"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/grey"
+        android:textSize="14sp"
+
+        />
+
+
+    <TextView
+        android:id="@+id/productDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/productRate"
+        android:text="@string/discount"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/grey"
+        android:textSize="14sp"
+        android:layout_marginTop="5dp"
+
+        />
+    <TextView
+        android:id="@+id/tvProductDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/productDiscount"
+        app:layout_constraintBottom_toBottomOf="@+id/productDiscount"
+        android:text="10.03"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/grey"
+        android:textSize="14sp"
+
+        />
+
+    <TextView
+        android:id="@+id/productTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/productDiscount"
+        android:text="@string/total"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
+        android:layout_marginTop="5dp"
+
+        />
+    <TextView
+        android:id="@+id/tvProductTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/productTotal"
+        app:layout_constraintBottom_toBottomOf="@+id/productTotal"
+        android:text="1005.00"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
+
+        />
+</android.support.constraint.ConstraintLayout>
