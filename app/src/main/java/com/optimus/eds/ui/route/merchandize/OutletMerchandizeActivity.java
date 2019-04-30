@@ -1,13 +1,10 @@
 package com.optimus.eds.ui.route.merchandize;
 
-import android.app.FragmentTransaction;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,10 +19,9 @@ import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.ui.order.OrderBookingActivity;
 import com.optimus.eds.ui.camera.ImageCropperActivity;
-import com.optimus.eds.ui.route.merchandize.dialog.ImageDialog;
+import com.optimus.eds.ui.route.merchandize.planogaram.ImageDialog;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;

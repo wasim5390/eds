@@ -1,20 +1,15 @@
-package com.optimus.eds.ui.route.merchandize.dialog;
+package com.optimus.eds.ui.route.merchandize.planogaram;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.optimus.eds.R;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 

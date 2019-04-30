@@ -1,4 +1,4 @@
-package com.optimus.eds.ui.route.merchandize.dialog;
+package com.optimus.eds.ui.route.merchandize.planogaram;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.optimus.eds.R;
-import com.optimus.eds.ui.route.merchandize.MerchandiseItem;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
