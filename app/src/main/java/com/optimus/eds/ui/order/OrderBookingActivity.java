@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
@@ -65,6 +66,9 @@ public class OrderBookingActivity extends BaseActivity {
 
     private void setObservers(){
         viewModel.getProductList().observe(this, packages -> setSectionedAdapter(packages));
+        viewModel.isSaving().observe(this, aBoolean -> {
+            Toast.makeText(this, aBoolean?"Order Saved":"Not saved", Toast.LENGTH_SHORT).show();
+        });
     }
 
 
@@ -98,6 +102,7 @@ public class OrderBookingActivity extends BaseActivity {
         }
         Order order = new Order("123",productList);
         viewModel.addOrder(order);
+
     }
 
 

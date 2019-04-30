@@ -37,8 +37,9 @@ import retrofit2.http.PATCH;
 public class OrderBookingViewModel extends AndroidViewModel {
 
     private ProductsDao productsDao;
-    private OrderDao orderDao;
+    private OrderBookingRepository repository;
     private MutableLiveData<List<PackageModel>> mutablePkgList;
+    private MutableLiveData<Boolean> isSaving;
     private List<Package> packages;
     private List<Product> products;
     private CompositeDisposable compositeDisposable;
@@ -47,9 +48,10 @@ public class OrderBookingViewModel extends AndroidViewModel {
         super(application);
         compositeDisposable = new CompositeDisposable();
         mutablePkgList = new MutableLiveData<>();
+        isSaving = new MutableLiveData<>();
         packages = new ArrayList<>();
         productsDao = AppDatabase.getDatabase(application).productsDao();
-        orderDao = AppDatabase.getDatabase(application).orderDao();
+        repository = new OrderBookingRepository(application);
         onScreenCreated();
     }
 
@@ -78,7 +80,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
     private void onProductsLoaded(List<Product> products,List<Package> packages){
         this.products = products;
-       mutablePkgList.setValue(packageModel(packages,products));
+        mutablePkgList.setValue(packageModel(packages,products));
     }
 
 
@@ -121,30 +123,17 @@ public class OrderBookingViewModel extends AndroidViewModel {
         return mutablePkgList;
     }
 
+
+
     public void addOrder(Order order){
-        Completable.create(e -> {
-        orderDao.insertOrder(order);
-        e.onComplete();
-        }).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
+        repository.addOrder(order).observeForever(aBoolean -> {
+            isSaving.setValue(aBoolean);
         });
-
     }
 
-
+    public LiveData<Boolean> isSaving() {
+        return isSaving;
+    }
     @Override
     protected void onCleared() {
         super.onCleared();
