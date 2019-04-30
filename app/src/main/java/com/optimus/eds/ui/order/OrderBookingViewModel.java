@@ -20,8 +20,11 @@ import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.model.PackageModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import io.github.luizgrp.sectionedrecyclerviewadapter.Section;
 import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
 import io.reactivex.CompletableObserver;
@@ -56,32 +59,20 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
     private void onScreenCreated(){
-        productsDao.findAllPackages().observeForever(packages1 -> {
-            onPackagesLoaded(packages1);
+
+
+        repository.findAllPackages().observeForever(packages -> {
+            this.packages = packages;
+            repository.findAllProducts().observeForever(products -> {
+                this.products = products;
+                mutablePkgList.setValue(repository.packageModel(packages,products));
+            });
         });
-        /*productsDao.findAllPackages().observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe((packages1, throwable) -> onPackagesLoaded(packages1));*/
-
 
 
     }
 
-    private void onPackagesLoaded(List<Package> packages) {
-        this.packages = packages;
-        productsDao.findAllProduct().observeForever(products1 -> {
-            onProductsLoaded(products1,this.packages);
-        });
-/*        productsDao.findAllProduct().observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe((products1, throwable) -> onProductsLoaded(products1,this.packages));*/
 
-    }
-
-    private void onProductsLoaded(List<Product> products,List<Package> packages){
-        this.products = products;
-        mutablePkgList.setValue(packageModel(packages,products));
-    }
 
 
 
@@ -95,28 +86,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
         mutablePkgList.setValue(packageModels);
     }
 
-    private List<PackageModel>  packageModel(List<Package> packages, List<Product> _products) {
-        List<PackageModel> packageModels = new ArrayList<>(packages.size());
 
-        for(Package _package: packages)
-        {
-            List<Product> products = getProductsById(_package.getPackageId(),_products);
-            PackageModel model = new PackageModel(_package.getPackageId(),_package.getPackageName(),products);
-            packageModels.add(model);
-        }
-        return packageModels;
-
-    }
-
-    private List<Product> getProductsById(Long packageId,List<Product> products){
-        List<Product> filteredList = new ArrayList<>();
-        for(Product product:products){
-            if(product.getPkgId()==packageId)
-                filteredList.add(product);
-        }
-
-        return filteredList;
-    }
 
 
     public LiveData<List<PackageModel>> getProductList() {
@@ -129,6 +99,23 @@ public class OrderBookingViewModel extends AndroidViewModel {
         repository.addOrder(order).observeForever(aBoolean -> {
             isSaving.setValue(aBoolean);
         });
+    }
+
+    protected List<Product> filterOrderProducts(Map<String,Section> sectionHashMap){
+        List<Product> productList = new ArrayList<>();
+
+        for (Map.Entry<String, Section> entry : sectionHashMap.entrySet()) {
+            String key = entry.getKey();
+            PackageSection section =(PackageSection) entry.getValue();
+            List<Product> products = section.getList();
+            for(Product product:products){
+                if(product.getQty()>0)
+                    productList.add(product);
+            }
+
+        }
+
+        return productList;
     }
 
     public LiveData<Boolean> isSaving() {
