@@ -2,9 +2,12 @@ package com.optimus.eds.ui.route.merchandize.coolerverification;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -47,6 +50,12 @@ public class AssetsVerificationAdapter extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         AssetsListHolder assetsListHolder = (AssetsListHolder) holder;
         CoolerAsset asset = coolerAssetList.get(position);
+
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
+                (mContext, R.layout.spinner_item, asset.reasons);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        assetsListHolder.reasonsSpinner.setAdapter(spinnerArrayAdapter);
     }
 
     @Override

@@ -37,6 +37,8 @@ public interface Constant {
     int SUCCESS = 200;
     int BAD_REQUEST = 400;
 
+    String KEY_SCANNER_STARTER="key_scanner_starter";
+    String KEY_SCANNER_RESULT="key_scanner_result";
 
     interface IntentExtras {
         String ACTION_CAMERA = "action-camera";

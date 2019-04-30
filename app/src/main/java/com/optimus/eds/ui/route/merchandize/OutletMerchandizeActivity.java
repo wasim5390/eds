@@ -19,6 +19,7 @@ import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.ui.order.OrderBookingActivity;
 import com.optimus.eds.ui.camera.ImageCropperActivity;
+import com.optimus.eds.ui.route.merchandize.coolerverification.AssetsVerificationActivity;
 import com.optimus.eds.ui.route.merchandize.planogaram.ImageDialog;
 
 import java.io.File;
@@ -130,6 +131,11 @@ public class OutletMerchandizeActivity extends BaseActivity {
             dialogFragment = ImageDialog.newInstance(strings);
             dialogFragment.show(fm, "Dialog");
         });
+    }
+
+    @OnClick(R.id.btnAssetVerification)
+    public void coolerVerification(){
+        AssetsVerificationActivity.start(this);
     }
 
     @OnClick(R.id.btnBeforeMerchandize)
