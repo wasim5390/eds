@@ -52,6 +52,7 @@ public class Util {
         return encoded;
     }
 
+
     public static String formatDate(String format, Long dateInMilli) {
         if(dateInMilli==null)
             return "N/A";
@@ -60,6 +61,7 @@ public class Util {
         calendar.setTimeInMillis(dateInMilli);
         return simpleDateFormat.format(calendar.getTime());
     }
+
 
     public static Date getDateFromMilliseconds(long date) {
         Calendar calendar = Calendar.getInstance();

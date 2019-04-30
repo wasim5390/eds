@@ -8,18 +8,28 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
+import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.Package;
+import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.ui.customer_input.CustomerInputActivity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.github.luizgrp.sectionedrecyclerviewadapter.Section;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 
 
@@ -61,17 +71,33 @@ public class OrderBookingActivity extends BaseActivity {
     private void setSectionedAdapter(List<PackageModel> packages){
         sectionAdapter = new SectionedRecyclerViewAdapter();
         for(PackageModel pkg:packages){
-            sectionAdapter.addSection(new PackageSection(pkg));
+            sectionAdapter.addSection(pkg.getPackageName(),new PackageSection(pkg));
         }
         rvProducts.setLayoutManager(new LinearLayoutManager(this));
         rvProducts.setAdapter(sectionAdapter);
 
     }
 
-
     @OnClick(R.id.btnNext)
     public void onNextClick(){
-        CustomerInputActivity.start(this);
+         CustomerInputActivity.start(this);
+    }
+
+    @OnClick(R.id.btnAdd)
+    public void onAddClick(){
+        List<Product> productList = new ArrayList<>();
+        List<String> sectionTags = new ArrayList<>(sectionAdapter.getCopyOfSectionsMap().size());
+        Map<String,Section> sectionHashMap = sectionAdapter.getCopyOfSectionsMap();
+        Set<String> keys = sectionHashMap.keySet();
+        sectionTags.addAll(keys);
+        for(int i=0;i<sectionTags.size();i++){
+            PackageSection section =(PackageSection) sectionAdapter.getSection(sectionTags.get(i));
+            List<Product> products = section.getList();
+            productList.addAll(products);
+
+        }
+        Order order = new Order("123",productList);
+        viewModel.addOrder(order);
     }
 
 

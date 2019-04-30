@@ -12,7 +12,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.optimus.eds.db.AppDatabase;
+import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
+import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.model.PackageModel;
@@ -20,6 +22,10 @@ import com.optimus.eds.model.PackageModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.CompletableObserver;
+import io.reactivex.CompletableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -31,6 +37,7 @@ import retrofit2.http.PATCH;
 public class OrderBookingViewModel extends AndroidViewModel {
 
     private ProductsDao productsDao;
+    private OrderDao orderDao;
     private MutableLiveData<List<PackageModel>> mutablePkgList;
     private List<Package> packages;
     private List<Product> products;
@@ -42,6 +49,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
         mutablePkgList = new MutableLiveData<>();
         packages = new ArrayList<>();
         productsDao = AppDatabase.getDatabase(application).productsDao();
+        orderDao = AppDatabase.getDatabase(application).orderDao();
         onScreenCreated();
     }
 
@@ -111,6 +119,29 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
     public LiveData<List<PackageModel>> getProductList() {
         return mutablePkgList;
+    }
+
+    public void addOrder(Order order){
+        Completable.create(e -> {
+        orderDao.insertOrder(order);
+        e.onComplete();
+        }).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+
     }
 
 

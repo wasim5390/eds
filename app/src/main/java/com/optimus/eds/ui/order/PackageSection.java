@@ -24,6 +24,9 @@ public class PackageSection extends StatelessSection {
 
 
     String title;
+
+
+
     List<Product> list;
 
 
@@ -38,6 +41,9 @@ public class PackageSection extends StatelessSection {
 
     }
 
+    public List<Product> getList() {
+        return list;
+    }
 
     @Override
     public int getContentItemsTotal() {
@@ -57,6 +63,7 @@ public class PackageSection extends StatelessSection {
 
         itemHolder.tvItemName.setText(product.getName());
         itemHolder.tvAvlStock.setText("0.0");
+        itemHolder.etOrder.setText(product.getQty()==0?"":String.valueOf(product.getQty()));
         itemHolder.etOrder.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -65,8 +72,12 @@ public class PackageSection extends StatelessSection {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-           // if(Double.parseDouble(s.toString())>0)
-
+                if(count<1)
+                    return;
+                double qty = Double.parseDouble(s.toString());
+            if(Double.parseDouble(s.toString())>0){
+                product.setQty(qty);
+            }
             }
 
             @Override

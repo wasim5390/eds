@@ -1,6 +1,8 @@
 package com.optimus.eds.db.entities;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
@@ -12,11 +14,17 @@ public class Product implements Serializable {
 
     @PrimaryKey
     @SerializedName("productId")
-    Long id;
-    @SerializedName("packageId")
-    Long pkgId;
+    public Long id;
+
+    @SerializedName("productPackageId")
+    public Long pkgId;
+
     @SerializedName("productName")
-    String name;
+    public String name;
+
+    @Ignore
+    public double qty;
+
 
     public Product(Long id, Long pkgId, String name) {
         this.id = id;
@@ -24,7 +32,13 @@ public class Product implements Serializable {
         this.name = name;
     }
 
+    public double getQty() {
+        return qty;
+    }
 
+    public void setQty(double qty) {
+        this.qty = qty;
+    }
     public Long getId() {
         return id;
     }
@@ -36,5 +50,10 @@ public class Product implements Serializable {
 
     public Long getPkgId() {
         return pkgId;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(getQty());
     }
 }
