@@ -2,28 +2,194 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    >
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <TextView
-        android:id="@+id/tvOutletName"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tool:layout_constraintTop_toTopOf="parent"
-        android:text="@string/outlet_name"
-        android:textSize="20sp"
-        android:fontFamily="@font/roboto_medium"
-        android:textColor="@color/colorPrimaryDark"
-        android:padding="5dp"
-        />
+        android:paddingTop="5dp"
+        android:layout_marginBottom="160dp"
+        >
+        <TextView
+            android:id="@+id/outletName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tool:layout_constraintTop_toTopOf="@+id/tvOutletName"
+            tool:layout_constraintBottom_toBottomOf="@+id/tvOutletName"
+            tool:layout_constraintStart_toStartOf="parent"
+            android:text="@string/outlet_name"
+            android:textSize="16sp"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/colorPrimaryDark"
+            android:padding="5dp"
+            android:layout_marginStart="6dp"
+            />
+        <TextView
+            android:id="@+id/tvOutletName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tool:layout_constraintTop_toTopOf="parent"
+            tool:layout_constraintStart_toEndOf="@+id/outletName"
+            android:text="30405236-1 Ahuja shop"
+            android:textSize="14sp"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/colorPrimaryDark"
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvCartItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/cashmemo_item_view"
+            android:layout_marginTop="5dp"
+            android:paddingBottom="10dp"
+            tool:layout_constraintTop_toBottomOf="@+id/tvOutletName"
+            />
 
-    <android.support.v7.widget.RecyclerView
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/cashmemo_item_view"
-        tool:layout_constraintTop_toBottomOf="@+id/tvOutletName"
-        />
-    </android.support.constraint.ConstraintLayout>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="100dp"
+        android:background="@color/colorAccent"
+        android:weightSum="30"
+        >
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_weight="6"
+            >
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/white"
+                android:text="@string/qty"
+
+
+                />
+
+            <TextView
+                android:id="@+id/tvQty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/white"
+                android:text="6000.0"
+
+                android:layout_marginStart="5dp"
+
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_weight="13"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/white"
+                android:text="@string/discount"
+
+
+                />
+            <TextView
+                android:id="@+id/tvDiscountedAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/white"
+                android:text="15,300.0"
+
+                android:layout_marginStart="5dp"
+
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical|right"
+            android:layout_weight="11"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/total"
+                android:textColor="@color/white"
+                android:gravity="center"
+                />
+
+
+            <TextView
+                android:id="@+id/tvGrandTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="123456789.00"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/white"
+
+                android:gravity="center"
+                android:layout_marginStart="5dp"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/bottomview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        >
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnAddPackages"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:theme="@style/PositiveButton"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="@string/add_packages"
+            android:textSize="18sp"
+            />
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnNext"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_weight="1"
+            android:layout_margin="1dp"
+            android:theme="@style/PositiveButton"
+            android:text="@string/next"
+            android:textSize="18sp"
+            />
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

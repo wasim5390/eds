@@ -22,6 +22,7 @@ import com.optimus.eds.db.entities.Outlet;
 
 import com.optimus.eds.model.CustomObject;
 import com.optimus.eds.ui.AlertDialogManager;
+import com.optimus.eds.ui.cash_memo.CashMemoActivity;
 import com.optimus.eds.ui.order.OrderBookingActivity;
 import com.optimus.eds.ui.route.merchandize.OutletMerchandizeActivity;
 import com.optimus.eds.utils.Util;
@@ -174,6 +175,6 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         double distance = location.distanceTo(outletLocation);
        // if(distance<20)
        //AlertDialogManager.getInstance().showLocationMissMatchAlertDialog(this,location,outletLocation);
-        OrderBookingActivity.start(this,outletId);
+        CashMemoActivity.start(this,outletId);
     }
 }

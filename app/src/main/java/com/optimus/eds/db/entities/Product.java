@@ -32,6 +32,12 @@ public class Product implements Serializable {
         this.name = name;
     }
 
+    public Product(Long id, Long pkgId, String name, Double qty) {
+        this.id = id;
+        this.pkgId = pkgId;
+        this.name = name;
+        this.qty = qty;
+    }
     public double getQty() {
         return qty;
     }

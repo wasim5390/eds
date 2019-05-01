@@ -1,19 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.optimus.eds.ui.cash_memo.CartItemView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardUseCompatPadding="true"
+   app:cardElevation="1dp"
+    >
+<android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="5dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+>
+    <LinearLayout
+        android:id="@+id/left_sep"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvProductName"
+        app:layout_constraintBottom_toBottomOf="@+id/productTotal"
+        >
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/ic_circle_b"
+            />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/colorAccent"
+            />
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/ic_circle_b"
+            />
+
+    </LinearLayout>
     <TextView
         android:id="@+id/tvProductName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/left_sep"
         app:layout_constraintTop_toTopOf="parent"
         android:text="SSRB-MIRINDA"
         android:fontFamily="@font/roboto_medium"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="16sp"
+        android:textColor="@color/light"
+        android:textSize="14sp"
+        android:layout_marginStart="10dp"
 
         />
 
@@ -21,7 +64,7 @@
         android:id="@+id/productQty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvProductName"
         app:layout_constraintTop_toBottomOf="@id/tvProductName"
         android:text="@string/quantity"
         android:fontFamily="@font/roboto_regular"
@@ -41,6 +84,7 @@
         android:fontFamily="@font/roboto_regular"
         android:textColor="@color/grey"
         android:textSize="14sp"
+        android:layout_marginEnd="5dp"
 
         />
 
@@ -49,7 +93,7 @@
         android:id="@+id/productRate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvProductName"
         app:layout_constraintTop_toBottomOf="@id/productQty"
         android:text="@string/rate"
         android:fontFamily="@font/roboto_regular"
@@ -62,7 +106,7 @@
         android:id="@+id/tvProductRate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tvProductQty"
         app:layout_constraintTop_toTopOf="@id/productRate"
         app:layout_constraintBottom_toBottomOf="@+id/productRate"
         android:text="56.03"
@@ -77,7 +121,7 @@
         android:id="@+id/productDiscount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvProductName"
         app:layout_constraintTop_toBottomOf="@id/productRate"
         android:text="@string/discount"
         android:fontFamily="@font/roboto_regular"
@@ -90,7 +134,7 @@
         android:id="@+id/tvProductDiscount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tvProductQty"
         app:layout_constraintTop_toTopOf="@id/productDiscount"
         app:layout_constraintBottom_toBottomOf="@+id/productDiscount"
         android:text="10.03"
@@ -104,12 +148,12 @@
         android:id="@+id/productTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvProductName"
         app:layout_constraintTop_toBottomOf="@id/productDiscount"
         android:text="@string/total"
         android:fontFamily="@font/roboto_medium"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="16sp"
+        android:textColor="@color/grey"
+        android:textSize="14sp"
         android:layout_marginTop="5dp"
 
         />
@@ -117,13 +161,14 @@
         android:id="@+id/tvProductTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tvProductQty"
         app:layout_constraintTop_toTopOf="@id/productTotal"
         app:layout_constraintBottom_toBottomOf="@+id/productTotal"
         android:text="1005.00"
         android:fontFamily="@font/roboto_medium"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="16sp"
+        android:textColor="@color/grey"
+        android:textSize="14sp"
 
         />
 </android.support.constraint.ConstraintLayout>
+</com.optimus.eds.ui.cash_memo.CartItemView>

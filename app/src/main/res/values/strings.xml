@@ -71,5 +71,10 @@
     <string name="rate">Rate:</string>
     <string name="discount">Discount:</string>
     <string name="total">Total:</string>
+    <string name="add_packages">Add Packages</string>
+    <string name="discount_amount">Discount Amount:</string>
+    <string name="grand_total">Grand Total:</string>
+    <string name="qty">Qty:</string>
+    <string name="cash_memo">Cash Memo</string>
 
 </resources>
