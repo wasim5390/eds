@@ -13,6 +13,7 @@ dependencies {
     implementation deps.dexter
     implementation deps.scanner
     implementation deps.picasso
+    implementation deps.expandablerecyclerview
     implementation deps.sectioned_recyclerview
     implementation deps.multidex
     testImplementation deps.junit

@@ -42,6 +42,8 @@
     <string name="before_merchandize">Before Merchandize</string>
     <string name="show_planogram">Show Planogram</string>
     <string name="cooler_verification">Cooler Verification</string>
+    <string name="customer_complaint">Customer Complaint</string>
+    <string name="scanner">Scanner</string>
     <string name="mobile_number_for_order">Mobile No. for Order:</string>
     <string name="mobile_number_hint">03XXXXXXXXX</string>
     <string name="remarks_hint">Type Remarks Here</string>

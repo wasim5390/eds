@@ -31,6 +31,7 @@ public class ScannerActivity extends BaseActivity implements ZXingScannerView.Re
     @Override
     public void created(Bundle savedInstanceState) {
         ButterKnife.bind(this);
+        setToolbar(getString(R.string.customer_complaint));
         PermissionUtil.requestPermission(this, Manifest.permission.CAMERA,
                 new PermissionUtil.PermissionCallback() {
                     @Override
