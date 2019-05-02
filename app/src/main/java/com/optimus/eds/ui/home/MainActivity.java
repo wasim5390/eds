@@ -1,6 +1,5 @@
 package com.optimus.eds.ui.home;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 
@@ -14,9 +13,8 @@ import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
+import com.optimus.eds.ui.complaints.customer.CustomerComplaintsActivity;
 import com.optimus.eds.ui.route.outlet.OutletListActivity;
-
-import javax.net.ssl.HostnameVerifier;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,11 +43,11 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-      //  viewModel.onScreenCreated();
-      //  viewModel.isLoading().observe(this, this::setProgress);
-      //  viewModel.getRoutes();
-      //  viewModel.getOutlets();
-        viewModel.getErrorMsg().observe(this,this::showError);
+        //  viewModel.onScreenCreated();
+        //  viewModel.isLoading().observe(this, this::setProgress);
+        //  viewModel.getRoutes();
+        //  viewModel.getOutlets();
+        viewModel.getErrorMsg().observe(this, this::showError);
 
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
 
@@ -62,13 +60,12 @@ public class MainActivity extends BaseActivity {
         navProfileName.setText("Wasim Sidhu");
         nav.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-            switch(id)
-            {
+            switch (id) {
                 case R.id.account:
-                    Toast.makeText(MainActivity.this, "My Account",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "My Account", Toast.LENGTH_SHORT).show();
 
                 case R.id.exit:
-                    Toast.makeText(MainActivity.this, "Logout",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Logout", Toast.LENGTH_SHORT).show();
                 default:
                     return true;
             }
@@ -79,19 +76,22 @@ public class MainActivity extends BaseActivity {
 
     }
 
-   @OnClick({R.id.btnStartDay,R.id.btnDownload,R.id.btnPlannedCall,R.id.btnReports,R.id.btnUpload,R.id.btnEndDay})
-   public void onMainMenuClick(View view){
-        switch (view.getId()){
+    @OnClick({R.id.btnStartDay, R.id.btnDownload, R.id.btnPlannedCall, R.id.btnReports, R.id.btnUpload, R.id.btnEndDay})
+    public void onMainMenuClick(View view) {
+        switch (view.getId()) {
             case R.id.btnPlannedCall:
                 OutletListActivity.start(this);
                 break;
+            case R.id.btnReports:
+                CustomerComplaintsActivity.start(this);
+                break;
         }
-   }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if(drawerToggle.onOptionsItemSelected(item))
+        if (drawerToggle.onOptionsItemSelected(item))
             return true;
 
         return super.onOptionsItemSelected(item);
