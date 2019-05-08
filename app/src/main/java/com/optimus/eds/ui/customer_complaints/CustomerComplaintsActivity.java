@@ -1,11 +1,9 @@
-package com.optimus.eds.ui.complaints.customer;
+package com.optimus.eds.ui.customer_complaints;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,16 +12,14 @@ import android.widget.Spinner;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
-import com.optimus.eds.ui.complaints.customer.adapter.CustomerComplaintsAdapter;
-import com.optimus.eds.ui.complaints.customer.adapter.DaysAdapter;
-import com.optimus.eds.ui.complaints.customer.model.ComplaintReasonModel;
-import com.optimus.eds.ui.complaints.customer.model.ComplaintTypeModel;
-import com.optimus.eds.ui.complaints.customer.model.DaysModel;
-import com.optimus.eds.ui.route.merchandize.MerchandiseViewModel;
+import com.optimus.eds.ui.customer_complaints.adapter.CustomerComplaintsAdapter;
+import com.optimus.eds.ui.customer_complaints.adapter.DaysAdapter;
+import com.optimus.eds.ui.customer_complaints.model.ComplaintReasonModel;
+import com.optimus.eds.ui.customer_complaints.model.ComplaintTypeModel;
+import com.optimus.eds.ui.customer_complaints.model.DaysModel;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -66,12 +62,9 @@ public class CustomerComplaintsActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this).get(CustomerComplaintViewModel.class);
 
 
-        viewModel.getComplaintsData().observe(this, new Observer<List<ComplaintTypeModel>>() {
-            @Override
-            public void onChanged(@Nullable List<ComplaintTypeModel> complaintTypeModels) {
-                complaintTypeModelList=complaintTypeModels;
-                initAssetsAdapter();
-            }
+        viewModel.getComplaintsData().observe(this, complaintTypeModels -> {
+            complaintTypeModelList=complaintTypeModels;
+            initAssetsAdapter();
         });
 
         viewModel.setComplaintsData();

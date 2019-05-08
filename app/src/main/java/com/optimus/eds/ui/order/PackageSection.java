@@ -62,9 +62,9 @@ public class PackageSection extends StatelessSection {
         Product product = list.get(position);
 
         itemHolder.tvItemName.setText(product.getName());
-        itemHolder.tvAvlStock.setText("0.0");
-        itemHolder.etOrder.setText(product.getQty()==0?"":String.valueOf(product.getQty()));
-        itemHolder.etOrder.addTextChangedListener(new TextWatcher() {
+        itemHolder.tvAvlStock.setText(product.getCartonStockInHand()+"/"+ product.getUnitStockInHand());
+        itemHolder.etCartonQty.setText(product.getQty()==0?"":String.valueOf(product.getQty()));
+        itemHolder.etCartonQty.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -132,8 +132,8 @@ public class PackageSection extends StatelessSection {
 
         private final TextView tvItemName;
         private final TextView tvAvlStock;
-        private final  TextView tvWhStock;
-        private final EditText etOrder;
+        private final  EditText etCartonQty;
+        private final EditText etUnitQty;
 
         ItemViewHolder(View view) {
             super(view);
@@ -141,8 +141,8 @@ public class PackageSection extends StatelessSection {
             rootView = view;
             tvItemName = view.findViewById(R.id.item_name);
             tvAvlStock = view.findViewById(R.id.avl_stock);
-            tvWhStock = view.findViewById(R.id.wh_stock);
-            etOrder = view.findViewById(R.id.orderQty);
+            etCartonQty = view.findViewById(R.id.order_carton);
+            etUnitQty = view.findViewById(R.id.order_unit);
 
         }
     }

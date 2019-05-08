@@ -26,7 +26,7 @@ public class Util {
     public static final String DATE_FORMAT_4 = "MM/dd/yyyy hh:mm a";
     private static final String TAG = "Util";
 
-    public static String getAuthorizationHeader(Context context) throws UnsupportedEncodingException {
+   /* public static String getAuthorizationHeader(Context context) throws UnsupportedEncodingException {
         String username = PreferenceUtil.getInstance(context).getUsername();
         String password = PreferenceUtil.getInstance(context).getPassword();
 
@@ -35,8 +35,14 @@ public class Util {
         } else {
             return null;
         }
-    }
+    }*/
 
+    public static String getAuthorizationHeader(Context context) throws UnsupportedEncodingException {
+        String token = PreferenceUtil.getInstance(context).getToken();
+        if(token.isEmpty())
+            return null;
+        return token;
+    }
 
 
 

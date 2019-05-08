@@ -1,4 +1,4 @@
-package com.optimus.eds.ui.complaints.customer.adapter;
+package com.optimus.eds.ui.customer_complaints.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +8,8 @@ import android.widget.Checkable;
 import android.widget.CheckedTextView;
 
 import com.optimus.eds.R;
-import com.optimus.eds.ui.complaints.customer.model.ComplaintReasonModel;
-import com.optimus.eds.ui.complaints.customer.model.ComplaintTypeModel;
-import com.optimus.eds.ui.route.merchandize.MerchandiseItem;
+import com.optimus.eds.ui.customer_complaints.model.ComplaintReasonModel;
+import com.optimus.eds.ui.customer_complaints.model.ComplaintTypeModel;
 import com.thoughtbot.expandablecheckrecyclerview.CheckableChildRecyclerViewAdapter;
 import com.thoughtbot.expandablecheckrecyclerview.models.CheckedExpandableGroup;
 import com.thoughtbot.expandablecheckrecyclerview.viewholders.CheckableChildViewHolder;

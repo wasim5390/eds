@@ -97,7 +97,7 @@ public class OutletListViewModel extends AndroidViewModel {
             outlet.setOutletName("Shop "+ i);
             outlet.setAddress("Main boulevard Iqbal town, lhr");
             outlet.setOutletId((Long.valueOf(new Random(16*i).nextInt())));
-            outlet.setLastSaleDate(new Date().getTime());
+           // outlet.setLastSaleDate(new Date().getTime());
             outlet.setVisitFrequency((i+1));
             outlet.setTotalAmount(12030*i/1.00);
             outlets.add(outlet);
@@ -119,7 +119,7 @@ public class OutletListViewModel extends AndroidViewModel {
             outlet.setOutletName("Shop_IQB "+ i);
             outlet.setAddress("Main boulevard Iqbal town, lhr");
             outlet.setOutletId((Long.valueOf(new Random(36*i).nextInt())));
-            outlet.setLastSaleDate(new Date().getTime());
+           // outlet.setLastSaleDate(new Date().getTime());
             outlet.setVisitFrequency((i+1));
             outlet.setTotalAmount(12030*i/1.00);
             outlets.add(outlet);

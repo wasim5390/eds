@@ -5,7 +5,7 @@ import android.arch.lifecycle.LiveData;
 
 import com.optimus.eds.Injection;
 import com.optimus.eds.db.AppDatabase;
-import com.optimus.eds.db.dao.OutletDao;
+
 import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
@@ -23,7 +23,6 @@ import io.reactivex.schedulers.Schedulers;
 public class OutletListRepository  {
 
     public List<Outlet> outletList;
-    private OutletDao outletDao;
     private RouteDao routeDao;
     private API api;
     static OutletListRepository repository;
@@ -35,7 +34,6 @@ public class OutletListRepository  {
     }
 
     public OutletListRepository(Application application){
-        outletDao = AppDatabase.getDatabase(application).outletDao();
         routeDao = AppDatabase.getDatabase(application).routeDao();
         api= RetrofitHelper.getInstance().getApi();
     }
@@ -43,7 +41,7 @@ public class OutletListRepository  {
 
 
     public LiveData<List<Outlet>> getOutlets(Long routeId){
-        return outletDao.findAllOutletsForRoute(routeId);
+        return routeDao.findAllOutletsForRoute(routeId);
     }
     public LiveData<List<Route>> getRoutes(){
         return routeDao.findAllRoutes();
@@ -52,7 +50,7 @@ public class OutletListRepository  {
 
     public void insertOutlets(List<Outlet> outlets){
         Completable.create(e -> {
-            outletDao.insertOutlets(outlets);
+            routeDao.insertOutlets(outlets);
             e.onComplete();
         }).subscribeOn(Schedulers.io())
                 .subscribe(new CompletableObserver() {

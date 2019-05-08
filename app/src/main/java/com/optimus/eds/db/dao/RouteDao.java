@@ -22,6 +22,7 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public interface RouteDao {
+
     @Query("SELECT * FROM Route ORDER BY mRouteName ASC")
     LiveData<List<Route>> findAllRoutes();
 
@@ -30,6 +31,17 @@ public interface RouteDao {
 
     @Query("SELECT * FROM Route WHERE mRouteId=:id")
     LiveData<Route> findRouteById(Long id);
+
+    @Query("SELECT * FROM Outlet ORDER BY mOutletName ASC")
+    LiveData<List<Outlet>> findAllOutlets();
+
+    @Query("SELECT * FROM Outlet WHERE mRouteId=:routeId")
+    LiveData<List<Outlet>> findAllOutletsForRoute(Long routeId);
+
+    @Query("SELECT * FROM Outlet WHERE mOutletId=:id")
+    LiveData<Outlet> findOutletById(Long id);
+
+
 
 
     @Insert(onConflict = REPLACE)
@@ -47,6 +59,24 @@ public interface RouteDao {
     @Delete
     void deleteRoute(Route route);
 
+    @Insert(onConflict = REPLACE)
+    long insertOutlet(Outlet outlet);
+
+    @Insert(onConflict = REPLACE)
+    void insertOutlets(List<Outlet> outlets);
+
+    @Update
+    int updateOutlet(Outlet outlet);
+
+    @Update
+    void updateOutlet(List<Outlet> outlets);
+
+    @Delete
+    void deleteOutlet(Outlet outlet);
+
+    @Query("DELETE FROM Outlet")
+    void deleteAllOutlets();
+
     @Query("DELETE FROM Route")
-    void deleteAll();
+    void deleteAllRoutes();
 }

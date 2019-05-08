@@ -17,6 +17,7 @@ import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
+import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.model.PackageModel;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
     private ProductsDao productsDao;
     private OrderBookingRepository repository;
     private MutableLiveData<List<PackageModel>> mutablePkgList;
+    private MutableLiveData<List<ProductGroup>> productGroupList;
     private MutableLiveData<Boolean> isSaving;
     private List<Package> packages;
     private List<Product> products;
@@ -51,6 +53,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
         super(application);
         compositeDisposable = new CompositeDisposable();
         mutablePkgList = new MutableLiveData<>();
+        productGroupList = new MutableLiveData<>();
         isSaving = new MutableLiveData<>();
         packages = new ArrayList<>();
         productsDao = AppDatabase.getDatabase(application).productsDao();
@@ -60,16 +63,23 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
     private void onScreenCreated(){
 
+        repository.findAllGroups().observeForever(groups -> {
+            productGroupList.postValue(groups);
+        });
 
         repository.findAllPackages().observeForever(packages -> {
             this.packages = packages;
-            repository.findAllProducts().observeForever(products -> {
-                this.products = products;
-                mutablePkgList.setValue(repository.packageModel(packages,products));
-            });
+
         });
 
 
+    }
+
+    public void filterProductsByGroup(Long groupId){
+        repository.findAllProducts(groupId).observeForever(products -> {
+            this.products = products;
+            mutablePkgList.setValue(repository.packageModel(packages,products));
+        });
     }
 
 
@@ -93,6 +103,9 @@ public class OrderBookingViewModel extends AndroidViewModel {
         return mutablePkgList;
     }
 
+    public LiveData<List<ProductGroup>> getProductGroupList() {
+        return productGroupList;
+    }
 
 
     public void addOrder(Order order){

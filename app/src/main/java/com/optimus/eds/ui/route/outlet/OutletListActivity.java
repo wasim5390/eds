@@ -67,14 +67,6 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
         viewModel = ViewModelProviders.of(this).get(OutletListViewModel.class);
 
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                viewModel.insertIntoDb();
-            }
-        },3000);
-
-
         viewModel.getRouteList().observe(this, routes -> {
             onRouteListLoaded(routes);
         });

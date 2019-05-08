@@ -78,5 +78,8 @@
     <string name="grand_total">Grand Total:</string>
     <string name="qty">Qty:</string>
     <string name="cash_memo">Cash Memo</string>
+    <string name="product_group">Product Group:</string>
+    <string name="unit">Unit(s)</string>
+    <string name="carton_s">Carton(s)</string>
 
 </resources>

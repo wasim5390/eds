@@ -1,4 +1,4 @@
-package com.optimus.eds.ui.complaints.customer.adapter;
+package com.optimus.eds.ui.customer_complaints.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
 import com.optimus.eds.R;
-import com.optimus.eds.ui.complaints.customer.model.DaysModel;
+import com.optimus.eds.ui.customer_complaints.model.DaysModel;
 import java.util.ArrayList;
 import java.util.List;
 

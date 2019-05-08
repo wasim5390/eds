@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
  <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -32,21 +30,22 @@
             android:layout_weight="10"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_regular"
-            android:textColor="@color/black"
-            android:text="0.0"
+            android:backgroundTint="@color/grey_alpha"
+            android:textColor="@color/white"
+            android:text="200 / 30"
             android:textSize="12sp"
             android:padding="10dp"
             android:maxLines="1"
             android:singleLine="true"
 
             />
-        <TextView
-            android:id="@+id/wh_stock"
+        <EditText
+            android:id="@+id/order_carton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="10"
             android:fontFamily="@font/roboto_regular"
-            android:text="23525626"
+            android:text="2"
             android:textColor="@color/black"
             android:gravity="center"
             android:textSize="12sp"
@@ -54,7 +53,7 @@
             android:padding="10dp"
             android:layout_marginStart="2dp"
             android:layout_marginEnd="2dp"
-            android:backgroundTint="@color/grey_alpha"
+            android:inputType="number"
             android:maxLines="1"
             android:singleLine="true"
 
@@ -63,7 +62,7 @@
 
 
         <EditText
-            android:id="@+id/orderQty"
+            android:id="@+id/order_unit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="10"
@@ -75,6 +74,7 @@
             android:background="@drawable/input_bg"
             android:padding="10dp"
             android:maxLines="1"
+            android:inputType="number"
             android:singleLine="true"
             />
 

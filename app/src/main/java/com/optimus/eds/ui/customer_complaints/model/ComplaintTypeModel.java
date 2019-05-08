@@ -1,6 +1,5 @@
-package com.optimus.eds.ui.complaints.customer.model;
+package com.optimus.eds.ui.customer_complaints.model;
 
-import com.optimus.eds.ui.complaints.customer.model.ComplaintReasonModel;
 import com.thoughtbot.expandablecheckrecyclerview.models.MultiCheckExpandableGroup;
 import java.util.List;
 

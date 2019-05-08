@@ -1,4 +1,4 @@
-package com.optimus.eds.ui.complaints.customer.model;
+package com.optimus.eds.ui.customer_complaints.model;
 
 /**
  * Created By apple on 5/2/19

@@ -18,43 +18,40 @@ public class Outlet implements Serializable {
     private Long mOutletId;
     @SerializedName("routeId")
     private Long mRouteId;
-    @SerializedName("address")
-    private String mAddress;
-
-    @SerializedName("availableCreditLimit")
-    private Double mAvailableCreditLimit;
-    @SerializedName("LastSale")
-    private Double mLastSale;
-    @SerializedName("channelName")
-    private String mChannelName;
-    @SerializedName("lastSaleDate")
-    private Long mLastSaleDate;
-    @SerializedName("lastSaleQuantity")
-    private String mLastSaleQuantity;
-    @SerializedName("latitude")
-    private Float mLatitude;
-    @SerializedName("location")
-    private String mLocation;
-    @SerializedName("longitude")
-    private Float mLongitude;
     @SerializedName("outletCode")
     private String mOutletCode;
-
     @SerializedName("outletName")
     private String mOutletName;
-    @SerializedName("outstandingCreditLimit")
-    private Double mOutstandingCredit;
-
-    @Ignore
-    private Double mTotalAmount;
-
-    @SerializedName("visitDay")
-    private Integer mVisitDay;
+    @SerializedName("channelName")
+    private String mChannelName;
+    @SerializedName("location")
+    private String mLocation;
     @SerializedName("visitFrequency")
     private Integer mVisitFrequency;
+    @SerializedName("visitDay")
+    private Integer mVisitDay;
+    @SerializedName("address")
+    private String mAddress;
+    @SerializedName("latitude")
+    private Float mLatitude;
+    @SerializedName("longitude")
+    private Float mLongitude;
+    @SerializedName("lastSaleDate")
+    private String mLastSaleDate;
+    @SerializedName("lastSaleQuantity")
+    private String mLastSaleQuantity;
+    @SerializedName("availableCreditLimit")
+    private Double mAvailableCreditLimit;
+    @SerializedName("outstandingCreditLimit")
+    private Double mOutstandingCredit;
+    @SerializedName("lastSale")
+    private Double mLastSale;
     @SerializedName("visitStatus")
     private Integer mVisitStatus;
 
+
+    @Ignore
+    private Double mTotalAmount;
 
     public Long getRouteId() {
         return mRouteId;
@@ -83,7 +80,7 @@ public class Outlet implements Serializable {
         this.mChannelName = mChannelName;
     }
 
-    public void setLastSaleDate(Long mLastSaleDate) {
+    public void setLastSaleDate(String mLastSaleDate) {
         this.mLastSaleDate = mLastSaleDate;
     }
 
@@ -144,7 +141,7 @@ public class Outlet implements Serializable {
         return mChannelName;
     }
 
-    public Long getLastSaleDate() {
+    public String getLastSaleDate() {
         return mLastSaleDate;
     }
 

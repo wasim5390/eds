@@ -25,8 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitHelper implements Constant {
 
-   public static final String BASE_URL = "https://kidslauncherapi.herokuapp.com/api/";
-    public static final String BASE_URL_DEV = "https://kidslauncherapi.herokuapp.com/api/";
+    public static final String BASE_URL_DEV = "http://192.168.8.101:51185/";
 
     private static RetrofitHelper instance;
     public Retrofit retrofit;
@@ -73,11 +72,10 @@ public class RetrofitHelper implements Constant {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request original = chain.request();
-
             String header = Util.getAuthorizationHeader(EdsApplication.getInstance());
             if (header!=null) {
                 Request request = original.newBuilder()
-                        .header("Authorization", "Basic " + header).build();
+                        .header("Authorization", "Bearer " + header).build();
                 Response response = chain.proceed(request);
                 if (response.code()==401) {
                     //EventBus.getDefault().post(new LoginFailEvent());
@@ -85,6 +83,7 @@ public class RetrofitHelper implements Constant {
 
                 return response;
             } else {
+
                 return chain.proceed(original);
             }
 

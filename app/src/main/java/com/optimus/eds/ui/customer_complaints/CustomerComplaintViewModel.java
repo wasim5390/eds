@@ -1,13 +1,12 @@
-package com.optimus.eds.ui.complaints.customer;
+package com.optimus.eds.ui.customer_complaints;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
-import com.optimus.eds.ui.complaints.customer.model.ComplaintReasonModel;
-import com.optimus.eds.ui.complaints.customer.model.ComplaintTypeModel;
-import com.optimus.eds.ui.route.merchandize.MerchandiseItem;
+import com.optimus.eds.ui.customer_complaints.model.ComplaintReasonModel;
+import com.optimus.eds.ui.customer_complaints.model.ComplaintTypeModel;
 
 import java.util.Arrays;
 import java.util.List;

@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
-import com.optimus.eds.ui.complaints.customer.CustomerComplaintsActivity;
+import com.optimus.eds.ui.customer_complaints.CustomerComplaintsActivity;
 import com.optimus.eds.ui.route.outlet.OutletListActivity;
 
 import butterknife.BindView;
@@ -44,7 +44,7 @@ public class MainActivity extends BaseActivity {
 
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         //  viewModel.onScreenCreated();
-        //  viewModel.isLoading().observe(this, this::setProgress);
+          viewModel.isLoading().observe(this, this::setProgress);
         //  viewModel.getRoutes();
         //  viewModel.getOutlets();
         viewModel.getErrorMsg().observe(this, this::showError);
@@ -79,6 +79,9 @@ public class MainActivity extends BaseActivity {
     @OnClick({R.id.btnStartDay, R.id.btnDownload, R.id.btnPlannedCall, R.id.btnReports, R.id.btnUpload, R.id.btnEndDay})
     public void onMainMenuClick(View view) {
         switch (view.getId()) {
+            case R.id.btnStartDay:
+                viewModel.startDay();
+                break;
             case R.id.btnPlannedCall:
                 OutletListActivity.start(this);
                 break;

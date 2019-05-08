@@ -21,6 +21,7 @@ public class PreferenceUtil {
     public static final String KEY_IS_SIGN_IN = "is_sign_in";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_PASSWORD = "password";
+    public static final String KEY_TOKEN = "token";
     public static final String KEY_USER = "user";
 
     private static final String PREFERENCE_NAME = "send_signal_preference";
@@ -58,6 +59,11 @@ public class PreferenceUtil {
         return sPref.getString(KEY_PASSWORD, "");
     }
 
+    public String getToken() {
+        return sPref.getString(KEY_TOKEN, "");
+    }
+
+
     public String getAppMode() {
         return sPref.getString(KEY_APP_MODE, defaultAppMode);
     }
@@ -71,6 +77,12 @@ public class PreferenceUtil {
     public void savePassword(String password) {
         SharedPreferences.Editor editor = sPref.edit();
         editor.putString(KEY_PASSWORD, password);
+        editor.apply();
+    }
+
+    public void saveToken(String token) {
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putString(KEY_TOKEN, token);
         editor.apply();
     }
 

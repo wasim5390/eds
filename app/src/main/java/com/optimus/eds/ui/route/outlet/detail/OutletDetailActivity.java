@@ -143,7 +143,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         outletLastSale.setText(String.valueOf( outlet.getLastSale()));
         outletSaleQty.setText(String.valueOf(outlet.getLastSaleQuantity()));
         outletChannel.setText(String.valueOf(outlet.getChannelName()));
-        outletLastSaleDate.setText(Util.formatDate(Util.DATE_FORMAT_2,outlet.getLastSaleDate()));
+       // outletLastSaleDate.setText(Util.formatDate(Util.DATE_FORMAT_2,outlet.getLastSaleDate()));
         outletName.setText(outlet.getOutletName());
         outletVisits.setText(String.valueOf(outlet.getVisitFrequency()));
     }
@@ -175,6 +175,6 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         double distance = location.distanceTo(outletLocation);
        // if(distance<20)
        //AlertDialogManager.getInstance().showLocationMissMatchAlertDialog(this,location,outletLocation);
-        CashMemoActivity.start(this,outletId);
+        OrderBookingActivity.start(this,outletId);
     }
 }

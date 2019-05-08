@@ -52,6 +52,7 @@
                             android:textColor="@color/black"
                             android:text="@string/outlet_name"
                             android:textSize="14sp"
+                            android:layout_marginTop="10dp"
 
 
                             />
@@ -60,13 +61,16 @@
                             android:id="@+id/pkg"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
+
                             android:fontFamily="@font/roboto_regular"
-                            android:text="@string/pkg_name"
+                            android:text="@string/product_group"
                             android:textColor="@color/black"
                             android:textSize="14sp"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/tvName"
+                            app:layout_constraintTop_toTopOf="@+id/group_spinner"
+                            app:layout_constraintBottom_toBottomOf="@+id/group_spinner"
+
+
 
                             />
 
@@ -89,15 +93,20 @@
                             app:layout_constraintStart_toEndOf="@+id/barrier3"
                             app:layout_constraintTop_toTopOf="@+id/name" />
 
-                        <TextView
-                            android:id="@+id/tvPackage"
+
+
+                        <android.support.v7.widget.AppCompatSpinner
+                            android:id="@+id/group_spinner"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="SSRB"
+                            android:background="@drawable/spinner_dropdown"
+                            android:overlapAnchor="false"
+                            android:paddingStart="2dp"
+                            android:paddingEnd="20dp"
                             android:layout_marginStart="10dp"
-                            android:textSize="14sp"
                             app:layout_constraintStart_toEndOf="@+id/barrier3"
-                            app:layout_constraintTop_toTopOf="@+id/pkg" />
+                            app:layout_constraintTop_toBottomOf="@+id/tvName"
+                            />
 
 
 
@@ -125,7 +134,7 @@
                         <TextView
                             android:id="@+id/item_name"
                             android:layout_width="0dp"
-                            android:layout_weight="10"
+                            android:layout_weight="9.5"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_regular"
                             android:textColor="@color/black"
@@ -137,22 +146,23 @@
                         <TextView
                             android:id="@+id/avl_stock"
                             android:layout_width="0dp"
-                            android:layout_weight="10"
+                            android:layout_weight="9.5"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_regular"
                             android:textColor="@color/black"
-                            android:text="@string/avl_stk"
+                            android:gravity="center"
+                            android:text="Avl Stock [Carton/Units]"
                             android:textSize="12sp"
 
 
                             />
                         <TextView
-                            android:id="@+id/wh_stock"
+                            android:id="@+id/carton_order"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="10"
+                            android:layout_weight="10.5"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="@string/wh_stk"
+                            android:text="@string/carton_s"
                             android:textColor="@color/black"
                             android:gravity="center"
                             android:textSize="12sp"
@@ -166,10 +176,10 @@
                             android:id="@+id/order"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="@string/order"
+                            android:text="@string/unit"
                             android:fontFamily="@font/roboto_regular"
                             android:textColor="@color/black"
-                            android:layout_weight="10"
+                            android:layout_weight="10.5"
                             android:textSize="14sp"
                             android:gravity="center"
                             />
@@ -197,20 +207,34 @@
             android:id="@+id/bottomview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_gravity="bottom"
             android:background="@color/white"
             android:gravity="center_horizontal"
+            android:padding="10dp"
             >
 
             <android.support.v7.widget.AppCompatButton
-                android:id="@+id/btnNext"
-                android:layout_width="match_parent"
+                android:id="@+id/btnAdd"
+                android:layout_width="0dp"
                 android:layout_height="55dp"
-                android:layout_margin="10dp"
+
+                android:layout_weight="1"
                 android:theme="@style/PositiveButton"
+                android:backgroundTint="@color/colorPrimary"
                 android:text="@string/add"
-                android:textSize="22sp"
+                android:textSize="18sp"
+                />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnNext"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+
+                android:layout_weight="1"
+                android:theme="@style/PositiveButton"
+                android:text="@string/next"
+                android:textSize="18sp"
                 />
         </LinearLayout>
 

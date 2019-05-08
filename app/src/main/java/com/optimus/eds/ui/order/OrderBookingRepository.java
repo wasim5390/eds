@@ -12,6 +12,7 @@ import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
+import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.model.PackageModel;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class OrderBookingRepository {
 
     private OrderDao orderDao;
     private ProductsDao productsDao;
+    private MutableLiveData<List<ProductGroup>> allGroups;
     private MutableLiveData<List<Package>> packages;
     private MutableLiveData<List<Product>> allProducts;
     private MutableLiveData<Boolean> isSaving;
@@ -35,6 +37,7 @@ public class OrderBookingRepository {
         productsDao = appDatabase.productsDao();
         orderDao = appDatabase.orderDao();
         isSaving = new MutableLiveData<>();
+        allGroups = new MutableLiveData<>();
         packages = new MutableLiveData<>();
         allProducts = new MutableLiveData<>();
     }
@@ -64,6 +67,12 @@ public class OrderBookingRepository {
 
     }
 
+    protected LiveData<List<ProductGroup>> findAllGroups(){
+        productsDao.findAllProductGroups().observeForever(groups -> {
+            allGroups.postValue(groups);
+        });
+        return allGroups;
+    }
 
 
     protected LiveData<List<Package>> findAllPackages(){
@@ -73,8 +82,15 @@ public class OrderBookingRepository {
         return packages;
     }
 
-    protected LiveData<List<Product>> findAllProducts(){
-        productsDao.findAllProduct().observeForever(products -> allProducts.postValue(products));
+    protected LiveData<List<Package>> findAllPackagesByGroup(Long groupId){
+        productsDao.findAllPackages().observeForever(packages1 -> {
+            packages.postValue(packages1);
+        });
+        return packages;
+    }
+
+    protected LiveData<List<Product>> findAllProducts(Long groupId){
+        productsDao.findAllProductsByGroupId(groupId).observeForever(products -> allProducts.postValue(products));
         return allProducts;
     }
 
@@ -85,8 +101,10 @@ public class OrderBookingRepository {
         for(Package _package: packages)
         {
             List<Product> products = getProductsById(_package.getPackageId(),_products);
-            PackageModel model = new PackageModel(_package.getPackageId(),_package.getPackageName(),products);
-            packageModels.add(model);
+            if(!products.isEmpty()) {
+                PackageModel model = new PackageModel(_package.getPackageId(), _package.getPackageName(), products);
+                packageModels.add(model);
+            }
         }
         return packageModels;
 

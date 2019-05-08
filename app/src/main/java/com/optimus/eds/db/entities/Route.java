@@ -16,13 +16,16 @@ public class Route implements Serializable {
 
     @SerializedName("routeId")
     @PrimaryKey
-    private Long mRouteId;
+    public Long mRouteId;
 
     @SerializedName("routeName")
-    private String mRouteName;
+    public String mRouteName;
 
     @SerializedName("employeeId")
-    private Integer mEmployeeId;
+    public Integer mEmployeeId;
+
+    @SerializedName("totalOutlets")
+    public Integer mTotalOutlets;
 
 
     /*******************Setters*********************/
@@ -39,6 +42,9 @@ public class Route implements Serializable {
 
     /******************Getters**********************/
 
+    public Integer getTotalOutlets() {
+        return mTotalOutlets;
+    }
 
     public Long getRouteId() {
         return mRouteId;

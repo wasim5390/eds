@@ -10,10 +10,10 @@ import com.google.gson.annotations.SerializedName;
 public class Package {
 
     @PrimaryKey
-    Long packageId;
-    @SerializedName("PackageName")
-    String packageName;
-
+    @SerializedName("productPackageId")
+    public Long packageId;
+    @SerializedName("productPackageName")
+    public String packageName;
 
     public Package(Long packageId, String packageName) {
         this.packageId = packageId;
