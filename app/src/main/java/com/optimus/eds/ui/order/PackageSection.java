@@ -24,9 +24,6 @@ public class PackageSection extends StatelessSection {
 
 
     String title;
-
-
-
     List<Product> list;
 
 
@@ -63,7 +60,8 @@ public class PackageSection extends StatelessSection {
 
         itemHolder.tvItemName.setText(product.getName());
         itemHolder.tvAvlStock.setText(product.getCartonStockInHand()+"/"+ product.getUnitStockInHand());
-        itemHolder.etCartonQty.setText(product.getQty()==0?"":String.valueOf(product.getQty()));
+        itemHolder.etCartonQty.setText("");
+        itemHolder.etUnitQty.setText("");
         itemHolder.etCartonQty.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -75,9 +73,9 @@ public class PackageSection extends StatelessSection {
                 if(count<1)
                     return;
                 double qty = Double.parseDouble(s.toString());
-            if(Double.parseDouble(s.toString())>0){
-                product.setQty(qty);
-            }
+                if(Double.parseDouble(s.toString())>0){
+                    product.setCarton(qty);
+                }
             }
 
             @Override
@@ -86,16 +84,29 @@ public class PackageSection extends StatelessSection {
             }
         });
 
-        itemHolder.rootView.setOnClickListener(new View.OnClickListener() {
+        itemHolder.etUnitQty.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                /*Toast.makeText(getContext(),
-                        String.format("Clicked on position #%s of Section %s",
-                                sectionAdapter.getPositionInSection(itemHolder.getAdapterPosition()),
-                                title),
-                        Toast.LENGTH_SHORT).show();*/
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(count<1)
+                    return;
+                double qty = Double.parseDouble(s.toString());
+                if(Double.parseDouble(s.toString())>0){
+                    product.setUnit(qty);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
+
+
     }
 
     @Override
@@ -113,7 +124,7 @@ public class PackageSection extends StatelessSection {
 
 
 
-   private class HeaderViewHolder extends RecyclerView.ViewHolder {
+    private class HeaderViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView tvTitle;
 
@@ -126,7 +137,7 @@ public class PackageSection extends StatelessSection {
 
 
 
-   private class ItemViewHolder extends RecyclerView.ViewHolder {
+    private class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final View rootView;
 

@@ -42,8 +42,6 @@ public interface RouteDao {
     LiveData<Outlet> findOutletById(Long id);
 
 
-
-
     @Insert(onConflict = REPLACE)
     long insertRoute(Route route);
 

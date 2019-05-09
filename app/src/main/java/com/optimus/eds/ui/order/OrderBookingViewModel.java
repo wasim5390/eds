@@ -8,95 +8,72 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.optimus.eds.db.AppDatabase;
-import com.optimus.eds.db.dao.OrderDao;
-import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.entities.Order;
+import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.model.PackageModel;
+import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section;
-import io.reactivex.Completable;
-import io.reactivex.CompletableEmitter;
-import io.reactivex.CompletableObserver;
-import io.reactivex.CompletableOnSubscribe;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import retrofit2.http.PATCH;
+
 
 
 public class OrderBookingViewModel extends AndroidViewModel {
 
-    private ProductsDao productsDao;
+
     private OrderBookingRepository repository;
+    private OutletDetailRepository outletDetailRepository;
     private MutableLiveData<List<PackageModel>> mutablePkgList;
-    private MutableLiveData<List<ProductGroup>> productGroupList;
-    private MutableLiveData<Boolean> isSaving;
-    private List<Package> packages;
-    private List<Product> products;
-    private CompositeDisposable compositeDisposable;
+    private LiveData<List<ProductGroup>> productGroupList;
+    private LiveData<Boolean> isSaving;
+    private LiveData<List<Package>> packages;
+    private List<Product> orderProducts;
+    private Order order;
+    private LiveData<Order> orderLiveData;
+    private Long outletId;
+    private MutableLiveData<Outlet> outlet;
+
 
     public OrderBookingViewModel(@NonNull Application application) {
         super(application);
-        compositeDisposable = new CompositeDisposable();
-        mutablePkgList = new MutableLiveData<>();
-        productGroupList = new MutableLiveData<>();
-        isSaving = new MutableLiveData<>();
-        packages = new ArrayList<>();
-        productsDao = AppDatabase.getDatabase(application).productsDao();
+
         repository = new OrderBookingRepository(application);
+        outletDetailRepository = new OutletDetailRepository(application);
+        mutablePkgList = new MutableLiveData<>();
+        outlet = new MutableLiveData<>();
+        orderProducts = new ArrayList<>();
+        isSaving = repository.isSaving();
         onScreenCreated();
     }
 
+    public void setOutletId(Long outletId) {
+        this.outletId = outletId;
+        orderLiveData = repository.findOrder(outletId);
+
+    }
+
     private void onScreenCreated(){
-
-        repository.findAllGroups().observeForever(groups -> {
-            productGroupList.postValue(groups);
-        });
-
-        repository.findAllPackages().observeForever(packages -> {
-            this.packages = packages;
-
-        });
-
+        productGroupList = repository.findAllGroups();
+        packages = repository.findAllPackages();
 
     }
 
     public void filterProductsByGroup(Long groupId){
-        repository.findAllProducts(groupId).observeForever(products -> {
-            this.products = products;
-            mutablePkgList.setValue(repository.packageModel(packages,products));
+
+        repository.findAllProducts(groupId).observeForever(products1 -> {
+            mutablePkgList.postValue(repository.packageModel(packages.getValue(),products1));
         });
-    }
-
-
-
-
-
-    private void onError(Throwable throwable) {
 
     }
-
-
-
-    private void onSuccess(List<PackageModel> packageModels) {
-        mutablePkgList.setValue(packageModels);
-    }
-
-
 
 
     public LiveData<List<PackageModel>> getProductList() {
@@ -107,22 +84,33 @@ public class OrderBookingViewModel extends AndroidViewModel {
         return productGroupList;
     }
 
+    public LiveData<Outlet> loadOutlet(Long outletId) {
+       return outletDetailRepository.getOutletById(outletId);
+    }
 
-    public void addOrder(Order order){
-        repository.addOrder(order).observeForever(aBoolean -> {
-            isSaving.setValue(aBoolean);
-        });
+
+    public void addOrderProducts(List<Product> orderItems){
+
+        order = orderLiveData.getValue();
+        if(order==null) {
+            orderProducts.addAll(orderItems);
+            order = new Order(outletId, orderProducts);
+            repository.addOrder(order);
+        }else{
+            order.getProducts().addAll(orderItems);
+            repository.updateOrder(order);
+        }
+
     }
 
     protected List<Product> filterOrderProducts(Map<String,Section> sectionHashMap){
         List<Product> productList = new ArrayList<>();
 
         for (Map.Entry<String, Section> entry : sectionHashMap.entrySet()) {
-            String key = entry.getKey();
             PackageSection section =(PackageSection) entry.getValue();
             List<Product> products = section.getList();
             for(Product product:products){
-                if(product.getQty()>0)
+                if(product.getQtyCarton()>0 || product.getQtyUnit()>0)
                     productList.add(product);
             }
 
@@ -134,9 +122,9 @@ public class OrderBookingViewModel extends AndroidViewModel {
     public LiveData<Boolean> isSaving() {
         return isSaving;
     }
+
     @Override
     protected void onCleared() {
         super.onCleared();
-        compositeDisposable.clear();
     }
 }

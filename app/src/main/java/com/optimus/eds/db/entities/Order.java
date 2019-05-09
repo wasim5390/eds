@@ -19,21 +19,23 @@ public class Order {
     @SerializedName("orderId")
     public Long mOrderId;
 
-    public Order( String userId, List<Product> products) {
-        this.userId = userId;
+    @SerializedName("outletId")
+    public Long outletId;
+
+    public Order(Long outletId, List<Product> products) {
+        this.outletId = outletId;
         this.products = products;
     }
 
-    public String getUserId() {
-        return userId;
+    public Long getOutletId() {
+        return outletId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setOutletId(Long outletId) {
+        this.outletId = outletId;
     }
 
-    @SerializedName("userId")
-    public String userId;
+
 
     @TypeConverters(ProductConverter.class)
     public List<Product> products;
@@ -55,4 +57,5 @@ public class Order {
     public void setProducts(List<Product> products) {
         this.products = products;
     }
+
 }

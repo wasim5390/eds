@@ -4,12 +4,15 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 
 import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
+import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Order;
+import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
@@ -20,6 +23,7 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
+import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -27,22 +31,29 @@ public class OrderBookingRepository {
 
     private OrderDao orderDao;
     private ProductsDao productsDao;
+    private RouteDao routeDao;
     private MutableLiveData<List<ProductGroup>> allGroups;
-    private MutableLiveData<List<Package>> packages;
     private MutableLiveData<List<Product>> allProducts;
+
+
+    public LiveData<Boolean> isSaving() {
+        return isSaving;
+    }
+
     private MutableLiveData<Boolean> isSaving;
 
     public OrderBookingRepository(Application application) {
         AppDatabase appDatabase = AppDatabase.getDatabase(application);
         productsDao = appDatabase.productsDao();
+        routeDao= appDatabase.routeDao();
         orderDao = appDatabase.orderDao();
         isSaving = new MutableLiveData<>();
         allGroups = new MutableLiveData<>();
-        packages = new MutableLiveData<>();
         allProducts = new MutableLiveData<>();
     }
 
-    public LiveData<Boolean> addOrder(Order order){
+
+    public void addOrder(Order order){
 
         Completable.create(e -> {
             orderDao.insertOrder(order);
@@ -60,37 +71,65 @@ public class OrderBookingRepository {
 
             @Override
             public void onError(Throwable e) {
-            isSaving.postValue(false);
+                isSaving.postValue(false);
             }
         });
-        return isSaving;
 
     }
 
-    protected LiveData<List<ProductGroup>> findAllGroups(){
-        productsDao.findAllProductGroups().observeForever(groups -> {
-            allGroups.postValue(groups);
+    public void updateOrder(Order order){
+
+        Completable.create(e -> {
+            orderDao.updateOrder(order);
+            e.onComplete();
+        }).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                isSaving.postValue(true);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                isSaving.postValue(false);
+            }
         });
+
+
+    }
+
+    protected LiveData<Order> findOrder(Long outletId){
+        MutableLiveData<Order> order = new MutableLiveData<>();
+        AsyncTask.execute(() -> {
+            Order ordr = orderDao.findOrderByOutletId(outletId);
+            order.postValue(ordr);
+        });
+        return  order;
+    }
+
+
+    protected LiveData<List<ProductGroup>> findAllGroups(){
+        AsyncTask.execute(() -> allGroups.postValue(productsDao.findAllProductGroups()));
         return allGroups;
     }
 
 
     protected LiveData<List<Package>> findAllPackages(){
-        productsDao.findAllPackages().observeForever(packages1 -> {
-            packages.postValue(packages1);
+        MutableLiveData<List<Package>> packages = new MutableLiveData<>();
+        AsyncTask.execute(() -> {
+           List<Package> packageList= productsDao.findAllPackages();
+           packages.postValue(packageList);
         });
-        return packages;
+       return packages;
     }
 
-    protected LiveData<List<Package>> findAllPackagesByGroup(Long groupId){
-        productsDao.findAllPackages().observeForever(packages1 -> {
-            packages.postValue(packages1);
-        });
-        return packages;
-    }
 
     protected LiveData<List<Product>> findAllProducts(Long groupId){
-        productsDao.findAllProductsByGroupId(groupId).observeForever(products -> allProducts.postValue(products));
+        AsyncTask.execute(() -> allProducts.postValue(productsDao.findAllProductsByGroupId(groupId)));
         return allProducts;
     }
 

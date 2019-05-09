@@ -57,7 +57,7 @@ public class Product implements Serializable {
 
 
     @Ignore
-    public double qty;
+    public double qtyCarton,qtyUnit;
 
 
     public Product(Long id, Long pkgId, String name) {
@@ -66,19 +66,33 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    public Product(Long id, Long pkgId, String name, Double qty) {
+    public Product(Long id, Long pkgId, String name, Double qtyUnit) {
         this.id = id;
         this.pkgId = pkgId;
         this.name = name;
-        this.qty = qty;
+        this.qtyUnit = qtyUnit;
     }
-    public double getQty() {
-        return qty;
+    public double getQtyUnit() {
+        return qtyUnit;
     }
 
-    public void setQty(double qty) {
-        this.qty = qty;
+    public double getQtyCarton() {
+        return qtyCarton;
     }
+
+    public void setQty(double carton,double unit) {
+        this.qtyCarton = carton;
+        this.qtyUnit = unit;
+    }
+
+    public void setUnit(double unit) {
+        this.qtyUnit = unit;
+    }
+
+    public void setCarton(double carton) {
+        this.qtyCarton = carton;
+    }
+
     public Long getId() {
         return id;
     }
@@ -160,6 +174,6 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
-        return String.valueOf(getQty());
+        return String.valueOf(getQtyCarton());
     }
 }

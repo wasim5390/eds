@@ -80,7 +80,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/productQty"
         app:layout_constraintBottom_toBottomOf="@+id/productQty"
-        android:text="5.0"
+        android:text="5"
         android:fontFamily="@font/roboto_regular"
         android:textColor="@color/grey"
         android:textSize="14sp"

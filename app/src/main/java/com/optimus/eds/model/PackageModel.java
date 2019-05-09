@@ -1,6 +1,6 @@
 package com.optimus.eds.model;
 
-import com.google.gson.annotations.SerializedName;
+
 import com.optimus.eds.db.entities.Product;
 
 import java.util.List;

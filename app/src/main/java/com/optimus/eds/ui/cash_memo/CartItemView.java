@@ -51,10 +51,10 @@ public class CartItemView extends MaterialCardView {
         this.product = item;
         if (item != null) {
             productName.setText(product.getName());
-            productQty.setText(String.valueOf(product.getQty()));
-            productRate.setText("83.6");
-            productDiscount.setText("15.5");
-            total.setText(String.valueOf(83.6*product.getQty()));
+            productQty.setText(String.valueOf(product.getQtyCarton()+"/"+product.getQtyUnit()));
+            productRate.setText("0.0");
+            productDiscount.setText("0.0");
+            total.setText(String.valueOf(83.6*product.getQtyUnit()));
         }
     }
 

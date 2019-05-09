@@ -13,11 +13,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Order;
+import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.db.entities.Route;
@@ -41,6 +43,8 @@ public class OrderBookingActivity extends BaseActivity {
     @BindView(R.id.group_spinner)
     AppCompatSpinner spinner;
 
+    @BindView(R.id.tvName)
+    TextView tvOutletName;
     private SectionedRecyclerViewAdapter sectionAdapter;
 
     private Long outletId;
@@ -64,17 +68,23 @@ public class OrderBookingActivity extends BaseActivity {
         outletId =  getIntent().getLongExtra("OutletId",0);
         setToolbar(getString(R.string.order_booking));
         viewModel = ViewModelProviders.of(this).get(OrderBookingViewModel.class);
+        viewModel.setOutletId(outletId);
         setObservers();
     }
 
     private void setObservers(){
-
+        viewModel.loadOutlet(outletId).observe(this, outlet -> onOutletLoaded(outlet));
         viewModel.getProductGroupList().observe(this, this::onProductGroupsLoaded);
-        viewModel.getProductList().observe(this, packages -> setSectionedAdapter(packages));
+
+        viewModel.getProductList().observe(this, this::setSectionedAdapter);
 
         viewModel.isSaving().observe(this, aBoolean -> {
             Toast.makeText(this, aBoolean?"Order Saved Successfully":"Not saved", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void onOutletLoaded(Outlet outlet) {
+        tvOutletName.setText(outlet.getOutletName());
     }
 
     public void onProductGroupsLoaded(List<ProductGroup> groups) {
@@ -84,10 +94,7 @@ public class OrderBookingActivity extends BaseActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 group = ((ProductGroup)(parent.getSelectedItem()));
-
                 viewModel.filterProductsByGroup(group.getProductGroupId());
-              //  viewModel.loadOutletsFromDb(group.getProductGroupId());
-              //  viewModel.getProductList()
 
             }
 
@@ -113,9 +120,9 @@ public class OrderBookingActivity extends BaseActivity {
 
     @OnClick(R.id.btnAdd)
     public void onAddClick(){
+
         List<Product> orderItems = viewModel.filterOrderProducts(sectionAdapter.getCopyOfSectionsMap());
-        Order order = new Order("123",orderItems);
-        viewModel.addOrder(order);
+        viewModel.addOrderProducts(orderItems);
     }
 
     @OnClick(R.id.btnNext)

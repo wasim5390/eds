@@ -22,10 +22,10 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 public interface ProductsDao {
 
     @Query("SELECT * FROM Package ORDER BY packageName ASC")
-    LiveData<List<Package>> findAllPackages();
+    List<Package> findAllPackages();
 
     @Query("SELECT * FROM ProductGroup ORDER BY productGroupName ASC")
-    LiveData<List<ProductGroup>> findAllProductGroups();
+    List<ProductGroup> findAllProductGroups();
 
 
     @Query("SELECT * FROM Product ORDER BY name ASC")
@@ -35,7 +35,7 @@ public interface ProductsDao {
     LiveData<List<Product>> findAllProductsByPkg(Long pkgId);
 
     @Query("SELECT * FROM Product WHERE productGroupId=:groupId")
-    LiveData<List<Product>> findAllProductsByGroupId(Long groupId);
+    List<Product> findAllProductsByGroupId(Long groupId);
 
     @Query("SELECT * FROM Product WHERE id=:id")
     LiveData<Product> findProductById(Long id);

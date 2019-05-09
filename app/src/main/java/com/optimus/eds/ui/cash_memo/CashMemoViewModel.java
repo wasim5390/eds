@@ -4,10 +4,15 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.optimus.eds.db.AppDatabase;
+import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
+import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Product;
 
@@ -17,25 +22,33 @@ import java.util.List;
 public class CashMemoViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<Product>> cartProducts;
+    private MutableLiveData<Order> order;
+    private List<Order> allOrders;
+
     ProductsDao dao;
+    OrderDao orderDao;
     private AppDatabase database;
 
     public CashMemoViewModel(@NonNull Application application) {
         super(application);
         cartProducts = new MutableLiveData<>();
+        order = new MutableLiveData<>();
         database = AppDatabase.getDatabase(application);
         dao = database.productsDao();
-        getProducts(1L);
-    }
-
-    void getProducts(Long outletId){
-        List<Product> products = new ArrayList<>();
-        products.add(new Product(1L,100L,"SSRB MIRINDA",10.0));
-        products.add(new Product(2L,101L,"SSRB PEPSI",8.0));
-        products.add(new Product(3L,103L,"SSRB SPRITE",4.0));
-        cartProducts.postValue(products);
+        orderDao = database.orderDao();
 
     }
+
+
+    protected LiveData<Order> getOrder(Long outletId){
+        MutableLiveData<Order> order = new MutableLiveData<>();
+        AsyncTask.execute(() -> {
+            Order ordr = orderDao.findOrderByOutletId(outletId);
+            order.postValue(ordr);
+        });
+        return  order;
+    }
+
 
     LiveData<List<Product>> getCartProducts(){
         return cartProducts;

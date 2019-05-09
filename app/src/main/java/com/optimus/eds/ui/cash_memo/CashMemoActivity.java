@@ -50,8 +50,10 @@ public class CashMemoActivity extends BaseActivity {
         setToolbar(getString(R.string.cash_memo));
         viewModel = ViewModelProviders.of(this).get(CashMemoViewModel.class);
         initAdapter();
-        viewModel.getCartProducts().observe(this, products -> {
-            updateCart(products);
+
+
+        viewModel.getOrder(outletId).observe(this,order -> {
+            updateCart(order.getProducts());
         });
 
 
