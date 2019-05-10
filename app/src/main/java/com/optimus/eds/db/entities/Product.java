@@ -1,5 +1,6 @@
 package com.optimus.eds.db.entities;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
@@ -13,7 +14,7 @@ import java.io.Serializable;
 public class Product implements Serializable {
 
 
-    @PrimaryKey
+    @PrimaryKey @ColumnInfo(name = "pid")
     @SerializedName("productId")
     public Long id;
     @SerializedName("productName")
@@ -43,7 +44,7 @@ public class Product implements Serializable {
     @SerializedName("cartonCode")
     public String cartonCode;
     @SerializedName("unitQuantity")
-    public Integer unitQuantity;
+    public Long unitQuantity;
     @SerializedName("cartonQuantity")
     public Integer cartonQuantity;
     @SerializedName("unitSizeForDisplay")
@@ -57,7 +58,9 @@ public class Product implements Serializable {
 
 
     @Ignore
-    public double qtyCarton,qtyUnit;
+    public Long qtyCarton=0l;
+    @Ignore
+    public Long qtyUnit=0l;
 
 
     public Product(Long id, Long pkgId, String name) {
@@ -66,30 +69,30 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    public Product(Long id, Long pkgId, String name, Double qtyUnit) {
+    public Product(Long id, Long pkgId, String name, Long qtyUnit) {
         this.id = id;
         this.pkgId = pkgId;
         this.name = name;
         this.qtyUnit = qtyUnit;
     }
-    public double getQtyUnit() {
+    public Long getQtyUnit() {
         return qtyUnit;
     }
 
-    public double getQtyCarton() {
+    public Long getQtyCarton() {
         return qtyCarton;
     }
 
-    public void setQty(double carton,double unit) {
+    public void setQty(Long carton,Long unit) {
         this.qtyCarton = carton;
         this.qtyUnit = unit;
     }
 
-    public void setUnit(double unit) {
+    public void setUnit(Long unit) {
         this.qtyUnit = unit;
     }
 
-    public void setCarton(double carton) {
+    public void setCarton(Long carton) {
         this.qtyCarton = carton;
     }
 
@@ -148,7 +151,7 @@ public class Product implements Serializable {
         return cartonCode;
     }
 
-    public Integer getUnitQuantity() {
+    public Long getUnitQuantity() {
         return unitQuantity;
     }
 
@@ -170,6 +173,10 @@ public class Product implements Serializable {
 
     public Long getCartonStockInHand() {
         return cartonStockInHand;
+    }
+
+    public boolean isProductSelected(){
+        return (getQtyCarton()!=null || getQtyUnit()!=null) && (getQtyUnit()>0 || getQtyCarton()>0);
     }
 
     @Override

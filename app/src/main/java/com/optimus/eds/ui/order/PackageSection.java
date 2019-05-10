@@ -72,8 +72,8 @@ public class PackageSection extends StatelessSection {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(count<1)
                     return;
-                double qty = Double.parseDouble(s.toString());
-                if(Double.parseDouble(s.toString())>0){
+                Long qty = Long.parseLong(s.toString());
+                if(qty>0){
                     product.setCarton(qty);
                 }
             }
@@ -94,8 +94,8 @@ public class PackageSection extends StatelessSection {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(count<1)
                     return;
-                double qty = Double.parseDouble(s.toString());
-                if(Double.parseDouble(s.toString())>0){
+                Long qty = Long.parseLong(s.toString());
+                if(qty>0){
                     product.setUnit(qty);
                 }
             }

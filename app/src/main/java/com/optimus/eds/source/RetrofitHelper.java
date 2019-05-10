@@ -25,7 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitHelper implements Constant {
 
-    public static final String BASE_URL_DEV = "http://192.168.8.101:51185/";
+    public static final String BASE_URL_DEV = "http://192.168.8.100:51185/";
 
     private static RetrofitHelper instance;
     public Retrofit retrofit;

@@ -1,6 +1,7 @@
 package com.optimus.eds.db.entities;
 
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
@@ -15,16 +16,17 @@ import java.util.List;
 @Entity
 public class Order {
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "oid")
     @SerializedName("orderId")
-    public Long mOrderId;
+    public Long id;
 
     @SerializedName("outletId")
     public Long outletId;
 
-    public Order(Long outletId, List<Product> products) {
+    public int orderStatus;
+
+    public Order(Long outletId) {
         this.outletId = outletId;
-        this.products = products;
     }
 
     public Long getOutletId() {
@@ -35,27 +37,21 @@ public class Order {
         this.outletId = outletId;
     }
 
-
-
-    @TypeConverters(ProductConverter.class)
-    public List<Product> products;
-
-
-
     public Long getOrderId() {
-        return mOrderId;
+        return id;
     }
 
     public void setOrderId(Long mOrderId) {
-        this.mOrderId = mOrderId;
+        this.id = mOrderId;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public int getOrderStatus() {
+        return orderStatus;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setOrderStatus(int orderStatus) {
+        this.orderStatus = orderStatus;
     }
+
 
 }

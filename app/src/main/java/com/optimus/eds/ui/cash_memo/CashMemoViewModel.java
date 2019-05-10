@@ -13,16 +13,21 @@ import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.entities.Order;
+import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Product;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 public class CashMemoViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<Product>> cartProducts;
-    private MutableLiveData<Order> order;
+    private MutableLiveData<HashMap<Order,OrderDetail>> order;
     private List<Order> allOrders;
 
     ProductsDao dao;
@@ -42,11 +47,21 @@ public class CashMemoViewModel extends AndroidViewModel {
 
     protected LiveData<Order> getOrder(Long outletId){
         MutableLiveData<Order> order = new MutableLiveData<>();
+
         AsyncTask.execute(() -> {
             Order ordr = orderDao.findOrderByOutletId(outletId);
             order.postValue(ordr);
         });
         return  order;
+    }
+
+    protected LiveData<List<OrderDetail>> getOrderItems(Long orderId){
+        MutableLiveData<List<OrderDetail>> orderItemLiveData = new MutableLiveData<>();
+        AsyncTask.execute(() -> {
+           List<OrderDetail> orderItems = orderDao.findOrderItemsByOrderId(orderId);
+           orderItemLiveData.postValue(orderItems);
+        });
+        return orderItemLiveData;
     }
 
 

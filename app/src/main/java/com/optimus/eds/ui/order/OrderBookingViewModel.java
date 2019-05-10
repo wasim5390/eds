@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.optimus.eds.db.entities.Order;
+import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
@@ -90,8 +91,21 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
 
     public void addOrderProducts(List<Product> orderItems){
+        Order order  = orderLiveData.getValue();
+        if(order==null) {
+            order = new Order(outletId);
+            order.setOrderStatus(0);
+            repository.addOrder(order);
 
-        order = orderLiveData.getValue();
+        }
+        List<OrderDetail> orderDetails = new ArrayList<>(orderItems.size());
+        for(Product product:orderItems) {
+            OrderDetail orderDetail = new OrderDetail(order.getOrderId(), product.getId(),product.getQtyCarton(),product.getQtyUnit());
+            orderDetails.add(orderDetail);
+        }
+
+        repository.addOrderItems(orderDetails);
+/*        order = orderLiveData.getValue();
         if(order==null) {
             orderProducts.addAll(orderItems);
             order = new Order(outletId, orderProducts);
@@ -99,7 +113,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
         }else{
             order.getProducts().addAll(orderItems);
             repository.updateOrder(order);
-        }
+        }*/
 
     }
 
@@ -110,8 +124,10 @@ public class OrderBookingViewModel extends AndroidViewModel {
             PackageSection section =(PackageSection) entry.getValue();
             List<Product> products = section.getList();
             for(Product product:products){
-                if(product.getQtyCarton()>0 || product.getQtyUnit()>0)
-                    productList.add(product);
+                if(product.isProductSelected()) {
+
+                        productList.add(product);
+                }
             }
 
         }

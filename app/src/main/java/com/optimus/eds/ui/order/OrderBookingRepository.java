@@ -12,6 +12,7 @@ import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Order;
+import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
@@ -66,7 +67,7 @@ public class OrderBookingRepository {
 
             @Override
             public void onComplete() {
-                isSaving.postValue(true);
+              //  isSaving.postValue(true);
             }
 
             @Override
@@ -77,10 +78,10 @@ public class OrderBookingRepository {
 
     }
 
-    public void updateOrder(Order order){
+    public void addOrderItems(List<OrderDetail> orderDetail){
 
         Completable.create(e -> {
-            orderDao.updateOrder(order);
+            orderDao.insertOrderItems(orderDetail);
             e.onComplete();
         }).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
@@ -99,8 +100,8 @@ public class OrderBookingRepository {
             }
         });
 
-
     }
+
 
     protected LiveData<Order> findOrder(Long outletId){
         MutableLiveData<Order> order = new MutableLiveData<>();

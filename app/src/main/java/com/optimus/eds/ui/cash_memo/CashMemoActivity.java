@@ -12,10 +12,14 @@ import android.support.v7.widget.RecyclerView;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
+import com.optimus.eds.db.entities.Order;
+import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Product;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,9 +56,14 @@ public class CashMemoActivity extends BaseActivity {
         initAdapter();
 
 
-        viewModel.getOrder(outletId).observe(this,order -> {
-            updateCart(order.getProducts());
+
+        viewModel.getOrder(outletId).observe(this, order -> {
+
+            viewModel.getOrderItems(order.getOrderId()).observe(this, orderDetails -> {
+                updateCart(orderDetails);
+            });
         });
+
 
 
     }
@@ -70,7 +79,7 @@ public class CashMemoActivity extends BaseActivity {
     }
 
 
-    private void updateCart(List<Product> products) {
+    private void updateCart(List<OrderDetail> products) {
         cartAdapter.populateCartItems(products);
     }
 }

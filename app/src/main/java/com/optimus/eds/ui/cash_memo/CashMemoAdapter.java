@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.optimus.eds.R;
+import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.model.PackageModel;
@@ -21,14 +22,14 @@ public class CashMemoAdapter extends
 
 
     private Context mContext;
-    private List<Product> products;
+    private List<OrderDetail> products;
 
     public CashMemoAdapter(Context context) {
         this.mContext = context;
         this.products = new ArrayList<>();
     }
 
-    public void populateCartItems(List<Product> products) {
+    public void populateCartItems(List<OrderDetail> products) {
         this.products = products;
         notifyDataSetChanged();
 
@@ -47,7 +48,7 @@ public class CashMemoAdapter extends
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        Product product = products.get(position);
+        OrderDetail product = products.get(position);
         ((CartItemView)viewHolder.itemView).setCartItem(product);
     }
 

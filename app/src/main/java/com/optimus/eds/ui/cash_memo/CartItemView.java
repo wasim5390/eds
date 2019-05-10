@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.optimus.eds.R;
+import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Product;
 
 import butterknife.BindView;
@@ -25,7 +26,7 @@ public class CartItemView extends MaterialCardView {
     @BindView(R.id.tvProductTotal)
     TextView total;
 
-    private Product product;
+    private OrderDetail product;
 
     public CartItemView(Context context) {
         super(context);
@@ -46,15 +47,15 @@ public class CartItemView extends MaterialCardView {
 
     }
 
-    public void setCartItem(Product item) {
+    public void setCartItem(OrderDetail item) {
 
         this.product = item;
         if (item != null) {
-            productName.setText(product.getName());
-            productQty.setText(String.valueOf(product.getQtyCarton()+"/"+product.getQtyUnit()));
+            productName.setText("");
+            productQty.setText(String.valueOf(product.getCartonQuantity()+"/"+product.getUnitQuantity()));
             productRate.setText("0.0");
             productDiscount.setText("0.0");
-            total.setText(String.valueOf(83.6*product.getQtyUnit()));
+            total.setText(String.valueOf(83.6*product.getUnitQuantity()));
         }
     }
 
