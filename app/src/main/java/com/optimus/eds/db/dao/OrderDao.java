@@ -26,9 +26,9 @@ public interface OrderDao {
     Order findOrderByOutletId(Long id);
 
     @Insert(onConflict = REPLACE)
-    long insertOrder(Order order);
+    void insertOrder(Order order);
 
     @Update
-    long updateOrder(Order order);
+    void updateOrder(Order order);
 
 }
