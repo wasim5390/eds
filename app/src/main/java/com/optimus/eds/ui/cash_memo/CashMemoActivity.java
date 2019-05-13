@@ -55,15 +55,10 @@ public class CashMemoActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this).get(CashMemoViewModel.class);
         initAdapter();
 
-
-
-        viewModel.getOrder(outletId).observe(this, order -> {
-
-            viewModel.getOrderItems(order.getOrderId()).observe(this, orderDetails -> {
-                updateCart(orderDetails);
-            });
+        viewModel.getOrder(outletId);
+        viewModel.getCartProducts().observe(this,orderDetails -> {
+            updateCart(orderDetails);
         });
-
 
 
     }

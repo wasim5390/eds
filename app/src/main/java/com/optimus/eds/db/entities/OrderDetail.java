@@ -4,9 +4,11 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
-@Entity(foreignKeys = {
+@Entity(
+        primaryKeys = {"c_pid","c_oid"},
+        foreignKeys = {
         @ForeignKey(
                 entity = Order.class,
                 parentColumns = "oid",
@@ -18,19 +20,20 @@ import android.arch.persistence.room.PrimaryKey;
                 parentColumns = "pid",
                 childColumns = "c_pid"
         )
-}, indices = {@Index(value = "c_pid", unique = true), @Index(value = "c_oid")})
+}, indices = {@Index(value = "c_pid"), @Index(value = "c_oid")})
 
 public class OrderDetail {
-    @PrimaryKey
-    public int id;
+
     @ColumnInfo(name = "c_pid")
+    @NonNull
     public Long mProductId;
     @ColumnInfo(name = "c_oid")
+    @NonNull
     public Long mOrderId;
     public Long mCartonQuantity;
     public Long mUnitQuantity;
 
-    public OrderDetail(Long mOrderId, Long mProductId, Long mCartonQuantity, Long mUnitQuantity) {
+    public OrderDetail(@NonNull Long mOrderId,@NonNull Long mProductId, Long mCartonQuantity, Long mUnitQuantity) {
         this.mOrderId = mOrderId;
         this.mProductId = mProductId;
         this.mCartonQuantity = mCartonQuantity;

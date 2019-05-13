@@ -60,8 +60,8 @@ public class PackageSection extends StatelessSection {
 
         itemHolder.tvItemName.setText(product.getName());
         itemHolder.tvAvlStock.setText(product.getCartonStockInHand()+"/"+ product.getUnitStockInHand());
-        itemHolder.etCartonQty.setText("");
-        itemHolder.etUnitQty.setText("");
+        itemHolder.etCartonQty.setText(product.getQtyCarton()==null?"":String.valueOf(product.getQtyCarton()));
+        itemHolder.etUnitQty.setText(product.getQtyUnit()==null?"":String.valueOf(product.getQtyUnit()));
         itemHolder.etCartonQty.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -70,8 +70,10 @@ public class PackageSection extends StatelessSection {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(count<1)
+                if(s.length()<1 || Long.parseLong(s.toString())<1) {
+                    product.setCarton(null);
                     return;
+                }
                 Long qty = Long.parseLong(s.toString());
                 if(qty>0){
                     product.setCarton(qty);
@@ -92,8 +94,10 @@ public class PackageSection extends StatelessSection {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(count<1)
+                if(s.length()<1 || Long.parseLong(s.toString())<1) {
+                    product.setUnit(null);
                     return;
+                }
                 Long qty = Long.parseLong(s.toString());
                 if(qty>0){
                     product.setUnit(qty);

@@ -23,10 +23,14 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class CashMemoViewModel extends AndroidViewModel {
 
-    public MutableLiveData<List<Product>> cartProducts;
+    public MutableLiveData<List<OrderDetail>> cartProducts;
     private MutableLiveData<HashMap<Order,OrderDetail>> order;
     private List<Order> allOrders;
 
@@ -45,27 +49,40 @@ public class CashMemoViewModel extends AndroidViewModel {
     }
 
 
-    protected LiveData<Order> getOrder(Long outletId){
-        MutableLiveData<Order> order = new MutableLiveData<>();
+    protected void getOrder(Long outletId){
 
-        AsyncTask.execute(() -> {
-            Order ordr = orderDao.findOrderByOutletId(outletId);
-            order.postValue(ordr);
+        orderDao.findOrderByOutletId(outletId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new SingleObserver<Order>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(Order order) {
+            getOrderItems(order.getOrderId());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
         });
-        return  order;
     }
 
     protected LiveData<List<OrderDetail>> getOrderItems(Long orderId){
         MutableLiveData<List<OrderDetail>> orderItemLiveData = new MutableLiveData<>();
-        AsyncTask.execute(() -> {
+     /*   AsyncTask.execute(() -> {
            List<OrderDetail> orderItems = orderDao.findOrderItemsByOrderId(orderId);
            orderItemLiveData.postValue(orderItems);
-        });
+            cartProducts.postValue(orderItems);
+        });*/
         return orderItemLiveData;
     }
 
 
-    LiveData<List<Product>> getCartProducts(){
+    LiveData<List<OrderDetail>> getCartProducts(){
         return cartProducts;
     }
 }

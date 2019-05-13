@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Order;
+import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
@@ -73,7 +74,11 @@ public class OrderBookingActivity extends BaseActivity {
     }
 
     private void setObservers(){
+
         viewModel.loadOutlet(outletId).observe(this, outlet -> onOutletLoaded(outlet));
+
+       // viewModel.getOrder().observe(this, this:: onOrderLoaded );
+
         viewModel.getProductGroupList().observe(this, this::onProductGroupsLoaded);
 
         viewModel.getProductList().observe(this, this::setSectionedAdapter);
@@ -81,6 +86,16 @@ public class OrderBookingActivity extends BaseActivity {
         viewModel.isSaving().observe(this, aBoolean -> {
             Toast.makeText(this, aBoolean?"Order Saved Successfully":"Not saved", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void onOrderLoaded(Order order) {
+        if(order==null) return;
+        viewModel.setOrder(order);
+       // viewModel.getOrderItems(order.getOrderId()).observe(this,this::onOrderItemsLoaded);
+    }
+
+    private void onOrderItemsLoaded(List<OrderDetail> orderItems) {
+
     }
 
     private void onOutletLoaded(Outlet outlet) {
@@ -123,6 +138,7 @@ public class OrderBookingActivity extends BaseActivity {
 
         List<Product> orderItems = viewModel.filterOrderProducts(sectionAdapter.getCopyOfSectionsMap());
         viewModel.addOrderProducts(orderItems);
+
     }
 
     @OnClick(R.id.btnNext)

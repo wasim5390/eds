@@ -19,7 +19,6 @@ public class Order {
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "oid")
     @SerializedName("orderId")
     public Long id;
-
     @SerializedName("outletId")
     public Long outletId;
 

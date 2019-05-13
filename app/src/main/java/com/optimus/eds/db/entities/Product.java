@@ -76,11 +76,11 @@ public class Product implements Serializable {
         this.qtyUnit = qtyUnit;
     }
     public Long getQtyUnit() {
-        return qtyUnit;
+        return qtyUnit==null||qtyUnit==0?null:qtyUnit;
     }
 
     public Long getQtyCarton() {
-        return qtyCarton;
+        return qtyCarton==null||qtyCarton==0?null:qtyCarton;
     }
 
     public void setQty(Long carton,Long unit) {
@@ -176,7 +176,7 @@ public class Product implements Serializable {
     }
 
     public boolean isProductSelected(){
-        return (getQtyCarton()!=null || getQtyUnit()!=null) && (getQtyUnit()>0 || getQtyCarton()>0);
+        return (getQtyCarton()!=null || getQtyUnit()!=null &&( getQtyUnit()>0 || getQtyCarton()>0));
     }
 
     @Override

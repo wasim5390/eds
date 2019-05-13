@@ -17,6 +17,7 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
+import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.PackageModel;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class OrderBookingRepository {
     }
 
 
-    public void addOrder(Order order){
+    public void createOrder(Order order){
 
         Completable.create(e -> {
             orderDao.insertOrder(order);
@@ -103,14 +104,11 @@ public class OrderBookingRepository {
     }
 
 
-    protected LiveData<Order> findOrder(Long outletId){
-        MutableLiveData<Order> order = new MutableLiveData<>();
-        AsyncTask.execute(() -> {
-            Order ordr = orderDao.findOrderByOutletId(outletId);
-            order.postValue(ordr);
-        });
-        return  order;
+    protected Single<OrderModel> findOrder(Long outletId){
+
+        return orderDao.getOrderWithItems(outletId);
     }
+
 
 
     protected LiveData<List<ProductGroup>> findAllGroups(){
@@ -129,9 +127,10 @@ public class OrderBookingRepository {
     }
 
 
-    protected LiveData<List<Product>> findAllProducts(Long groupId){
-        AsyncTask.execute(() -> allProducts.postValue(productsDao.findAllProductsByGroupId(groupId)));
-        return allProducts;
+    protected Single<List<Product>> findAllProducts(Long groupId){
+        return productsDao.findAllProductsByGroupId(groupId);
+       /* AsyncTask.execute(() -> allProducts.postValue(productsDao.findAllProductsByGroupId(groupId)));
+        return allProducts;*/
     }
 
 
@@ -158,6 +157,17 @@ public class OrderBookingRepository {
         }
 
         return filteredList;
+    }
+
+    protected Single<List<OrderDetail>> getOrderItems(Long orderId){
+        return orderDao.findOrderItemsByOrderId(orderId);
+
+        /*MutableLiveData<List<OrderDetail>> orderItemLiveData = new MutableLiveData<>();
+        AsyncTask.execute(() -> {
+            List<OrderDetail> orderItems = orderDao.findOrderItemsByOrderId(orderId);
+            orderItemLiveData.postValue(orderItems);
+        });
+        return orderItemLiveData;*/
     }
 
 }

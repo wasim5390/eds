@@ -108,9 +108,11 @@ public class HomeRepository {
             try {
                 Response<PackageProductResponseModel> response = webService.loadTodayPackageProduct().execute();
                 if(response.isSuccessful()){
-                    productsDao.deleteAllProducts();
+                    orderDao.deleteAllOrders();
+
                     productsDao.deleteAllPackages();
                     productsDao.deleteAllProductGroups();
+                    productsDao.deleteAllProducts();
                     productsDao.insertProductGroups(response.body().getProductGroups());
                     productsDao.insertPackages(response.body().getPackageList());
                     productsDao.insertProducts(response.body().getProductList());

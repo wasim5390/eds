@@ -2,6 +2,7 @@ package com.optimus.eds.db.dao;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
@@ -11,8 +12,12 @@ import android.icu.text.Replaceable;
 
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
+import com.optimus.eds.model.OrderModel;
 
 import java.util.List;
+
+import io.reactivex.Single;
+import retrofit2.http.DELETE;
 
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
@@ -24,10 +29,14 @@ public interface OrderDao {
     Order findOrderByOrderId(Long id);
 
     @Query("SELECT * FROM `Order` WHERE outletId=:id")
-    Order findOrderByOutletId(Long id);
+    Single<Order> findOrderByOutletId(Long id);
 
     @Query("SELECT * FROM OrderDetail where c_oid=:orderId")
-    List<OrderDetail> findOrderItemsByOrderId(Long orderId);
+    Single<List<OrderDetail>> findOrderItemsByOrderId(Long orderId);
+
+    @Query("SELECT * FROM `Order` where outletId=:outletId")
+    @Transaction
+    Single<OrderModel> getOrderWithItems(long outletId);
 
     @Insert(onConflict = REPLACE)
     void insertOrder(Order order);
@@ -40,5 +49,8 @@ public interface OrderDao {
 
     @Update
     void updateOrderItems(List<OrderDetail> orderItems);
+
+    @Query("Delete From 'Order' ")
+    void deleteAllOrders();
 
 }
