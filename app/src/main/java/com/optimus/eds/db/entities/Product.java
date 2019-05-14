@@ -10,6 +10,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+import io.reactivex.annotations.Nullable;
+
 @Entity
 public class Product implements Serializable {
 
@@ -182,5 +184,13 @@ public class Product implements Serializable {
     @Override
     public String toString() {
         return String.valueOf(getQtyCarton());
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(obj!=null && obj instanceof Product){
+            if(((Product) obj).getId()==getId()) return true;
+        }
+        return false;
     }
 }

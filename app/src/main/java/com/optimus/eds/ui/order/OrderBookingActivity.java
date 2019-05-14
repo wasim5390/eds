@@ -77,8 +77,6 @@ public class OrderBookingActivity extends BaseActivity {
 
         viewModel.loadOutlet(outletId).observe(this, outlet -> onOutletLoaded(outlet));
 
-       // viewModel.getOrder().observe(this, this:: onOrderLoaded );
-
         viewModel.getProductGroupList().observe(this, this::onProductGroupsLoaded);
 
         viewModel.getProductList().observe(this, this::setSectionedAdapter);
@@ -86,17 +84,12 @@ public class OrderBookingActivity extends BaseActivity {
         viewModel.isSaving().observe(this, aBoolean -> {
             Toast.makeText(this, aBoolean?"Order Saved Successfully":"Not saved", Toast.LENGTH_SHORT).show();
         });
+
+        viewModel.showMessage().observe(this,s -> Toast.makeText(this, s, Toast.LENGTH_SHORT).show());
     }
 
-    private void onOrderLoaded(Order order) {
-        if(order==null) return;
-        viewModel.setOrder(order);
-       // viewModel.getOrderItems(order.getOrderId()).observe(this,this::onOrderItemsLoaded);
-    }
 
-    private void onOrderItemsLoaded(List<OrderDetail> orderItems) {
 
-    }
 
     private void onOutletLoaded(Outlet outlet) {
         tvOutletName.setText(outlet.getOutletName());
@@ -143,7 +136,8 @@ public class OrderBookingActivity extends BaseActivity {
 
     @OnClick(R.id.btnNext)
     public void onNextClick(){
-        CashMemoActivity.start(this,outletId);
+        //CashMemoActivity.start(this,outletId);
+        viewModel.composeOrderForServer();
     }
 
 

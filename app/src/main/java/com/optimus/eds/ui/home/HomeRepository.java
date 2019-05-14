@@ -62,11 +62,12 @@ public class HomeRepository {
         isLoading.setValue(true);
         executor.execute(()->{
 
-            webService.getToken("password","wasim","farazbutt").enqueue(new Callback<TokenResponse>() {
+            webService.getToken("password","imran","imranshabrati").enqueue(new Callback<TokenResponse>() {
                 @Override
                 public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
                     if(response.isSuccessful()) {
                         preferenceUtil.saveToken(response.body().getAccessToken());
+                        fetchTodayData();
                     }
                 }
 

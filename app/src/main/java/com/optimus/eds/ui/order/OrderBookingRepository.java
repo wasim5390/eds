@@ -3,55 +3,59 @@ package com.optimus.eds.ui.order;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
-
 import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
-import com.optimus.eds.db.entities.Outlet;
+
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.PackageModel;
+import com.optimus.eds.source.API;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 
 public class OrderBookingRepository {
-
+    private final String TAG=OrderBookingRepository.class.getSimpleName();
+    private static OrderBookingRepository repository;
     private OrderDao orderDao;
     private ProductsDao productsDao;
-    private RouteDao routeDao;
     private MutableLiveData<List<ProductGroup>> allGroups;
-    private MutableLiveData<List<Product>> allProducts;
-
-
-    public LiveData<Boolean> isSaving() {
-        return isSaving;
-    }
 
     private MutableLiveData<Boolean> isSaving;
+    private API webService;
+    private Executor executor;
 
-    public OrderBookingRepository(Application application) {
+    public static OrderBookingRepository singleInstance(Application application, API api, Executor executor){
+        if(repository==null)
+            repository = new OrderBookingRepository(application,api,executor);
+        return repository;
+    }
+
+    public OrderBookingRepository(Application application, API api, Executor executor) {
+        webService = api;
+        this.executor = executor;
         AppDatabase appDatabase = AppDatabase.getDatabase(application);
         productsDao = appDatabase.productsDao();
-        routeDao= appDatabase.routeDao();
         orderDao = appDatabase.orderDao();
         isSaving = new MutableLiveData<>();
         allGroups = new MutableLiveData<>();
-        allProducts = new MutableLiveData<>();
     }
 
 
@@ -129,8 +133,7 @@ public class OrderBookingRepository {
 
     protected Single<List<Product>> findAllProducts(Long groupId){
         return productsDao.findAllProductsByGroupId(groupId);
-       /* AsyncTask.execute(() -> allProducts.postValue(productsDao.findAllProductsByGroupId(groupId)));
-        return allProducts;*/
+
     }
 
 
@@ -161,13 +164,8 @@ public class OrderBookingRepository {
 
     protected Single<List<OrderDetail>> getOrderItems(Long orderId){
         return orderDao.findOrderItemsByOrderId(orderId);
-
-        /*MutableLiveData<List<OrderDetail>> orderItemLiveData = new MutableLiveData<>();
-        AsyncTask.execute(() -> {
-            List<OrderDetail> orderItems = orderDao.findOrderItemsByOrderId(orderId);
-            orderItemLiveData.postValue(orderItems);
-        });
-        return orderItemLiveData;*/
     }
-
+    public LiveData<Boolean> isSaving() {
+        return isSaving;
+    }
 }

@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             tool:layout_constraintTop_toTopOf="parent"
             tool:layout_constraintStart_toEndOf="@+id/outletName"
-            android:text="30405236-1 Ahuja shop"
+            android:text="30405236-1 shop"
             android:textSize="14sp"
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/colorPrimaryDark"

@@ -16,6 +16,8 @@ import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Product;
+import com.optimus.eds.model.OrderModel;
+import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,38 +32,33 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CashMemoViewModel extends AndroidViewModel {
 
-    public MutableLiveData<List<OrderDetail>> cartProducts;
-    private MutableLiveData<HashMap<Order,OrderDetail>> order;
-    private List<Order> allOrders;
+    public MutableLiveData<List<OrderDetail>> savedProducts;
+    private CashMemoRepository repository;
+    private OutletDetailRepository outletDetailRepository;
+    private MutableLiveData<OrderModel> orderLiveData;
 
-    ProductsDao dao;
-    OrderDao orderDao;
-    private AppDatabase database;
 
     public CashMemoViewModel(@NonNull Application application) {
         super(application);
-        cartProducts = new MutableLiveData<>();
-        order = new MutableLiveData<>();
-        database = AppDatabase.getDatabase(application);
-        dao = database.productsDao();
-        orderDao = database.orderDao();
+        savedProducts = new MutableLiveData<>();
+        orderLiveData = new MutableLiveData<>();
+        repository = new CashMemoRepository(application);
+        outletDetailRepository = new OutletDetailRepository(application);
 
     }
 
-
     protected void getOrder(Long outletId){
-
-        orderDao.findOrderByOutletId(outletId)
+        repository.findOrder(outletId)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new SingleObserver<Order>() {
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new SingleObserver<OrderModel>() {
             @Override
             public void onSubscribe(Disposable d) {
 
             }
 
             @Override
-            public void onSuccess(Order order) {
-            getOrderItems(order.getOrderId());
+            public void onSuccess(OrderModel order) {
+            orderLiveData.postValue(order);
             }
 
             @Override
@@ -71,18 +68,11 @@ public class CashMemoViewModel extends AndroidViewModel {
         });
     }
 
-    protected LiveData<List<OrderDetail>> getOrderItems(Long orderId){
-        MutableLiveData<List<OrderDetail>> orderItemLiveData = new MutableLiveData<>();
-     /*   AsyncTask.execute(() -> {
-           List<OrderDetail> orderItems = orderDao.findOrderItemsByOrderId(orderId);
-           orderItemLiveData.postValue(orderItems);
-            cartProducts.postValue(orderItems);
-        });*/
-        return orderItemLiveData;
+
+    public LiveData<Outlet> loadOutlet(Long outletId) {
+        return outletDetailRepository.getOutletById(outletId);
     }
-
-
-    LiveData<List<OrderDetail>> getCartProducts(){
-        return cartProducts;
+    LiveData<OrderModel> getOrder(){
+        return orderLiveData;
     }
 }

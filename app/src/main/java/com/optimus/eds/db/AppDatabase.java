@@ -28,7 +28,7 @@ import com.optimus.eds.db.entities.Route;
 
 @Database(entities = {Route.class, Outlet.class, Merchandise.class, ProductGroup.class, Product.class, Package.class, Order.class,
         OrderDetail.class
-}, version = 3, exportSchema = false)
+}, version = 4, exportSchema = false)
 @TypeConverters({OutletConverter.class, MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
 
 public abstract class AppDatabase extends RoomDatabase {

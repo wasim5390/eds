@@ -1,25 +1,19 @@
 package com.optimus.eds.ui.cash_memo;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
-import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
-import com.optimus.eds.db.entities.Product;
+import com.optimus.eds.db.entities.Outlet;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +26,9 @@ public class CashMemoActivity extends BaseActivity {
 
     @BindView(R.id.rvCartItems)
     RecyclerView rvCartItems;
+
+    @BindView(R.id.tvOutletName)
+    TextView tvOutletName;
 
     private CashMemoAdapter cartAdapter;
     private CashMemoViewModel viewModel;
@@ -54,13 +51,20 @@ public class CashMemoActivity extends BaseActivity {
         setToolbar(getString(R.string.cash_memo));
         viewModel = ViewModelProviders.of(this).get(CashMemoViewModel.class);
         initAdapter();
+        setObserver();
 
+    }
+
+    private void setObserver(){
+        viewModel.loadOutlet(outletId).observe(this, this::onOutletLoaded);
         viewModel.getOrder(outletId);
-        viewModel.getCartProducts().observe(this,orderDetails -> {
-            updateCart(orderDetails);
+        viewModel.getOrder().observe(this, order -> {
+            updateCart(order.getOrderDetails());
         });
+    }
 
-
+    private void onOutletLoaded(Outlet outlet) {
+        tvOutletName.setText(outlet.getOutletName());
     }
 
     private void initAdapter(){

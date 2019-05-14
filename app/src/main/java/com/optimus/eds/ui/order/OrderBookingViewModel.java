@@ -6,8 +6,13 @@ import android.arch.lifecycle.LiveData;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
@@ -16,11 +21,17 @@ import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.PackageModel;
+import com.optimus.eds.source.API;
+import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section;
 import io.reactivex.Completable;
@@ -42,21 +53,23 @@ public class OrderBookingViewModel extends AndroidViewModel {
     private MutableLiveData<List<PackageModel>> mutablePkgList;
     private LiveData<List<ProductGroup>> productGroupList;
     private LiveData<Boolean> isSaving;
+    private MutableLiveData<String> msg;
     private LiveData<List<Package>> packages;
-    private MutableLiveData<Order> orderLiveData;
+
     private Long outletId;
-
-    OrderModel order =null;
-
+    private OrderModel order =null;
+    private API webservice;
 
 
     public OrderBookingViewModel(@NonNull Application application) {
         super(application);
         disposable = new CompositeDisposable();
-        repository = new OrderBookingRepository(application);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        webservice = RetrofitHelper.getInstance().getApi();
+        repository = OrderBookingRepository.singleInstance(application, webservice,executor);
         outletDetailRepository = new OutletDetailRepository(application);
         mutablePkgList = new MutableLiveData<>();
-        orderLiveData = new MutableLiveData<>();
+        msg = new MutableLiveData<>();
         isSaving = repository.isSaving();
         onScreenCreated();
     }
@@ -69,7 +82,8 @@ public class OrderBookingViewModel extends AndroidViewModel {
     public void setOutletId(Long outletId) {
         this.outletId = outletId;
         Single<OrderModel> orderSingle = repository.findOrder(outletId);
-        Disposable orderDisposable = orderSingle.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(this::setOrder,this::onError);
+        Disposable orderDisposable = orderSingle.observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(this::setOrder,this::onError);
         disposable.add(orderDisposable);
     }
 
@@ -77,19 +91,18 @@ public class OrderBookingViewModel extends AndroidViewModel {
         productGroupList = repository.findAllGroups();
         packages = repository.findAllPackages();
 
-
     }
 
     public void filterProductsByGroup(Long groupId){
         Single<List<Product>> allProductsByGroup = repository.findAllProducts(groupId);
         if(order==null)
         {
-            allProductsByGroup.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(this::onSuccess);
+            disposable.add(allProductsByGroup.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(this::onSuccess));
             return;
         }
 
-        Single<List<OrderDetail>> allAddedProducts = repository.getOrderItems(order.getOrder().getOrderId());
-        Single<List<Product>> zippedSingleSource = Single.zip(allProductsByGroup, allAddedProducts, this::updatedOrder);
+        Single<List<OrderDetail>> allAddedProducts = repository.getOrderItems(order.getOrder().getLocalOrderId());
+        Single<List<Product>> zippedSingleSource = Single.zip(allProductsByGroup, allAddedProducts, this::updatedProductListing);
 
         Disposable homeDisposable = zippedSingleSource
                 .observeOn(AndroidSchedulers.mainThread())
@@ -105,11 +118,12 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
     private void onError(Throwable throwable) {
+    msg.postValue(throwable.getMessage());
 
     }
 
 
-    private List<Product> updatedOrder(List<Product> filteredProducts, List<OrderDetail> addedProducts){
+    private List<Product> updatedProductListing(List<Product> filteredProducts, List<OrderDetail> addedProducts){
 
         for(Product product:filteredProducts){
             for(OrderDetail orderDetail:addedProducts){
@@ -125,65 +139,30 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<PackageModel>> getProductList() {
-        return mutablePkgList;
-    }
 
-    public LiveData<List<ProductGroup>> getProductGroupList() {
-        return productGroupList;
-    }
-
-    public LiveData<Outlet> loadOutlet(Long outletId) {
-        return outletDetailRepository.getOutletById(outletId);
-    }
 
 
 
     public void addOrderProducts(List<Product> orderItems){
-        List<OrderDetail> orderDetails = new ArrayList<>(orderItems.size());
-
 
         Completable.create(e -> {
             if(order==null) {
-               Order order = new Order(outletId);
+                Order order = new Order(outletId);
                 order.setOrderStatus(0);
                 repository.createOrder(order);
             }
             e.onComplete();
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new CompletableObserver() {
+        }).subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
+                disposable.add(d);
             }
 
             @Override
             public void onComplete() {
-                repository.findOrder(outletId)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()).
-                        subscribe(new SingleObserver<OrderModel>() {
 
-                            @Override
-                            public void onSubscribe(Disposable d) {
-
-                            }
-
-                            @Override
-                            public void onSuccess(OrderModel order) {
-                                orderLiveData.postValue(order.getOrder());
-                                for(Product product:orderItems) {
-                                    OrderDetail orderDetail = new OrderDetail(order.getOrder().getOrderId(), product.getId(),product.getQtyCarton(),product.getQtyUnit());
-                                    orderDetails.add(orderDetail);
-                                }
-                                repository.addOrderItems(orderDetails);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-
-                            }
-                        });
-
+                addOrderItems(orderItems);
 
             }
 
@@ -194,6 +173,41 @@ public class OrderBookingViewModel extends AndroidViewModel {
         });
 
 
+    }
+
+    public void addOrderItems(List<Product> orderItems){
+        List<OrderDetail> orderDetails = new ArrayList<>(orderItems.size());
+        repository.findOrder(outletId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new SingleObserver<OrderModel>() {
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable.add(d);
+                    }
+
+                    @Override
+                    public void onSuccess(OrderModel order) {
+
+                        for(Product product:orderItems) {
+                            OrderDetail orderDetail = new OrderDetail(order.getOrder().getLocalOrderId(), product.getId(),product.getQtyCarton(),product.getQtyUnit());
+                            orderDetail.setCartonCode(product.getCartonCode());
+                            orderDetail.setUnitCode(product.getUnitCode());
+                            orderDetail.setProductName(product.getName());
+                            orderDetail.setType(Constant.ProductType.PAID);
+                            orderDetails.add(orderDetail);
+                        }
+                        repository.addOrderItems(orderDetails);
+                        order.setOrderDetails(orderDetails);
+                        setOrder(order);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
     }
 
 
@@ -215,12 +229,47 @@ public class OrderBookingViewModel extends AndroidViewModel {
         return productList;
     }
 
+    public void composeOrderForServer(){
+        if(order!=null){
+            Order mOrder = new Order(order.getOrder().getOutletId());
+            mOrder.setRouteId(order.getOutlet().getRouteId());
+            mOrder.setVisitDayId(order.getOutlet().getVisitDay());
+            mOrder.setOrderStatus(2);
+            mOrder.setLocalOrderId(order.getOrder().getLocalOrderId());
+            mOrder.setLatitude(order.getOutlet().getLatitude());
+            mOrder.setLongitude(order.getOutlet().getLongitude());
+            order.setOrder(mOrder);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            order.setOutlet(null);
+            String json = gson.toJson(order);
+            Log.i("JSON: ",json);
+
+        }
+        disposable
+                .add(webservice.calculatePricing(order).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+                .subscribe(this::setOrder,this::onError));
+
+    }
+
+
+    public LiveData<List<PackageModel>> getProductList() {
+        return mutablePkgList;
+    }
+
+    public LiveData<List<ProductGroup>> getProductGroupList() {
+        return productGroupList;
+    }
+
+    public LiveData<Outlet> loadOutlet(Long outletId) {
+        return outletDetailRepository.getOutletById(outletId);
+    }
+
     public LiveData<Boolean> isSaving() {
         return isSaving;
     }
 
-    public LiveData<Order> getOrder(){
-        return orderLiveData;
+    public LiveData<String> showMessage(){
+        return msg;
     }
 
 

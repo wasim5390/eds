@@ -8,6 +8,9 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import com.optimus.eds.db.converters.ProductConverter;
 
@@ -17,17 +20,47 @@ import java.util.List;
 public class Order {
 
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "oid")
-    @SerializedName("orderId")
+    @SerializedName("mobileOrderId")
     public Long id;
+
+    @SerializedName("orderId")
+    public Long serverOrderId;
+
     @SerializedName("outletId")
     public Long outletId;
+    @SerializedName("routeId")
+    public Long routeId;
 
-    public int orderStatus;
+    @SerializedName("orderStatusId")
+    public int orderStatus; // {1. Confirmed, 2. Created, 3. Cancelled}
+
+    @SerializedName("visitDayId")
+    public int visitDayId;
+
+    @SerializedName("latitude")
+    public double latitude;
+    @SerializedName("longitude")
+    public double longitude;
+
+    @SerializedName("subTotal")
+    public Double subTotal;
+    @SerializedName("payable")
+    public Double payable;
+
 
     public Order(Long outletId) {
         this.outletId = outletId;
     }
+    public Order() {
 
+    }
+    public Long getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(Long routeId) {
+        this.routeId = routeId;
+    }
     public Long getOutletId() {
         return outletId;
     }
@@ -36,12 +69,20 @@ public class Order {
         this.outletId = outletId;
     }
 
-    public Long getOrderId() {
+    public Long getLocalOrderId() {
         return id;
     }
 
-    public void setOrderId(Long mOrderId) {
+    public void setLocalOrderId(Long mOrderId) {
         this.id = mOrderId;
+    }
+
+    public Long getOrderId() {
+        return serverOrderId;
+    }
+
+    public void setOrderId(Long serverOrderId) {
+        this.serverOrderId = serverOrderId;
     }
 
     public int getOrderStatus() {
@@ -52,5 +93,42 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public int getVisitDayId() {
+        return visitDayId;
+    }
+
+    public void setVisitDayId(int visitDayId) {
+        this.visitDayId = visitDayId;
+    }
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+    public double getSubTotal() {
+        return subTotal;
+    }
+
+    public void setSubTotal(double subTotal) {
+        this.subTotal = subTotal;
+    }
+
+    public double getPayable() {
+        return payable;
+    }
+
+    public void setPayable(double payable) {
+        this.payable = payable;
+    }
 
 }

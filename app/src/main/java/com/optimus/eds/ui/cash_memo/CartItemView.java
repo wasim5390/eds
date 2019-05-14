@@ -55,7 +55,7 @@ public class CartItemView extends MaterialCardView {
             productQty.setText(String.valueOf(product.getCartonQuantity()+"/"+product.getUnitQuantity()));
             productRate.setText("0.0");
             productDiscount.setText("0.0");
-            total.setText(String.valueOf(83.6*product.getUnitQuantity()));
+            total.setText(String.valueOf(83.6*10));
         }
     }
 

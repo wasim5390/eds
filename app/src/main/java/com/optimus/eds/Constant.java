@@ -45,4 +45,9 @@ public interface Constant {
         String ACTION_GALLERY = "action-gallery";
         String IMAGE_PATH = "image-path";
     }
+    interface ProductType {
+        String FREE = "free";
+        String PAID = "paid";
+
+    }
 }

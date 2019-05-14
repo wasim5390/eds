@@ -34,7 +34,7 @@ public interface OrderDao {
     @Query("SELECT * FROM OrderDetail where c_oid=:orderId")
     Single<List<OrderDetail>> findOrderItemsByOrderId(Long orderId);
 
-    @Query("SELECT * FROM `Order` where outletId=:outletId")
+    @Query("SELECT * FROM `Order`,Outlet where outletId=:outletId AND mOutletId=:outletId")
     @Transaction
     Single<OrderModel> getOrderWithItems(long outletId);
 

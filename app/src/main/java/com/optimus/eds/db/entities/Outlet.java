@@ -1,6 +1,7 @@
 
 package com.optimus.eds.db.entities;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 public class Outlet implements Serializable {
 
     @PrimaryKey
+    @ColumnInfo(name = "mOutletId")
     @SerializedName("outletId")
     private Long mOutletId;
     @SerializedName("routeId")
@@ -182,7 +184,7 @@ public class Outlet implements Serializable {
     }
 
     public Double getTotalAmount() {
-        return mTotalAmount;
+        return mTotalAmount==null?0.0:mTotalAmount;
     }
 
     public Integer getVisitDay() {

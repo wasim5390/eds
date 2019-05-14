@@ -20,10 +20,13 @@ import com.optimus.eds.source.API;
 
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.route.outlet.OutletListRepository;
+import com.optimus.eds.utils.PreferenceUtil;
 
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +49,8 @@ public class HomeViewModel extends AndroidViewModel {
                 NUMBER_OF_CORES*2,
                 60L,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<>());
-        repository = HomeRepository.singleInstance(application,RetrofitHelper.getInstance().getApi(),executor);
+        ExecutorService executors = Executors.newSingleThreadExecutor();
+        repository = HomeRepository.singleInstance(application,RetrofitHelper.getInstance().getApi(),executors);
         isLoading = new MutableLiveData<>();
         errorMsg = new MutableLiveData<>();
         repository.mLoading().observeForever(aBoolean -> {
@@ -57,8 +61,9 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public void startDay(){
+        PreferenceUtil.getInstance(getApplication()).clearAllPreferences();
         repository.getToken();
-        repository.fetchTodayData();
+        //repository.fetchTodayData();
     }
 
 

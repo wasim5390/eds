@@ -16,6 +16,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
@@ -46,8 +47,9 @@ public class RetrofitHelper implements Constant {
 
        Gson builder = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).create();
         retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL_DEV)
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(builder))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(okHttpClientBuilder.build())
                 .build();
 

@@ -3,6 +3,7 @@ package com.optimus.eds.source;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.model.BaseResponse;
+import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.PackageProductResponseModel;
 import com.optimus.eds.model.RouteOutletResponseModel;
 
@@ -10,6 +11,8 @@ import com.optimus.eds.model.RouteOutletResponseModel;
 import java.util.HashMap;
 import java.util.List;
 
+import butterknife.BindView;
+import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -30,6 +33,9 @@ public interface API {
 
     @GET("api/route/products")
     Call<PackageProductResponseModel> loadTodayPackageProduct();
+
+    @POST("api/order")
+    Single<OrderModel> calculatePricing(@Body OrderModel orderModel);
 
     @GET("routes")
     Call<List<Route>> getRoutes(@Query("id") String userId);
