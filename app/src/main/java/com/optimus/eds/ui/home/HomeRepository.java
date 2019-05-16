@@ -22,6 +22,9 @@ import com.optimus.eds.utils.PreferenceUtil;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -60,23 +63,19 @@ public class HomeRepository {
 
     public void getToken(){
         isLoading.setValue(true);
-        executor.execute(()->{
+        webService.getToken("password","imran","imranshabrati").observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribeWith(new DisposableSingleObserver<TokenResponse>() {
+            @Override
+            public void onSuccess(TokenResponse tokenResponse) {
+                preferenceUtil.saveToken(tokenResponse.getAccessToken());
+                fetchTodayData();
+            }
 
-            webService.getToken("password","imran","imranshabrati").enqueue(new Callback<TokenResponse>() {
-                @Override
-                public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
-                    if(response.isSuccessful()) {
-                        preferenceUtil.saveToken(response.body().getAccessToken());
-                        fetchTodayData();
-                    }
-                }
+            @Override
+            public void onError(Throwable e) {
 
-                @Override
-                public void onFailure(Call<TokenResponse> call, Throwable t) {
-
-                }
-            });
+            }
         });
+
     }
 
     public void fetchTodayData(){

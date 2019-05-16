@@ -26,7 +26,9 @@ import java.util.concurrent.ExecutorService;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
@@ -38,7 +40,6 @@ public class OrderBookingRepository {
     private ProductsDao productsDao;
     private MutableLiveData<List<ProductGroup>> allGroups;
 
-    private MutableLiveData<Boolean> isSaving;
     private API webService;
     private Executor executor;
 
@@ -54,63 +55,30 @@ public class OrderBookingRepository {
         AppDatabase appDatabase = AppDatabase.getDatabase(application);
         productsDao = appDatabase.productsDao();
         orderDao = appDatabase.orderDao();
-        isSaving = new MutableLiveData<>();
         allGroups = new MutableLiveData<>();
     }
 
 
     public void createOrder(Order order){
-
-        Completable.create(e -> {
             orderDao.insertOrder(order);
-            e.onComplete();
-        }).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-              //  isSaving.postValue(true);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                isSaving.postValue(false);
-            }
-        });
-
     }
 
     public void addOrderItems(List<OrderDetail> orderDetail){
+        orderDao.insertOrderItems(orderDetail);
+    }
 
-        Completable.create(e -> {
-            orderDao.insertOrderItems(orderDetail);
-            e.onComplete();
-        }).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                isSaving.postValue(true);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                isSaving.postValue(false);
-            }
-        });
-
+    public void updateOrderItems(List<OrderDetail> orderDetails){
+        orderDao.updateOrderItems(orderDetails);
     }
 
 
-    protected Single<OrderModel> findOrder(Long outletId){
-
+    protected Maybe<OrderModel> findOrder(Long outletId){
         return orderDao.getOrderWithItems(outletId);
+    }
+
+    public void updateOrder(Order order){
+
+        orderDao.updateOrder(order);
     }
 
 
@@ -165,7 +133,6 @@ public class OrderBookingRepository {
     protected Single<List<OrderDetail>> getOrderItems(Long orderId){
         return orderDao.findOrderItemsByOrderId(orderId);
     }
-    public LiveData<Boolean> isSaving() {
-        return isSaving;
-    }
+
+
 }

@@ -1,5 +1,6 @@
 package com.optimus.eds.source;
 
+import com.google.gson.JsonObject;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.model.BaseResponse;
@@ -26,7 +27,7 @@ public interface API {
 
     @FormUrlEncoded
     @POST("token")
-    Call<TokenResponse> getToken(@Field("grant_type") String type , @Field("username") String username, @Field("password") String password);
+    Single<TokenResponse> getToken(@Field("grant_type") String type , @Field("username") String username, @Field("password") String password);
 
     @GET("api/route/routes")
     Call<RouteOutletResponseModel> loadTodayRouteOutlets();
@@ -35,7 +36,10 @@ public interface API {
     Call<PackageProductResponseModel> loadTodayPackageProduct();
 
     @POST("api/order")
-    Single<OrderModel> calculatePricing(@Body OrderModel orderModel);
+    Single<OrderModel> calculatePricing(@Body JsonObject orderModel);
+
+    @POST("api/order/PostOrder")
+    Single<OrderModel> saveOrder(@Body JsonObject order);
 
     @GET("routes")
     Call<List<Route>> getRoutes(@Query("id") String userId);

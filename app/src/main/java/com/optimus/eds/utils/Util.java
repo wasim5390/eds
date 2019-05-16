@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -73,6 +74,21 @@ public class Util {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
         return calendar.getTime();
+    }
+
+    public static Long convertDateToMilli(String date,String format){
+        long timeInMilliseconds;
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        try {
+            Date mDate = sdf.parse(date);
+             timeInMilliseconds = mDate.getTime();
+            System.out.println("Date in milli :: " + timeInMilliseconds);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }finally {
+            timeInMilliseconds = new Date().getTime();
+        }
+        return timeInMilliseconds;
     }
 
     /**

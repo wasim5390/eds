@@ -82,7 +82,10 @@ public class OrderBookingActivity extends BaseActivity {
         viewModel.getProductList().observe(this, this::setSectionedAdapter);
 
         viewModel.isSaving().observe(this, aBoolean -> {
-            Toast.makeText(this, aBoolean?"Order Saved Successfully":"Not saved", Toast.LENGTH_SHORT).show();
+            if(aBoolean)
+                showProgress();
+            else
+                hideProgress();
         });
 
         viewModel.showMessage().observe(this,s -> Toast.makeText(this, s, Toast.LENGTH_SHORT).show());
@@ -128,9 +131,8 @@ public class OrderBookingActivity extends BaseActivity {
 
     @OnClick(R.id.btnAdd)
     public void onAddClick(){
-
         List<Product> orderItems = viewModel.filterOrderProducts(sectionAdapter.getCopyOfSectionsMap());
-        viewModel.addOrderProducts(orderItems);
+        viewModel.addOrder(orderItems);
 
     }
 

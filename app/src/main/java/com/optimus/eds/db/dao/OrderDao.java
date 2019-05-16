@@ -16,6 +16,7 @@ import com.optimus.eds.model.OrderModel;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 import retrofit2.http.DELETE;
 
@@ -36,7 +37,7 @@ public interface OrderDao {
 
     @Query("SELECT * FROM `Order`,Outlet where outletId=:outletId AND mOutletId=:outletId")
     @Transaction
-    Single<OrderModel> getOrderWithItems(long outletId);
+    Maybe<OrderModel> getOrderWithItems(long outletId);
 
     @Insert(onConflict = REPLACE)
     void insertOrder(Order order);

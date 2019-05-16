@@ -10,6 +10,7 @@ import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.model.OrderModel;
 
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 public class CashMemoRepository {
@@ -34,7 +35,7 @@ public class CashMemoRepository {
 
     }
 
-    protected Single<OrderModel> findOrder(Long outletId){
+    protected Maybe<OrderModel> findOrder(Long outletId){
         return orderDao.getOrderWithItems(outletId);
     }
 }

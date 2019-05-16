@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.MaybeObserver;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -50,7 +51,7 @@ public class CashMemoViewModel extends AndroidViewModel {
     protected void getOrder(Long outletId){
         repository.findOrder(outletId)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new SingleObserver<OrderModel>() {
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new MaybeObserver<OrderModel>() {
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -63,6 +64,11 @@ public class CashMemoViewModel extends AndroidViewModel {
 
             @Override
             public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
 
             }
         });
