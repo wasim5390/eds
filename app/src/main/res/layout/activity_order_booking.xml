@@ -218,7 +218,7 @@
                 android:id="@+id/btnAdd"
                 android:layout_width="0dp"
                 android:layout_height="55dp"
-
+                android:visibility="gone"
                 android:layout_weight="1"
                 android:theme="@style/PositiveButton"
                 android:backgroundTint="@color/colorPrimary"

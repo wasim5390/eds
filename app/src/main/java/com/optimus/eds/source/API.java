@@ -5,6 +5,7 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.OrderModel;
+import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.model.PackageProductResponseModel;
 import com.optimus.eds.model.RouteOutletResponseModel;
 
@@ -29,17 +30,17 @@ public interface API {
     @POST("token")
     Single<TokenResponse> getToken(@Field("grant_type") String type , @Field("username") String username, @Field("password") String password);
 
-    @GET("api/route/routes")
+    @GET("route/routes")
     Call<RouteOutletResponseModel> loadTodayRouteOutlets();
 
-    @GET("api/route/products")
+    @GET("route/products")
     Call<PackageProductResponseModel> loadTodayPackageProduct();
 
-    @POST("api/order")
+    @POST("order")
     Single<OrderModel> calculatePricing(@Body JsonObject orderModel);
 
     @POST("api/order/PostOrder")
-    Single<OrderModel> saveOrder(@Body JsonObject order);
+    Single<OrderResponseModel> saveOrder(@Body OrderResponseModel order);
 
     @GET("routes")
     Call<List<Route>> getRoutes(@Query("id") String userId);

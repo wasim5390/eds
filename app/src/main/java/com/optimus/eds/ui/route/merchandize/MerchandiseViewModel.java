@@ -10,9 +10,16 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.optimus.eds.Constant;
+import com.optimus.eds.db.entities.Merchandise;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 /**
@@ -24,7 +31,8 @@ public class MerchandiseViewModel extends AndroidViewModel {
     private int imagesCount;
     private MutableLiveData<List<MerchandiseItem>> mMerchandise;
     private List<MerchandiseItem> list;
-    private MutableLiveData<Boolean> isLoading;
+    private MutableLiveData<Boolean> isSaved;
+    private MutableLiveData<Boolean> inProgress;
     private MutableLiveData<Boolean> enableAfterMerchandiseButton;
     private MutableLiveData<Boolean> enableNextButton;
     private MutableLiveData<Boolean> lessImages;
@@ -37,13 +45,12 @@ public class MerchandiseViewModel extends AndroidViewModel {
         mMerchandise = new MutableLiveData<>();
         imagesCount=0;
         list=new ArrayList<>();
-        isLoading = new MutableLiveData<>();
+        isSaved = new MutableLiveData<>();
+        inProgress = new MutableLiveData<>();
         enableAfterMerchandiseButton = new MutableLiveData<>();
         enableNextButton = new MutableLiveData<>();
         lessImages = new MutableLiveData<>();
         mPlanogram = new MutableLiveData<>();
-
-        repository.isLoading().observeForever(aBoolean -> isLoading.setValue(aBoolean));
         enableAfterMerchandiseButton.setValue(false);
         enableNextButton.setValue(false);
     }
@@ -67,11 +74,41 @@ public class MerchandiseViewModel extends AndroidViewModel {
     public void insertMerchandiseIntoDB(Long outletId){
 
         if(list.size()>=3) {
-            isLoading.setValue(true);
-            repository.insertIntoDb(outletId, mMerchandise.getValue());
+            inProgress.postValue(true);
+            saveMerchandise(outletId, mMerchandise.getValue());
         }else {
             lessImages.setValue(true);
         }
+    }
+
+    public void saveMerchandise(Long outletId, List<MerchandiseItem> merchandiseItems){
+
+        Completable.create(e -> {
+            Merchandise merchandise = new Merchandise();
+            merchandise.setOutletId(outletId);
+            merchandise.setMerchandiseItems(merchandiseItems);
+            repository.insertIntoDb(merchandise);
+            e.onComplete();
+        }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                isSaved.setValue(true);
+                inProgress.postValue(false);
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                isSaved.setValue(true);
+                inProgress.postValue(false);
+            }
+        });
+
     }
 
     public void getImages(){
@@ -88,8 +125,12 @@ public class MerchandiseViewModel extends AndroidViewModel {
         mMerchandise.setValue(list);
     }
 
-    public LiveData<Boolean> isLoading() {
-        return isLoading;
+    public LiveData<Boolean> isSaved() {
+        return isSaved;
+    }
+
+    public LiveData<Boolean> isInProgress() {
+        return inProgress;
     }
 
     public LiveData<Boolean> enableAfterMerchandiseButton() {

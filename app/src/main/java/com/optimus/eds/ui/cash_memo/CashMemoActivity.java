@@ -12,11 +12,13 @@ import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.ui.customer_input.CustomerInputActivity;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class CashMemoActivity extends BaseActivity {
 
@@ -80,5 +82,10 @@ public class CashMemoActivity extends BaseActivity {
 
     private void updateCart(List<OrderDetail> products) {
         cartAdapter.populateCartItems(products);
+    }
+
+    @OnClick(R.id.btnNext)
+    public void navigateToCustomerInput(){
+        CustomerInputActivity.start(this);
     }
 }

@@ -7,6 +7,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.Order;
@@ -16,6 +17,7 @@ import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.model.OrderModel;
+import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
@@ -39,6 +41,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -52,7 +55,9 @@ public class OrderBookingViewModel extends AndroidViewModel {
     private LiveData<List<ProductGroup>> productGroupList;
     private MutableLiveData<Boolean> isSaving;
     private MutableLiveData<String> msg;
+    private MutableLiveData<Boolean> orderSaved;
     private LiveData<List<Package>> packages;
+    private List<Product> products;
 
     private Long outletId;
     private OrderModel order =null;
@@ -65,9 +70,12 @@ public class OrderBookingViewModel extends AndroidViewModel {
         webservice = RetrofitHelper.getInstance().getApi();
         repository = OrderBookingRepository.singleInstance(application, webservice,Executors.newSingleThreadExecutor());
         outletDetailRepository = new OutletDetailRepository(application);
+        products = new ArrayList<>();
         mutablePkgList = new MutableLiveData<>();
         msg = new MutableLiveData<>();
         isSaving = new MutableLiveData<>();
+        orderSaved = new MutableLiveData<>();
+
         onScreenCreated();
     }
 
@@ -134,7 +142,6 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
 
     public void addOrder(List<Product> orderItems){
-        isSaving.postValue(true);
         Completable.create(e -> {
             if(order==null) {
                 Order order = new Order(outletId);
@@ -209,11 +216,14 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
             @Override
             public void onComplete() {
-
+                orderSaved.postValue(true);
+                isSaving.postValue(false);
+                msg.postValue("Order Saved Successfully");
             }
 
             @Override
             public void onError(Throwable e) {
+                orderSaved.postValue(false);
                 msg.postValue(e.getMessage());
             }
         });
@@ -222,8 +232,6 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
     private void onAddOrderSuccess(OrderModel orderModel) {
         setOrder(orderModel);
-        isSaving.postValue(false);
-        msg.postValue("Order Saved Successfully");
     }
 
     private void onSuccess(List<Product> products) {
@@ -271,6 +279,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
     public void composeOrderForServer(){
+        isSaving.postValue(true);
         if(order!=null){
             Order mOrder = new Order(order.getOrder().getOutletId());
             mOrder.setRouteId(order.getOutlet().getRouteId());
@@ -280,11 +289,22 @@ public class OrderBookingViewModel extends AndroidViewModel {
             mOrder.setLatitude(order.getOutlet().getLatitude());
             mOrder.setLongitude(order.getOutlet().getLongitude());
             order.setOrder(mOrder);
-          /*  Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String json = gson.toJson(order.toJSON());
-            Log.i("JSON: ",json);*/
+
+            Gson gson  = new Gson();
+            String json = gson.toJson(mOrder);
+            OrderResponseModel responseModel = gson.fromJson(json,OrderResponseModel.class);
+            responseModel.setOrderDetails(order.getOrderDetails());
+
             disposable
-                    .add(webservice.saveOrder(order.toJSON()).observeOn(AndroidSchedulers.mainThread())
+                    .add(webservice.saveOrder(responseModel).map(orderResponseModel -> {
+                        OrderModel orderModel = new OrderModel();
+                        String orderString = new Gson().toJson(orderResponseModel);
+                        Order order = new Gson().fromJson(orderString,Order.class);
+                        orderModel.setOrderDetails(orderResponseModel.getOrderDetails());
+                        orderModel.setOrder(order);
+                        orderModel.setOutlet(this.order.getOutlet());
+                        return orderModel;
+                    }).observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.io())
                             .subscribe(this::saveOrder,this::onError));
         }
@@ -314,6 +334,9 @@ public class OrderBookingViewModel extends AndroidViewModel {
         return msg;
     }
 
+    public LiveData<Boolean> orderSaved(){
+        return orderSaved;
+    }
 
     @Override
     protected void onCleared() {

@@ -26,6 +26,7 @@ import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.ui.cash_memo.CashMemoActivity;
+import com.optimus.eds.ui.customer_input.CustomerInputActivity;
 
 import java.util.List;
 
@@ -87,6 +88,8 @@ public class OrderBookingActivity extends BaseActivity {
             else
                 hideProgress();
         });
+        viewModel.orderSaved().observe(this, aBoolean -> { if(aBoolean) CashMemoActivity.start(OrderBookingActivity.this,outletId);
+        });
 
         viewModel.showMessage().observe(this,s -> Toast.makeText(this, s, Toast.LENGTH_SHORT).show());
     }
@@ -104,6 +107,7 @@ public class OrderBookingActivity extends BaseActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                onAdd();
                 group = ((ProductGroup)(parent.getSelectedItem()));
                 viewModel.filterProductsByGroup(group.getProductGroupId());
 
@@ -129,16 +133,20 @@ public class OrderBookingActivity extends BaseActivity {
     }
 
 
-    @OnClick(R.id.btnAdd)
-    public void onAddClick(){
-        List<Product> orderItems = viewModel.filterOrderProducts(sectionAdapter.getCopyOfSectionsMap());
-        viewModel.addOrder(orderItems);
+
+    public void onAdd(){
+        if(sectionAdapter!=null) {
+            List<Product> orderItems = viewModel.filterOrderProducts(sectionAdapter.getCopyOfSectionsMap());
+            if(!orderItems.isEmpty())
+                viewModel.addOrder(orderItems);
+        }
+
 
     }
 
     @OnClick(R.id.btnNext)
     public void onNextClick(){
-        //CashMemoActivity.start(this,outletId);
+        onAdd();
         viewModel.composeOrderForServer();
     }
 

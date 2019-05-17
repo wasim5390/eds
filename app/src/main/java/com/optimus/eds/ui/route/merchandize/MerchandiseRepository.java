@@ -34,45 +34,17 @@ import io.reactivex.schedulers.Schedulers;
 public class MerchandiseRepository {
 
     private MerchandiseDao merchandiseDao;
-    private MutableLiveData<Boolean> isLoading;
+
 
     public MerchandiseRepository(Application application) {
         AppDatabase appDatabase = AppDatabase.getDatabase(application);
         merchandiseDao = appDatabase.merchandiseDao();
-        isLoading = new MutableLiveData<>();
+
     }
 
-    public void insertIntoDb(Long outletId, List<MerchandiseItem> merchandiseItems) {
-
-        Completable.create(new CompletableOnSubscribe() {
-            @Override
-            public void subscribe(CompletableEmitter e) throws Exception {
-                Merchandise merchandise = new Merchandise();
-                merchandise.setOutletId(outletId);
-                merchandise.setMerchandiseItems(merchandiseItems);
-                merchandiseDao.insertMerchandise(merchandise);
-                e.onComplete();
-            }
-        }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                isLoading.setValue(false);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
+    public void insertIntoDb(Merchandise merchandise) {
+            merchandiseDao.insertMerchandise(merchandise);
     }
 
-    public LiveData<Boolean> isLoading() {
-        return isLoading;
-    }
 
 }

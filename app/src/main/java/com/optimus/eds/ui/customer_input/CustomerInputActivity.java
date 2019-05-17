@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
+import com.optimus.eds.ui.customer_complaints.CustomerComplaintsActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,6 +46,10 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
         signaturePad.clear();
     }
 
+    @OnClick(R.id.btnNext)
+    public void navigateToComplaints(){
+        CustomerComplaintsActivity.start(this);
+    }
     @Override
     public void onStartSigning() {
 

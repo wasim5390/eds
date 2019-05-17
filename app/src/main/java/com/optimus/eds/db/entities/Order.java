@@ -47,6 +47,11 @@ public class Order {
     @SerializedName("payable")
     public Double payable;
 
+    @SerializedName("orderDate")
+    public Long orderDate;
+    @SerializedName("deliveryDate")
+    public Long deliveryDate;
+
 
     public Order(Long outletId) {
         this.outletId = outletId;
@@ -115,20 +120,36 @@ public class Order {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-    public double getSubTotal() {
+    public Double getSubTotal() {
         return subTotal;
     }
 
-    public void setSubTotal(double subTotal) {
+    public void setSubTotal(Double subTotal) {
         this.subTotal = subTotal;
     }
 
-    public double getPayable() {
+    public Double getPayable() {
         return payable;
     }
 
-    public void setPayable(double payable) {
+    public void setPayable(Double payable) {
         this.payable = payable;
     }
 
+
+    public Long getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Long orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public Long getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public void setDeliveryDate(Long deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
 }

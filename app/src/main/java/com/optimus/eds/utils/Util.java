@@ -17,6 +17,8 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -63,10 +65,15 @@ public class Util {
     public static String formatDate(String format, Long dateInMilli) {
         if(dateInMilli==null)
             return "N/A";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(dateInMilli);
-        return simpleDateFormat.format(calendar.getTime());
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(dateInMilli);
+            return simpleDateFormat.format(calendar.getTime());
+        }catch (Exception e){
+            return "";
+        }
+
     }
 
 

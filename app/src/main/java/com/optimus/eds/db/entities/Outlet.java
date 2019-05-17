@@ -39,7 +39,7 @@ public class Outlet implements Serializable {
     @SerializedName("longitude")
     private Float mLongitude;
     @SerializedName("lastSaleDate")
-    private String mLastSaleDate;
+    private Long mLastSaleDate;
     @SerializedName("lastSaleQuantity")
     private String mLastSaleQuantity;
     @SerializedName("availableCreditLimit")
@@ -82,7 +82,7 @@ public class Outlet implements Serializable {
         this.mChannelName = mChannelName;
     }
 
-    public void setLastSaleDate(String mLastSaleDate) {
+    public void setLastSaleDate(Long mLastSaleDate) {
         this.mLastSaleDate = mLastSaleDate;
     }
 
@@ -143,7 +143,7 @@ public class Outlet implements Serializable {
         return mChannelName;
     }
 
-    public String getLastSaleDate() {
+    public Long getLastSaleDate() {
         return mLastSaleDate;
     }
 
@@ -154,6 +154,11 @@ public class Outlet implements Serializable {
     public Double getLastSale() {
         return mLastSale;
     }
+
+    public String getLastSaleString() {
+        return mLastSale==null?"":String.valueOf(mLastSale);
+    }
+
 
     public Float getLatitude() {
         return mLatitude;

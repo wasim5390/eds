@@ -71,7 +71,12 @@ public class OutletMerchandizeActivity extends BaseActivity {
         });
 
 
-        viewModel.isLoading().observe(this, this::setProgress);
+        viewModel.isSaved().observe(this, aBoolean -> {
+            if(aBoolean){
+                OrderBookingActivity.start(OutletMerchandizeActivity.this,outletId);
+            }
+        });
+        viewModel.isInProgress().observe(this, this::setProgress);
 
         viewModel.enableAfterMerchandiseButton().observe(this, aBoolean -> {
             btnAfterMerchandize.setEnabled(aBoolean);
@@ -100,7 +105,6 @@ public class OutletMerchandizeActivity extends BaseActivity {
             progressBar.setVisibility(View.VISIBLE);
         } else {
             progressBar.setVisibility(View.GONE);
-            OrderBookingActivity.start(this,outletId);
         }
     }
 
