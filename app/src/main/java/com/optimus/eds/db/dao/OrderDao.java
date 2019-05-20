@@ -54,4 +54,7 @@ public interface OrderDao {
     @Query("Delete From 'Order' ")
     void deleteAllOrders();
 
+    @Query("Delete From 'OrderDetail' WHERE c_oid=:orderId AND mProductGroupId=:groupId")
+    void deleteOrderItems(Long orderId,Long groupId);
+
 }

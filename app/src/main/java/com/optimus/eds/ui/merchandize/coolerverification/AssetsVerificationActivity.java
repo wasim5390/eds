@@ -1,4 +1,4 @@
-package com.optimus.eds.ui.route.merchandize.coolerverification;
+package com.optimus.eds.ui.merchandize.coolerverification;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;

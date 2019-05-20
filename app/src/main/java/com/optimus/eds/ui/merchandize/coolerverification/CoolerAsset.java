@@ -1,4 +1,4 @@
-package com.optimus.eds.ui.route.merchandize.coolerverification;
+package com.optimus.eds.ui.merchandize.coolerverification;
 
 import java.io.Serializable;
 import java.util.List;

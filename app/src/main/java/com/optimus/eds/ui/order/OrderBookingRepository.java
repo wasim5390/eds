@@ -71,13 +71,16 @@ public class OrderBookingRepository {
         orderDao.updateOrderItems(orderDetails);
     }
 
+    public void deleteOrderItems(Long orderId,Long groupId){
+        orderDao.deleteOrderItems(orderId,groupId);
+    }
+
 
     protected Maybe<OrderModel> findOrder(Long outletId){
         return orderDao.getOrderWithItems(outletId);
     }
 
     public void updateOrder(Order order){
-
         orderDao.updateOrder(order);
     }
 
@@ -99,8 +102,13 @@ public class OrderBookingRepository {
     }
 
 
-    protected Single<List<Product>> findAllProducts(Long groupId){
+    protected Single<List<Product>> findAllProductsByGroup(Long groupId){
         return productsDao.findAllProductsByGroupId(groupId);
+
+    }
+
+    protected LiveData<List<Product>> findAllProducts(){
+        return productsDao.findAllProduct();
 
     }
 
@@ -110,7 +118,7 @@ public class OrderBookingRepository {
 
         for(Package _package: packages)
         {
-            List<Product> products = getProductsById(_package.getPackageId(),_products);
+            List<Product> products = getProductsByPkgId(_package.getPackageId(),_products);
             if(!products.isEmpty()) {
                 PackageModel model = new PackageModel(_package.getPackageId(), _package.getPackageName(), products);
                 packageModels.add(model);
@@ -120,7 +128,7 @@ public class OrderBookingRepository {
 
     }
 
-    protected List<Product> getProductsById(Long packageId,List<Product> products){
+    protected List<Product> getProductsByPkgId(Long packageId,List<Product> products){
         List<Product> filteredList = new ArrayList<>();
         for(Product product:products){
             if(product.getPkgId()==packageId)

@@ -1,14 +1,11 @@
-package com.optimus.eds.ui.route.merchandize.coolerverification;
+package com.optimus.eds.ui.merchandize.coolerverification;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
-import com.optimus.eds.R;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

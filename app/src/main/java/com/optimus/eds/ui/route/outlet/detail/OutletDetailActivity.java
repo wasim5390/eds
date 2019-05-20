@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationProvider;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
@@ -22,9 +21,8 @@ import com.optimus.eds.db.entities.Outlet;
 
 import com.optimus.eds.model.CustomObject;
 import com.optimus.eds.ui.AlertDialogManager;
-import com.optimus.eds.ui.cash_memo.CashMemoActivity;
 import com.optimus.eds.ui.order.OrderBookingActivity;
-import com.optimus.eds.ui.route.merchandize.OutletMerchandizeActivity;
+import com.optimus.eds.ui.merchandize.OutletMerchandizeActivity;
 import com.optimus.eds.utils.Util;
 
 

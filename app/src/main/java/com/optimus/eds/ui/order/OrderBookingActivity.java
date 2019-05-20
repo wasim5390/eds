@@ -76,6 +76,7 @@ public class OrderBookingActivity extends BaseActivity {
 
     private void setObservers(){
 
+
         viewModel.loadOutlet(outletId).observe(this, outlet -> onOutletLoaded(outlet));
 
         viewModel.getProductGroupList().observe(this, this::onProductGroupsLoaded);
@@ -129,7 +130,6 @@ public class OrderBookingActivity extends BaseActivity {
         }
         rvProducts.setLayoutManager(new LinearLayoutManager(this));
         rvProducts.setAdapter(sectionAdapter);
-
     }
 
 
@@ -137,10 +137,9 @@ public class OrderBookingActivity extends BaseActivity {
     public void onAdd(){
         if(sectionAdapter!=null) {
             List<Product> orderItems = viewModel.filterOrderProducts(sectionAdapter.getCopyOfSectionsMap());
-            if(!orderItems.isEmpty())
-                viewModel.addOrder(orderItems);
+            //if(!orderItems.isEmpty())
+            viewModel.addOrder(orderItems,group.getProductGroupId());
         }
-
 
     }
 

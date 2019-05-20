@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.optimus.eds.db.entities.OrderDetail;
 
-public class OrderResponseModel {
+public class OrderResponseModel extends BaseResponse{
 
     @Expose
     private String code;
@@ -42,8 +42,7 @@ public class OrderResponseModel {
     private Long salesmanId;
     @Expose
     private Long subtotal;
-    @Expose
-    private String success;
+
     @Expose
     private Long visitDayId;
 
@@ -181,14 +180,6 @@ public class OrderResponseModel {
 
     public void setSubtotal(Long subtotal) {
         this.subtotal = subtotal;
-    }
-
-    public String getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(String success) {
-        this.success = success;
     }
 
     public Long getVisitDayId() {

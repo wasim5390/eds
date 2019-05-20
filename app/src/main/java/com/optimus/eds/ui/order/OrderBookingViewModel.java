@@ -24,6 +24,7 @@ import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
 
 
 public class OrderBookingViewModel extends AndroidViewModel {
@@ -57,7 +59,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
     private MutableLiveData<String> msg;
     private MutableLiveData<Boolean> orderSaved;
     private LiveData<List<Package>> packages;
-    private List<Product> products;
+
 
     private Long outletId;
     private OrderModel order =null;
@@ -70,7 +72,6 @@ public class OrderBookingViewModel extends AndroidViewModel {
         webservice = RetrofitHelper.getInstance().getApi();
         repository = OrderBookingRepository.singleInstance(application, webservice,Executors.newSingleThreadExecutor());
         outletDetailRepository = new OutletDetailRepository(application);
-        products = new ArrayList<>();
         mutablePkgList = new MutableLiveData<>();
         msg = new MutableLiveData<>();
         isSaving = new MutableLiveData<>();
@@ -103,9 +104,8 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
 
-
     public void filterProductsByGroup(Long groupId){
-        Single<List<Product>> allProductsByGroup = repository.findAllProducts(groupId);
+        Single<List<Product>> allProductsByGroup = repository.findAllProductsByGroup(groupId);
         if(order==null)
         {
             disposable.add(allProductsByGroup.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(this::onSuccess));
@@ -113,7 +113,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
         }
 
         Single<List<OrderDetail>> allAddedProducts = repository.getOrderItems(order.getOrder().getLocalOrderId());
-        Single<List<Product>> zippedSingleSource = Single.zip(allProductsByGroup, allAddedProducts, this::updatedProductListing);
+        Single<List<Product>> zippedSingleSource = Single.zip(allProductsByGroup, allAddedProducts, this::updatedProducts);
 
         Disposable homeDisposable = zippedSingleSource
                 .observeOn(AndroidSchedulers.mainThread())
@@ -125,7 +125,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
 
-    private List<Product> updatedProductListing(List<Product> filteredProducts, List<OrderDetail> addedProducts){
+    private List<Product> updatedProducts(List<Product> filteredProducts, List<OrderDetail> addedProducts){
 
         for(Product product:filteredProducts){
             for(OrderDetail orderDetail:addedProducts){
@@ -141,12 +141,13 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
 
-    public void addOrder(List<Product> orderItems){
+    public void addOrder(List<Product> orderItems,Long groupId){
         Completable.create(e -> {
             if(order==null) {
                 Order order = new Order(outletId);
-                order.setOrderStatus(0);
                 repository.createOrder(order);
+            }else{
+                repository.deleteOrderItems(order.getOrder().getLocalOrderId(),groupId);
             }
             e.onComplete();
         }).subscribeOn(Schedulers.io())
@@ -172,13 +173,15 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
     public void addOrderItems(List<Product> orderItems){
 
+
         repository.findOrder(outletId).map(orderModel -> modifyOrderDetails(orderModel,orderItems))
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::onAddOrderSuccess,this::onError);
     }
 
-    public void saveOrder(OrderModel order) {
+    public void updateOrder(OrderModel order) {
+        if(order==null) return;
         setOrder(order);
         Completable.create(e -> {
             repository.updateOrder(order.getOrder());
@@ -239,8 +242,13 @@ public class OrderBookingViewModel extends AndroidViewModel {
         isSaving.postValue(false);
     }
 
-    private void onError(Throwable throwable) {
-        msg.postValue(throwable.getMessage());
+    private void onError(Throwable throwable) throws IOException {
+        String errorBody = throwable.getMessage();
+        if (throwable instanceof HttpException){
+            HttpException error = (HttpException)throwable;
+            errorBody = error.response().errorBody().string();
+        }
+        msg.postValue(errorBody);
         isSaving.postValue(false);
 
     }
@@ -252,14 +260,16 @@ public class OrderBookingViewModel extends AndroidViewModel {
             orderDetail.setCartonCode(product.getCartonCode());
             orderDetail.setUnitCode(product.getUnitCode());
             orderDetail.setProductName(product.getName());
+            orderDetail.setProductGroupId(product.getProductGroupId());
             orderDetail.setType(Constant.ProductType.PAID);
             orderDetails.add(orderDetail);
         }
+
+
         repository.addOrderItems(orderDetails);
         order.setOrderDetails(orderDetails);
         return order;
     }
-
 
     protected List<Product> filterOrderProducts(Map<String,Section> sectionHashMap){
         List<Product> productList = new ArrayList<>();
@@ -279,8 +289,9 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
     public void composeOrderForServer(){
-        isSaving.postValue(true);
+
         if(order!=null){
+            isSaving.postValue(true);
             Order mOrder = new Order(order.getOrder().getOutletId());
             mOrder.setRouteId(order.getOutlet().getRouteId());
             mOrder.setVisitDayId(order.getOutlet().getVisitDay());
@@ -297,6 +308,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
             disposable
                     .add(webservice.saveOrder(responseModel).map(orderResponseModel -> {
+
                         OrderModel orderModel = new OrderModel();
                         String orderString = new Gson().toJson(orderResponseModel);
                         Order order = new Gson().fromJson(orderString,Order.class);
@@ -306,12 +318,11 @@ public class OrderBookingViewModel extends AndroidViewModel {
                         return orderModel;
                     }).observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.io())
-                            .subscribe(this::saveOrder,this::onError));
+                            .subscribe(this::updateOrder,this::onError));
         }
 
 
     }
-
 
 
     public LiveData<List<PackageModel>> getProductList() {

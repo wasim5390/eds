@@ -3,7 +3,7 @@ package com.optimus.eds.db.entities;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.optimus.eds.ui.route.merchandize.MerchandiseItem;
+import com.optimus.eds.ui.merchandize.MerchandiseItem;
 
 import java.io.Serializable;
 import java.util.List;

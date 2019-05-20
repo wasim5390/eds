@@ -1,4 +1,4 @@
-package com.optimus.eds.ui.route.merchandize;
+package com.optimus.eds.ui.merchandize;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -19,8 +19,8 @@ import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.ui.order.OrderBookingActivity;
 import com.optimus.eds.ui.camera.ImageCropperActivity;
-import com.optimus.eds.ui.route.merchandize.coolerverification.AssetsVerificationActivity;
-import com.optimus.eds.ui.route.merchandize.planogaram.ImageDialog;
+import com.optimus.eds.ui.merchandize.coolerverification.AssetsVerificationActivity;
+import com.optimus.eds.ui.merchandize.planogaram.ImageDialog;
 
 import java.io.File;
 import java.util.List;

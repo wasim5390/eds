@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Observable;
+
 @Entity(
         primaryKeys = {"c_pid","c_oid"},
         foreignKeys = {
@@ -32,12 +34,21 @@ public class OrderDetail {
     public Long mProductId;
     @NonNull @ColumnInfo(name = "c_oid")
     @SerializedName("mobileOrderId")
+    public Long mLocalOrderId;
+
+    @NonNull @ColumnInfo(name = "orderId")
+    @SerializedName("orderId")
     public Long mOrderId;
-    @SerializedName("orderDetailId")
-    public Long orderDetailId;
+
+    @SerializedName("unitOrderDetailId")
+    public Long mUnitOrderDetailId;
+    @SerializedName("cartonOrderDetailId")
+    public Long mCartonOrderDetailId;
+    @SerializedName("productGroupId")
+    public Long mProductGroupId;
+
     @SerializedName("productName")
     public String mProductName;
-
     @SerializedName("cartonQuantity")
     public Long mCartonQuantity;
     @SerializedName("unitQuantity")
@@ -46,34 +57,48 @@ public class OrderDetail {
     public String mCartonCode;
     @SerializedName("unitCode")
     public String mUnitCode;
+
+    @SerializedName("unitPrice")
+    public Double unitPrice;
+    @SerializedName("cartonPrice")
+    public Double cartonPrice;
+    @SerializedName("unitTotalPrice")
+    public Double unitTotalPrice;
+    @SerializedName("cartonTotalPrice")
+    public Double cartonTotalPrice;
+
     @SerializedName("totalPrice")
     public Double total;
     @SerializedName("type")
     public String type; // either paid or free product
 
+    @SerializedName("freeQuantityTypeId")
+    public Integer freeQuantityTypeId; // 1. Primary ; 2. Optional {If Optional ask for quantity}
+    @SerializedName("freeGoodQuantity")
+    public Integer freeGoodQuantity; //Only applicable for Optional
+
     @Ignore
     public Long parentId; //In case of FOC, server will send the FOC row with parentId
 
     public OrderDetail(@NonNull Long mOrderId,@NonNull Long mProductId, Long mCartonQuantity, Long mUnitQuantity) {
-        this.mOrderId = mOrderId;
+        this.mLocalOrderId = mOrderId;
         this.mProductId = mProductId;
         this.mCartonQuantity = mCartonQuantity;
         this.mUnitQuantity = mUnitQuantity;
     }
+    public void setLocalOrderId(Long mLocalOrderId){
+        this.mLocalOrderId = mLocalOrderId;
+    }
+    public Long getLocalOrderId() {
+        return mLocalOrderId;
+    }
+
     public Long getOrderId() {
         return mOrderId;
     }
 
     public void setOrderId(Long mOrderId) {
         this.mOrderId = mOrderId;
-    }
-
-    public Long getOrderDetailId() {
-        return orderDetailId;
-    }
-
-    public void setOrderDetailId(Long orderDetailId) {
-        this.orderDetailId = orderDetailId;
     }
 
     public Long getProductId() {
@@ -140,5 +165,75 @@ public class OrderDetail {
         this.mProductName = mProductName;
     }
 
+    public Long getProductGroupId() {
+        return mProductGroupId;
+    }
+
+    public void setProductGroupId(Long mProductGroupId) {
+        this.mProductGroupId = mProductGroupId;
+    }
+
+    public Long getUnitOrderDetailId() {
+        return mUnitOrderDetailId;
+    }
+
+    public void setUnitOrderDetailId(Long mUnitOrderDetailId) {
+        this.mUnitOrderDetailId = mUnitOrderDetailId;
+    }
+
+    public Long getCartonOrderDetailId() {
+        return mCartonOrderDetailId;
+    }
+
+    public void setCartonOrderDetailId(Long mCartonOrderDetailId) {
+        this.mCartonOrderDetailId = mCartonOrderDetailId;
+    }
+
+    public Double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(Double unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public Double getCartonPrice() {
+        return cartonPrice;
+    }
+
+    public void setCartonPrice(Double cartonPrice) {
+        this.cartonPrice = cartonPrice;
+    }
+
+    public Double getUnitTotalPrice() {
+        return unitTotalPrice;
+    }
+
+    public void setUnitTotalPrice(Double unitTotalPrice) {
+        this.unitTotalPrice = unitTotalPrice;
+    }
+
+    public Double getCartonTotalPrice() {
+        return cartonTotalPrice;
+    }
+
+    public void setCartonTotalPrice(Double cartonTotalPrice) {
+        this.cartonTotalPrice = cartonTotalPrice;
+    }
+    public Integer getFreeQuantityTypeId() {
+        return freeQuantityTypeId;
+    }
+
+    public void setFreeQuantityTypeId(Integer freeQuantityTypeId) {
+        this.freeQuantityTypeId = freeQuantityTypeId;
+    }
+
+    public Integer getFreeGoodQuantity() {
+        return freeGoodQuantity;
+    }
+
+    public void setFreeGoodQuantity(Integer freeGoodQuantity) {
+        this.freeGoodQuantity = freeGoodQuantity;
+    }
 
 }

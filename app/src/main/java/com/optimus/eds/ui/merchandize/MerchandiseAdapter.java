@@ -1,14 +1,11 @@
-package com.optimus.eds.ui.route.merchandize;
+package com.optimus.eds.ui.merchandize;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.optimus.eds.R;
 import com.squareup.picasso.Picasso;

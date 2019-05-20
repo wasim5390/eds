@@ -1,4 +1,4 @@
-package com.optimus.eds.ui.route.merchandize.planogaram;
+package com.optimus.eds.ui.merchandize.planogaram;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;

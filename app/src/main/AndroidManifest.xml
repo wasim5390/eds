@@ -40,7 +40,7 @@
 
         <activity android:name=".ui.route.outlet.detail.OutletDetailActivity"/>
 
-        <activity android:name=".ui.route.merchandize.OutletMerchandizeActivity"/>
+        <activity android:name=".ui.merchandize.OutletMerchandizeActivity"/>
 
         <activity android:name=".ui.order.OrderBookingActivity"/>
         <activity android:name=".ui.cash_memo.CashMemoActivity"/>
@@ -48,7 +48,7 @@
         <activity android:name=".ui.customer_input.CustomerInputActivity"/>
 
 
-        <activity android:name=".ui.route.merchandize.coolerverification.AssetsVerificationActivity"/>
+        <activity android:name=".ui.merchandize.coolerverification.AssetsVerificationActivity"/>
 
         <activity android:name=".ui.scanner.ScannerActivity"/>
 

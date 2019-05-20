@@ -1,6 +1,4 @@
-package com.optimus.eds.ui.route.merchandize;
-
-import com.optimus.eds.Constant;
+package com.optimus.eds.ui.merchandize;
 
 import java.io.Serializable;
 

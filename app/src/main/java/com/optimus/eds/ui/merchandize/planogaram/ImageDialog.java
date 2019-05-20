@@ -1,4 +1,4 @@
-package com.optimus.eds.ui.route.merchandize.planogaram;
+package com.optimus.eds.ui.merchandize.planogaram;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;

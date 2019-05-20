@@ -4,8 +4,7 @@ import android.arch.persistence.room.TypeConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.optimus.eds.db.entities.Merchandise;
-import com.optimus.eds.ui.route.merchandize.MerchandiseItem;
+import com.optimus.eds.ui.merchandize.MerchandiseItem;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

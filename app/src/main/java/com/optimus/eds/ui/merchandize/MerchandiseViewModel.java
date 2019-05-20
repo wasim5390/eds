@@ -1,15 +1,11 @@
-package com.optimus.eds.ui.route.merchandize;
+package com.optimus.eds.ui.merchandize;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.Merchandise;
 
 import java.util.ArrayList;
