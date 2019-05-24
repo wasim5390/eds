@@ -7,6 +7,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.optimus.eds.db.entities.Merchandise;
+import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ import io.reactivex.schedulers.Schedulers;
 public class MerchandiseViewModel extends AndroidViewModel {
 
     private MerchandiseRepository repository;
+    private OutletDetailRepository outletDetailRepository;
     private int imagesCount;
     private MutableLiveData<List<MerchandiseItem>> mMerchandise;
     private List<MerchandiseItem> list;
@@ -38,6 +41,7 @@ public class MerchandiseViewModel extends AndroidViewModel {
     public MerchandiseViewModel(@NonNull Application application) {
         super(application);
         repository = new MerchandiseRepository(application);
+        outletDetailRepository = new OutletDetailRepository(application);
         mMerchandise = new MutableLiveData<>();
         imagesCount=0;
         list=new ArrayList<>();
@@ -143,6 +147,9 @@ public class MerchandiseViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<MerchandiseItem>> getmMerchandise() {
         return mMerchandise;
+    }
+    public LiveData<Outlet> loadOutlet(Long outletId) {
+        return outletDetailRepository.getOutletById(outletId);
     }
     public MutableLiveData<List<String>> getPlanogaram() {
         return mPlanogram;

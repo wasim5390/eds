@@ -12,7 +12,7 @@ import com.optimus.eds.db.entities.Product;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CartItemView extends MaterialCardView {
+public class CashMemoItemView extends MaterialCardView {
 
     @BindView(R.id.tvProductName)
     TextView productName;
@@ -28,15 +28,15 @@ public class CartItemView extends MaterialCardView {
 
     private OrderDetail product;
 
-    public CartItemView(Context context) {
+    public CashMemoItemView(Context context) {
         super(context);
     }
 
-    public CartItemView(Context context, AttributeSet attrs) {
+    public CashMemoItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CartItemView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CashMemoItemView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -51,7 +51,7 @@ public class CartItemView extends MaterialCardView {
 
         this.product = item;
         if (item != null) {
-            productName.setText("");
+            productName.setText(item.getProductName());
             productQty.setText(String.valueOf(product.getCartonQuantity()+"/"+product.getUnitQuantity()));
             productRate.setText("0.0");
             productDiscount.setText("0.0");

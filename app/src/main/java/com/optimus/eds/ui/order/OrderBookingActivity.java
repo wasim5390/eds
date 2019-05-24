@@ -96,10 +96,8 @@ public class OrderBookingActivity extends BaseActivity {
     }
 
 
-
-
     private void onOutletLoaded(Outlet outlet) {
-        tvOutletName.setText(outlet.getOutletName());
+        tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
     }
 
     public void onProductGroupsLoaded(List<ProductGroup> groups) {
@@ -108,7 +106,7 @@ public class OrderBookingActivity extends BaseActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                onAdd();
+                onAdd(false);
                 group = ((ProductGroup)(parent.getSelectedItem()));
                 viewModel.filterProductsByGroup(group.getProductGroupId());
 
@@ -134,19 +132,17 @@ public class OrderBookingActivity extends BaseActivity {
 
 
 
-    public void onAdd(){
+    public void onAdd(boolean sendToServer){
         if(sectionAdapter!=null) {
             List<Product> orderItems = viewModel.filterOrderProducts(sectionAdapter.getCopyOfSectionsMap());
-            //if(!orderItems.isEmpty())
-            viewModel.addOrder(orderItems,group.getProductGroupId());
+            viewModel.addOrder(orderItems,group.getProductGroupId(),sendToServer);
         }
 
     }
 
     @OnClick(R.id.btnNext)
     public void onNextClick(){
-        onAdd();
-        viewModel.composeOrderForServer();
+        onAdd(true);
     }
 
 

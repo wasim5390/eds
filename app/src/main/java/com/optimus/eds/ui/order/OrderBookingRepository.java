@@ -75,6 +75,10 @@ public class OrderBookingRepository {
         orderDao.deleteOrderItems(orderId,groupId);
     }
 
+    public void deleteOrder(Long orderId){
+        orderDao.deleteOrder(orderId);
+    }
+
 
     protected Maybe<OrderModel> findOrder(Long outletId){
         return orderDao.getOrderWithItems(outletId);
@@ -104,11 +108,6 @@ public class OrderBookingRepository {
 
     protected Single<List<Product>> findAllProductsByGroup(Long groupId){
         return productsDao.findAllProductsByGroupId(groupId);
-
-    }
-
-    protected LiveData<List<Product>> findAllProducts(){
-        return productsDao.findAllProduct();
 
     }
 

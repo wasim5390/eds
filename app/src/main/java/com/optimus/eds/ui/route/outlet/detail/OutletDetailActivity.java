@@ -142,7 +142,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         outletSaleQty.setText(String.valueOf(outlet.getLastSaleQuantity()));
         outletChannel.setText(String.valueOf(outlet.getChannelName()));
         outletLastSaleDate.setText(Util.formatDate(Util.DATE_FORMAT_2,outlet.getLastSaleDate()));
-        outletName.setText(outlet.getOutletName());
+        outletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
         outletVisits.setText(String.valueOf(outlet.getVisitFrequency()));
     }
 

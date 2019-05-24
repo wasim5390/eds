@@ -9,40 +9,46 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Observable;
+import java.util.List;
+
 
 @Entity(
-        primaryKeys = {"c_pid","c_oid"},
+        primaryKeys = {"fk_pid","fk_oid"},
         foreignKeys = {
         @ForeignKey(
                 entity = Order.class,
-                parentColumns = "oid",
-                childColumns = "c_oid",
+                parentColumns = "pk_oid",
+                childColumns = "fk_oid",
                 onDelete = ForeignKey.CASCADE),
 
         @ForeignKey(
                 entity = Product.class,
-                parentColumns = "pid",
-                childColumns = "c_pid"
+                parentColumns = "pk_pid",
+                childColumns = "fk_pid"
         )
-}, indices = {@Index(value = "c_pid"), @Index(value = "c_oid")})
+}, indices = {@Index(value = "fk_pid"), @Index(value = "fk_oid")
+        ,@Index(unique = true,value = "cartonOrderDetailId")
+        ,@Index(unique = true,value = "unitOrderDetailId")})
 
 public class OrderDetail {
 
-    @NonNull @ColumnInfo(name = "c_pid")
+    @NonNull @ColumnInfo(name = "fk_pid")
     @SerializedName("productId")
     public Long mProductId;
-    @NonNull @ColumnInfo(name = "c_oid")
+
+    @NonNull @ColumnInfo(name = "fk_oid")
     @SerializedName("mobileOrderId")
     public Long mLocalOrderId;
 
-    @NonNull @ColumnInfo(name = "orderId")
+    @ColumnInfo(name = "orderId")
     @SerializedName("orderId")
     public Long mOrderId;
 
     @SerializedName("unitOrderDetailId")
+    @ColumnInfo(name = "unitOrderDetailId")
     public Long mUnitOrderDetailId;
     @SerializedName("cartonOrderDetailId")
+    @ColumnInfo(name = "cartonOrderDetailId")
     public Long mCartonOrderDetailId;
     @SerializedName("productGroupId")
     public Long mProductGroupId;
@@ -53,6 +59,12 @@ public class OrderDetail {
     public Long mCartonQuantity;
     @SerializedName("unitQuantity")
     public Long mUnitQuantity;
+
+    @SerializedName("avlUnitQuantity")
+    public Long avlUnitQuantity;
+    @SerializedName("avlCartonQuantity")
+    public Long avlCartonQuantity;
+
     @SerializedName("cartonCode")
     public String mCartonCode;
     @SerializedName("unitCode")
@@ -67,18 +79,50 @@ public class OrderDetail {
     @SerializedName("cartonTotalPrice")
     public Double cartonTotalPrice;
 
-    @SerializedName("totalPrice")
+    @SerializedName("payable")
     public Double total;
+    @SerializedName("subtotal")
+    public Double subtotal;
     @SerializedName("type")
     public String type; // either paid or free product
 
-    @SerializedName("freeQuantityTypeId")
-    public Integer freeQuantityTypeId; // 1. Primary ; 2. Optional {If Optional ask for quantity}
-    @SerializedName("freeGoodQuantity")
-    public Integer freeGoodQuantity; //Only applicable for Optional
+    @SerializedName("unitFreeQuantityTypeId")
+    public Integer unitFreeQuantityTypeId; // 1. Primary ; 2. Optional {If Optional ask for quantity}
+
+    @SerializedName("cartonFreeQuantityTypeId")
+    public Integer cartonFreeQuantityTypeId; // 1. Primary ; 2. Optional {If Optional ask for quantity}
+
+    @SerializedName("unitFreeGoodQuantity")
+    public Integer unitFreeGoodQuantity; //Only applicable for Optional
+
+    @SerializedName("cartonFreeGoodQuantity")
+    public Integer cartonFreeGoodQuantity; //Only applicable for Optional
+
+    @SerializedName("unitSelectedFreeGoodQuantity")
+    public Integer unitSelectedFreeGoodQuantity;
+
+    @SerializedName("cartonSelectedFreeGoodQuantity")
+    public Integer cartonSelectedFreeGoodQuantity;
 
     @Ignore
     public Long parentId; //In case of FOC, server will send the FOC row with parentId
+
+    @SerializedName("cartonPriceBreakDown")
+    @Ignore
+    public List<CartonPriceBreakDown> cartonPriceBreakDown;
+
+    @SerializedName("unitPriceBreakDown")
+    @Ignore
+    public List<UnitPriceBreakDown> unitPriceBreakDown;
+
+    @Ignore
+    @SerializedName("cartonFreeGoods")
+    public List<OrderDetail> cartonFreeGoods;
+    @Ignore
+    @SerializedName("unitFreeGoods")
+    public List<OrderDetail> unitFreeGoods;
+
+
 
     public OrderDetail(@NonNull Long mOrderId,@NonNull Long mProductId, Long mCartonQuantity, Long mUnitQuantity) {
         this.mLocalOrderId = mOrderId;
@@ -123,6 +167,15 @@ public class OrderDetail {
 
     public void setUnitQuantity(Long mUnitQuantity) {
         this.mUnitQuantity = mUnitQuantity;
+    }
+
+
+    public Long getAvlUnitQuantity() {
+        return avlUnitQuantity;
+    }
+
+    public Long getAvlCartonQuantity() {
+        return avlCartonQuantity;
     }
 
     public String getCartonCode() {
@@ -220,20 +273,72 @@ public class OrderDetail {
     public void setCartonTotalPrice(Double cartonTotalPrice) {
         this.cartonTotalPrice = cartonTotalPrice;
     }
-    public Integer getFreeQuantityTypeId() {
-        return freeQuantityTypeId;
+    public Integer getUnitFreeQuantityTypeId() {
+        return unitFreeQuantityTypeId;
     }
 
-    public void setFreeQuantityTypeId(Integer freeQuantityTypeId) {
-        this.freeQuantityTypeId = freeQuantityTypeId;
+    public void setUnitFreeQuantityTypeId(Integer unitFreeQuantityTypeId) {
+        this.unitFreeQuantityTypeId = unitFreeQuantityTypeId;
     }
 
-    public Integer getFreeGoodQuantity() {
-        return freeGoodQuantity;
+    public Integer getCartonFreeQuantityTypeId() {
+        return cartonFreeQuantityTypeId;
     }
 
-    public void setFreeGoodQuantity(Integer freeGoodQuantity) {
-        this.freeGoodQuantity = freeGoodQuantity;
+    public void setCartonFreeQuantityTypeId(Integer cartonFreeQuantityTypeId) {
+        this.cartonFreeQuantityTypeId = cartonFreeQuantityTypeId;
     }
 
+    public Integer getUnitFreeGoodQuantity() {
+        return unitFreeGoodQuantity;
+    }
+
+    public void setUnitFreeGoodQuantity(Integer freeGoodQuantity) {
+        this.unitFreeGoodQuantity = freeGoodQuantity;
+    }
+
+    public Integer getCartonFreeGoodQuantity() {
+        return cartonFreeGoodQuantity;
+    }
+
+    public void setCartonFreeGoodQuantity(Integer freeGoodQuantity) {
+        this.cartonFreeGoodQuantity = freeGoodQuantity;
+    }
+
+    public Integer getSelectedCartonFreeGoodQuantity() {
+        return cartonSelectedFreeGoodQuantity;
+    }
+
+    public void setSelectedCartonFreeGoodQuantity(Integer freeGoodQuantity) {
+        this.cartonSelectedFreeGoodQuantity = freeGoodQuantity;
+    }
+
+    public Integer getSelectedUnitFreeGoodQuantity() {
+        return unitSelectedFreeGoodQuantity;
+    }
+
+    public void setSelectedUnitFreeGoodQuantity(Integer freeGoodQuantity) {
+        this.unitSelectedFreeGoodQuantity = freeGoodQuantity;
+    }
+
+    public Double getSubtotal() {
+        return subtotal;
+    }
+    public void setSubtotal(Double subtotal) {
+        this.subtotal = subtotal;
+    }
+
+
+    public void setAvlQty(Long avlCartonQuantity,Long avlUnitQuantity){
+        this.avlCartonQuantity=avlCartonQuantity;
+        this.avlUnitQuantity = avlUnitQuantity;
+    }
+
+    public List<CartonPriceBreakDown> getCartonPriceBreakDown() {
+        return cartonPriceBreakDown;
+    }
+
+    public List<UnitPriceBreakDown> getUnitPriceBreakDown() {
+        return unitPriceBreakDown;
+    }
 }

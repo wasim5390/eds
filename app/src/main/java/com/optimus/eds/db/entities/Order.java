@@ -4,7 +4,9 @@ package com.optimus.eds.db.entities;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
@@ -16,20 +18,29 @@ import com.optimus.eds.db.converters.ProductConverter;
 
 import java.util.List;
 
-@Entity
+@Entity (foreignKeys =
+@ForeignKey(
+        entity = Outlet.class,
+        parentColumns = "mOutletId",
+        childColumns = "c_outletId",
+        onDelete = ForeignKey.CASCADE), indices = {@Index(value = "c_outletId")})
+
 public class Order {
 
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "oid")
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "pk_oid")
     @SerializedName("mobileOrderId")
     public Long id;
-
     @SerializedName("orderId")
     public Long serverOrderId;
 
     @SerializedName("outletId")
+    @ColumnInfo(name = "c_outletId")
     public Long outletId;
     @SerializedName("routeId")
     public Long routeId;
+
+    @SerializedName("code")
+    public String code;
 
     @SerializedName("orderStatusId")
     public int orderStatus; // {1. Confirmed, 2. Created, 3. Cancelled}
@@ -56,9 +67,7 @@ public class Order {
     public Order(Long outletId) {
         this.outletId = outletId;
     }
-    public Order() {
 
-    }
     public Long getRouteId() {
         return routeId;
     }
@@ -151,5 +160,13 @@ public class Order {
 
     public void setDeliveryDate(Long deliveryDate) {
         this.deliveryDate = deliveryDate;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

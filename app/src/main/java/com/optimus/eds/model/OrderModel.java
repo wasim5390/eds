@@ -8,13 +8,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import com.google.gson.annotations.SerializedName;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
 
 
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderModel {
@@ -25,12 +24,12 @@ public class OrderModel {
     @Embedded
     public Outlet outlet;
 
-    @Relation(parentColumn = "oid", entityColumn = "c_oid")
+    @Relation(parentColumn = "pk_oid", entityColumn = "fk_oid")
     List<OrderDetail> orderDetails;
 
 
     public List<OrderDetail> getOrderDetails() {
-        return orderDetails;
+        return orderDetails==null?new ArrayList<>():orderDetails;
     }
 
     public void setOrderDetails(List<OrderDetail> orderDetails) {

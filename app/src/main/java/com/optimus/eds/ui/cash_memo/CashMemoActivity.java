@@ -66,7 +66,7 @@ public class CashMemoActivity extends BaseActivity {
     }
 
     private void onOutletLoaded(Outlet outlet) {
-        tvOutletName.setText(outlet.getOutletName());
+        tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
     }
 
     private void initAdapter(){

@@ -12,6 +12,7 @@ import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.model.PackageModel;
+import com.optimus.eds.utils.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,11 +60,14 @@ public class PackageSection extends StatelessSection {
         Product product = list.get(position);
 
         itemHolder.tvItemName.setText(product.getName());
-        itemHolder.tvAvlStock.setText(product.getCartonStockInHand()+"/"+ product.getUnitStockInHand());
-        itemHolder.etCartonQty.setText(product.getQtyCarton()==null?"":String.valueOf(product.getQtyCarton()));
-        itemHolder.etUnitQty.setText(product.getQtyUnit()==null?"":String.valueOf(product.getQtyUnit()));
 
-        itemHolder.etCartonQty.addTextChangedListener(new TextWatcher() {
+        itemHolder.whStock.setText(String.valueOf(Util.convertToDecimalQuantity(product.getCartonStockInHand(),product.getUnitStockInHand())));
+
+        itemHolder.etAvlStock.setText(String.valueOf(Util.convertToDecimalQuantity(product.getAvlStockCarton(),product.getAvlStockUnit())));
+
+        itemHolder.etOrderQty.setText(String.valueOf(Util.convertToDecimalQuantity(product.getQtyCarton(),product.getQtyUnit())));
+
+        itemHolder.etAvlStock.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -71,13 +75,14 @@ public class PackageSection extends StatelessSection {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()<1 || Long.parseLong(s.toString())<1) {
-                    product.setCarton(null);
+                if(s.length()<1 || (s.length()==1 && s.toString().equals("."))) {
+                    product.setAvlStock(null,null);
                     return;
                 }
-                Long qty = Long.parseLong(s.toString());
+                double qty = Double.parseDouble(s.toString());
                 if(qty>0){
-                    product.setCarton(qty);
+                    Long[] cu = Util.convertToLongQuantity(s.toString());
+                    product.setAvlStock(cu[0],cu[1]);
                 }
             }
 
@@ -87,7 +92,7 @@ public class PackageSection extends StatelessSection {
             }
         });
 
-        itemHolder.etUnitQty.addTextChangedListener(new TextWatcher() {
+        itemHolder.etOrderQty.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -95,13 +100,14 @@ public class PackageSection extends StatelessSection {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()<1 || Long.parseLong(s.toString())<1) {
-                    product.setUnit(null);
+                if(s.length()<1 || (s.length()==1 && s.toString().equals("."))) {
+                    product.setQty(null,null);
                     return;
                 }
-                Long qty = Long.parseLong(s.toString());
+                double qty = Double.parseDouble(s.toString());
                 if(qty>0){
-                    product.setUnit(qty);
+                    Long[] cu = Util.convertToLongQuantity(s.toString());
+                    product.setQty(cu[0],cu[1]);
                 }
             }
 
@@ -147,18 +153,18 @@ public class PackageSection extends StatelessSection {
         private final View rootView;
 
         private final TextView tvItemName;
-        private final TextView tvAvlStock;
-        private final  EditText etCartonQty;
-        private final EditText etUnitQty;
+        private final TextView whStock;
+        private final  EditText etAvlStock;
+        private final EditText etOrderQty;
 
         ItemViewHolder(View view) {
             super(view);
 
             rootView = view;
             tvItemName = view.findViewById(R.id.item_name);
-            tvAvlStock = view.findViewById(R.id.avl_stock);
-            etCartonQty = view.findViewById(R.id.order_carton);
-            etUnitQty = view.findViewById(R.id.order_unit);
+            whStock = view.findViewById(R.id.wh_stock);
+            etAvlStock = view.findViewById(R.id.avl_stock);
+            etOrderQty = view.findViewById(R.id.order_unit);
 
         }
     }

@@ -15,6 +15,7 @@ import com.optimus.eds.db.dao.MerchandiseDao;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
+import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
@@ -23,12 +24,12 @@ import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.db.entities.Route;
-
+import com.optimus.eds.db.entities.UnitPriceBreakDown;
 
 
 @Database(entities = {Route.class, Outlet.class, Merchandise.class, ProductGroup.class, Product.class, Package.class, Order.class,
-        OrderDetail.class
-}, version = 3, exportSchema = false)
+        OrderDetail.class, CartonPriceBreakDown.class, UnitPriceBreakDown.class
+}, version = 1, exportSchema = false)
 @TypeConverters({OutletConverter.class, MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
 
 public abstract class AppDatabase extends RoomDatabase {

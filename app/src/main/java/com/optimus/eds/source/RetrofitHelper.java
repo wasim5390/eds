@@ -1,20 +1,28 @@
 package com.optimus.eds.source;
 
+import android.content.SharedPreferences;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.optimus.eds.AnnotationExclusionStrategy;
 import com.optimus.eds.Constant;
 import com.optimus.eds.EdsApplication;
+import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.internal.http1.Http1Codec;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -37,22 +45,7 @@ public class RetrofitHelper implements Constant {
     private static final String TAG = "RetrofitHelper";
     private RetrofitHelper () {
 
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder()
-                .readTimeout(30, TimeUnit.SECONDS)
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .addInterceptor(httpLoggingInterceptor)
-                .addInterceptor(new AuthorizationInterceptor());
-
-       Gson builder = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).create();
-        retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(builder))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(okHttpClientBuilder.build())
-                .build();
-
+        retrofit = getRetrofit();
         service = retrofit.create(API.class);
     }
 
@@ -71,28 +64,63 @@ public class RetrofitHelper implements Constant {
 
 
     public class AuthorizationInterceptor implements Interceptor {
-
+        Request request;
+        Response response;
         @Override
         public Response intercept(Chain chain) throws IOException {
-            Request original = chain.request();
-            String header = Util.getAuthorizationHeader(EdsApplication.getInstance());
-            if (header!=null) {
-                Request request = original.newBuilder()
-                        .header("Authorization", "Bearer " + header).build();
-                Response response = chain.proceed(request);
-                if (response.code()==401) {
-                    //EventBus.getDefault().post(new LoginFailEvent());
+            Request originalRequest = chain.request();
+            String token = Util.getAuthorizationHeader(EdsApplication.getInstance());
+
+            if (token!=null) {
+
+                request = originalRequest.newBuilder()
+                        .header("Authorization", "Bearer " + token).build();
+                response = chain.proceed(request);
+
+                if (response.code()== 401) {
+                    API tokenApi =  getRetrofit().create(API.class);
+                    retrofit2.Response<TokenResponse> tokenResponse= tokenApi.refreshToken("password","imran","imranshabrati").execute();
+                    if(tokenResponse.isSuccessful()){
+                        TokenResponse tokenResponseObj=tokenResponse.body();
+                        PreferenceUtil.getInstance(EdsApplication.getInstance()).saveToken(tokenResponseObj.getAccessToken());
+                        try {
+                            request= response.request().newBuilder()
+                                    .header("Authorization", "Bearer " + tokenResponseObj.getAccessToken()).build();
+                            response = chain.proceed(request);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        // goto Login as we cannot refresh token
+                    }
+
                 }
 
                 return response;
             } else {
-
-                return chain.proceed(original);
+                return chain.proceed(originalRequest);
             }
 
 
 
         }
+    }
+
+    private Retrofit getRetrofit(){
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder()
+                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .addInterceptor(httpLoggingInterceptor)
+                .addInterceptor(new AuthorizationInterceptor());
+        Gson builder = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).create();
+        return new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(builder))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(okHttpClientBuilder.build())
+                .build();
     }
 
 

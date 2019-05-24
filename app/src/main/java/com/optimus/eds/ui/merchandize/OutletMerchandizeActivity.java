@@ -12,11 +12,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.Constant;
 import com.optimus.eds.R;
+import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.ui.order.OrderBookingActivity;
 import com.optimus.eds.ui.camera.ImageCropperActivity;
 import com.optimus.eds.ui.merchandize.coolerverification.AssetsVerificationActivity;
@@ -39,6 +41,8 @@ public class OutletMerchandizeActivity extends BaseActivity {
     Button btnAfterMerchandize;
     @BindView(R.id.btnNext)
     Button btnNext;
+    @BindView(R.id.tvName)
+    TextView tvOutletName;
     private MerchandiseAdapter merchandiseAdapter;
     private Long outletId;
     private static final int REQUEST_CODE_IMAGE = 0x0005;
@@ -65,7 +69,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
         initMerchandiseAdapter();
         outletId =  getIntent().getLongExtra("OutletId",0);
         viewModel = ViewModelProviders.of(this).get(MerchandiseViewModel.class);
-
+        viewModel.loadOutlet(outletId).observe(this, outlet -> onOutletLoaded(outlet));
         viewModel.getmMerchandise().observe(this, merchandiseItems -> {
             updateMerchandiseList(merchandiseItems);
         });
@@ -91,7 +95,9 @@ public class OutletMerchandizeActivity extends BaseActivity {
             Toast.makeText(OutletMerchandizeActivity.this,"At least 3 images required",Toast.LENGTH_LONG).show();
         });
     }
-
+    private void onOutletLoaded(Outlet outlet) {
+        tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
+    }
     public void removeImage(MerchandiseItem item){
         viewModel.removeImage(item);
     }

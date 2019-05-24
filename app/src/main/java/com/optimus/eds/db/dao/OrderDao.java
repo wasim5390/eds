@@ -29,13 +29,13 @@ public interface OrderDao {
     @Query("SELECT * FROM `Order` WHERE oid=:id")
     Order findOrderByOrderId(Long id);
 
-    @Query("SELECT * FROM `Order` WHERE outletId=:id")
+    @Query("SELECT * FROM `Order` WHERE c_outletId=:id")
     Single<Order> findOrderByOutletId(Long id);
 
-    @Query("SELECT * FROM OrderDetail where c_oid=:orderId")
+    @Query("SELECT * FROM OrderDetail where fk_oid=:orderId")
     Single<List<OrderDetail>> findOrderItemsByOrderId(Long orderId);
 
-    @Query("SELECT * FROM `Order`,Outlet where outletId=:outletId AND mOutletId=:outletId")
+    @Query("SELECT * FROM `Order`,Outlet where c_outletId=:outletId AND mOutletId=:outletId")
     @Transaction
     Maybe<OrderModel> getOrderWithItems(long outletId);
 
@@ -54,7 +54,9 @@ public interface OrderDao {
     @Query("Delete From 'Order' ")
     void deleteAllOrders();
 
-    @Query("Delete From 'OrderDetail' WHERE c_oid=:orderId AND mProductGroupId=:groupId")
+    @Query("Delete From 'OrderDetail' WHERE fk_oid=:orderId AND mProductGroupId=:groupId")
     void deleteOrderItems(Long orderId,Long groupId);
 
+    @Query("Delete From 'OrderDetail' WHERE fk_oid=:orderId")
+    void deleteOrder(Long orderId);
 }

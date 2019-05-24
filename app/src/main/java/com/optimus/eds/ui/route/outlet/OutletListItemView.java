@@ -49,7 +49,7 @@ public class OutletListItemView extends ConstraintLayout {
         this.outletItem = item;
         if (item != null) {
 
-            outletName.setText(outletItem.getOutletName());
+            outletName.setText(outletItem.getOutletName().concat(" - "+ outletItem.getLocation()));
             outletCode.setText(getResources().getString(R.string.outlet_code,outletItem.getOutletCode()));
             orderAmount.setText("RS. "+ outletItem.getTotalAmount());
         }

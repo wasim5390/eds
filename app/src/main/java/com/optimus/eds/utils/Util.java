@@ -22,6 +22,9 @@ import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 
+import static java.lang.Math.pow;
+import static java.lang.Math.log10;
+
 public class Util {
     public static final String DATE_FORMAT_1 = "MM/dd/yyyy hh:mm:ss";
     public static final String DATE_FORMAT_2 = "MMM dd";
@@ -40,7 +43,7 @@ public class Util {
         }
     }*/
 
-    public static String getAuthorizationHeader(Context context) throws UnsupportedEncodingException {
+    public static String getAuthorizationHeader(Context context) {
         String token = PreferenceUtil.getInstance(context).getToken();
         if(token.isEmpty())
             return null;
@@ -88,7 +91,7 @@ public class Util {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         try {
             Date mDate = sdf.parse(date);
-             timeInMilliseconds = mDate.getTime();
+            timeInMilliseconds = mDate.getTime();
             System.out.println("Date in milli :: " + timeInMilliseconds);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -172,6 +175,48 @@ public class Util {
     public static int pxToDp(int px)
     {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static String convertToDecimalQuantity(Long carton, Long units)
+    {
+        if(carton==null)
+            carton=0L;
+        if(units==null)
+            units=0L;
+
+        String finalVal="";
+        if(carton>0 && units>0)
+            finalVal= String.valueOf(carton).concat("."+String.valueOf(units));
+        else if(carton>0){
+            finalVal = String.valueOf(carton);
+        }else if(units>0)
+            finalVal = ".".concat(String.valueOf(units));
+
+        return finalVal;
+    }
+
+
+    public static Long[] convertToLongQuantity(String qty)
+    {
+        if(qty.startsWith("."))
+            qty = "0".concat(qty);
+        Long decimal;
+        Long fractional ;
+
+        boolean isWhole = Util.isInt(Double.parseDouble(qty));
+        if(isWhole) {
+            decimal = Long.parseLong(qty.split("\\.")[0]);
+            fractional=0L;
+        }else {
+            decimal = Long.parseLong(qty.split("\\.")[0]);
+            fractional = Long.parseLong(qty.split("\\.")[1]);
+        }
+        return new Long[]{decimal,fractional};
+    }
+
+    public static boolean isInt(double d)
+    {
+        return d == (long) d;
     }
 
 }

@@ -131,6 +131,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
             for(OrderDetail orderDetail:addedProducts){
                 if(product.getId()==orderDetail.getProductId()) {
                     product.setQty(orderDetail.getCartonQuantity(), orderDetail.getUnitQuantity());
+                    product.setAvlStock(orderDetail.getAvlCartonQuantity(), orderDetail.getAvlUnitQuantity());
 
                 }
             }
@@ -141,7 +142,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
 
-    public void addOrder(List<Product> orderItems,Long groupId){
+    public void addOrder(List<Product> orderItems,Long groupId,boolean sendToServer){
         Completable.create(e -> {
             if(order==null) {
                 Order order = new Order(outletId);
@@ -159,7 +160,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
             @Override
             public void onComplete() {
-                addOrderItems(orderItems);
+                addOrderItems(orderItems,sendToServer);
             }
 
             @Override
@@ -171,13 +172,13 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
     }
 
-    public void addOrderItems(List<Product> orderItems){
+    public void addOrderItems(List<Product> orderItems,boolean sendToServer){
 
 
         repository.findOrder(outletId).map(orderModel -> modifyOrderDetails(orderModel,orderItems))
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
-                .subscribe(this::onAddOrderSuccess,this::onError);
+                .subscribe(orderModel -> {onAddOrderSuccess(orderModel,sendToServer);},this::onError);
     }
 
     public void updateOrder(OrderModel order) {
@@ -233,8 +234,11 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
     }
 
-    private void onAddOrderSuccess(OrderModel orderModel) {
+    private void onAddOrderSuccess(OrderModel orderModel,boolean sendToServer) {
         setOrder(orderModel);
+        if(sendToServer)
+        composeOrderForServer();
+
     }
 
     private void onSuccess(List<Product> products) {
@@ -256,7 +260,9 @@ public class OrderBookingViewModel extends AndroidViewModel {
     private OrderModel modifyOrderDetails(OrderModel order,List<Product> orderProducts) {
         List<OrderDetail> orderDetails = new ArrayList<>(orderProducts.size());
         for(Product product:orderProducts) {
-            OrderDetail orderDetail = new OrderDetail(order.getOrder().getLocalOrderId(), product.getId(),product.getQtyCarton(),product.getQtyUnit());
+            OrderManager.OrderQuantity orderQuantity = OrderManager.instance().calculateOrderQty(product.getCartonQuantity(),product.getQtyUnit(),product.getQtyCarton());
+            OrderDetail orderDetail = new OrderDetail(order.getOrder().getLocalOrderId(), product.getId(),orderQuantity.getCarton(),orderQuantity.getUnits());
+            orderDetail.setAvlQty(product.getAvlStockCarton(),product.getAvlStockUnit());
             orderDetail.setCartonCode(product.getCartonCode());
             orderDetail.setUnitCode(product.getUnitCode());
             orderDetail.setProductName(product.getName());
@@ -267,9 +273,11 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
 
         repository.addOrderItems(orderDetails);
-        order.setOrderDetails(orderDetails);
+        order.getOrderDetails().addAll(orderDetails);
         return order;
     }
+
+
 
     protected List<Product> filterOrderProducts(Map<String,Section> sectionHashMap){
         List<Product> productList = new ArrayList<>();
@@ -289,7 +297,6 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
     public void composeOrderForServer(){
-
         if(order!=null){
             isSaving.postValue(true);
             Order mOrder = new Order(order.getOrder().getOutletId());

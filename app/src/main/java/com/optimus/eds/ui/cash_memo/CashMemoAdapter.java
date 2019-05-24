@@ -9,10 +9,6 @@ import android.view.ViewGroup;
 
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.OrderDetail;
-import com.optimus.eds.db.entities.Outlet;
-import com.optimus.eds.db.entities.Product;
-import com.optimus.eds.model.PackageModel;
-import com.optimus.eds.ui.route.outlet.OutletListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +45,7 @@ public class CashMemoAdapter extends
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         OrderDetail product = products.get(position);
-        ((CartItemView)viewHolder.itemView).setCartItem(product);
+        ((CashMemoItemView)viewHolder.itemView).setCartItem(product);
     }
 
     @Override

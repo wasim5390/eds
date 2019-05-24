@@ -31,6 +31,11 @@ public interface API {
     @POST("token")
     Single<TokenResponse> getToken(@Field("grant_type") String type , @Field("username") String username, @Field("password") String password);
 
+    @FormUrlEncoded
+    @POST("token")
+    Call<TokenResponse> refreshToken(@Field("grant_type") String type , @Field("username") String username, @Field("password") String password);
+
+
     @GET("route/routes")
     Call<RouteOutletResponseModel> loadTodayRouteOutlets();
 

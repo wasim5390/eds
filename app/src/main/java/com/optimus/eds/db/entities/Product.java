@@ -16,7 +16,7 @@ import io.reactivex.annotations.Nullable;
 public class Product implements Serializable {
 
 
-    @PrimaryKey @ColumnInfo(name = "pid")
+    @PrimaryKey @ColumnInfo(name = "pk_pid")
     @SerializedName("productId")
     public Long id;
     @SerializedName("productName")
@@ -48,7 +48,7 @@ public class Product implements Serializable {
     @SerializedName("unitQuantity")
     public Long unitQuantity;
     @SerializedName("cartonQuantity")
-    public Integer cartonQuantity;
+    public Long cartonQuantity;
     @SerializedName("unitSizeForDisplay")
     public String unitSizeForDisplay;
     @SerializedName("cartonSizeForDisplay")
@@ -60,9 +60,9 @@ public class Product implements Serializable {
 
 
     @Ignore
-    public Long qtyCarton=0l;
+    public Long qtyCarton,qtyUnit;
     @Ignore
-    public Long qtyUnit=0l;
+    public Long avlStockUnit,avlStockCarton;
 
 
     public Product(Long id, Long pkgId, String name) {
@@ -71,12 +71,6 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    public Product(Long id, Long pkgId, String name, Long qtyUnit) {
-        this.id = id;
-        this.pkgId = pkgId;
-        this.name = name;
-        this.qtyUnit = qtyUnit;
-    }
     public Long getQtyUnit() {
         return qtyUnit==null||qtyUnit==0?null:qtyUnit;
     }
@@ -85,9 +79,14 @@ public class Product implements Serializable {
         return qtyCarton==null||qtyCarton==0?null:qtyCarton;
     }
 
-    public void setQty(Long carton,Long unit) {
+    public void setQty(Long carton, Long unit) {
         this.qtyCarton = carton;
         this.qtyUnit = unit;
+    }
+
+    public void setAvlStock(Long carton,Long unit) {
+        this.avlStockCarton = carton;
+        this.avlStockUnit = unit;
     }
 
     public void setUnit(Long unit) {
@@ -96,6 +95,15 @@ public class Product implements Serializable {
 
     public void setCarton(Long carton) {
         this.qtyCarton = carton;
+    }
+
+
+    public Long getAvlStockUnit() {
+        return avlStockUnit;
+    }
+
+    public Long getAvlStockCarton() {
+        return avlStockCarton;
     }
 
     public Long getId() {
@@ -157,7 +165,7 @@ public class Product implements Serializable {
         return unitQuantity;
     }
 
-    public Integer getCartonQuantity() {
+    public Long getCartonQuantity() {
         return cartonQuantity;
     }
 
@@ -176,6 +184,7 @@ public class Product implements Serializable {
     public Long getCartonStockInHand() {
         return cartonStockInHand;
     }
+
 
     public boolean isProductSelected(){
         return (getQtyCarton()!=null || getQtyUnit()!=null &&( getQtyUnit()>0 || getQtyCarton()>0));
