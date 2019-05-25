@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
@@ -13,7 +14,7 @@ import java.util.List;
 
 
 @Entity(
-        primaryKeys = {"fk_pid","fk_oid"},
+       /* primaryKeys = {"fk_pid","fk_oid"},*/
         foreignKeys = {
         @ForeignKey(
                 entity = Order.class,
@@ -21,18 +22,22 @@ import java.util.List;
                 childColumns = "fk_oid",
                 onDelete = ForeignKey.CASCADE),
 
-        @ForeignKey(
+       /* @ForeignKey(
                 entity = Product.class,
                 parentColumns = "pk_pid",
                 childColumns = "fk_pid"
-        )
-}, indices = {@Index(value = "fk_pid"), @Index(value = "fk_oid")
+        )*/
+}, indices = { @Index(value = "fk_oid")
         ,@Index(unique = true,value = "cartonOrderDetailId")
         ,@Index(unique = true,value = "unitOrderDetailId")})
 
 public class OrderDetail {
 
-    @NonNull @ColumnInfo(name = "fk_pid")
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "pk_modid")
+    @SerializedName("mobileOrderDetailId")
+    public Long orderDetailId;
+
+    /*@NonNull @ColumnInfo(name = "fk_pid")*/
     @SerializedName("productId")
     public Long mProductId;
 
@@ -136,7 +141,9 @@ public class OrderDetail {
     public Long getLocalOrderId() {
         return mLocalOrderId;
     }
-
+    public Long getMobileOrderDetailId() {
+        return orderDetailId;
+    }
     public Long getOrderId() {
         return mOrderId;
     }
@@ -340,5 +347,13 @@ public class OrderDetail {
 
     public List<UnitPriceBreakDown> getUnitPriceBreakDown() {
         return unitPriceBreakDown;
+    }
+
+    public List<OrderDetail> getCartonFreeGoods() {
+        return cartonFreeGoods;
+    }
+
+    public List<OrderDetail> getUnitFreeGoods() {
+        return unitFreeGoods;
     }
 }

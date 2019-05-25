@@ -42,6 +42,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -211,6 +212,12 @@ public class OrderBookingViewModel extends AndroidViewModel {
     public void updateOrderWithPricingItems(List<OrderDetail> orderItems){
         Completable.create(e -> {
             repository.updateOrderItems(orderItems);
+            for(OrderDetail orderDetail:orderItems){
+                if(!orderDetail.getCartonPriceBreakDown().isEmpty())
+                    repository.addOrderCartonPriceBreakDown(orderDetail.getCartonPriceBreakDown());
+                if(!orderDetail.getUnitPriceBreakDown().isEmpty())
+                    repository.addOrderUnitPriceBreakDown(orderDetail.getUnitPriceBreakDown());
+            }
             e.onComplete();
         }).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
@@ -235,9 +242,15 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
     private void onAddOrderSuccess(OrderModel orderModel,boolean sendToServer) {
-        setOrder(orderModel);
-        if(sendToServer)
-        composeOrderForServer();
+        repository.getOrderItems(orderModel.getOrder().getLocalOrderId())
+                .observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+                .subscribe(orderDetails -> {
+                    orderModel.setOrderDetails(orderDetails);
+                    setOrder(orderModel);
+                    if(sendToServer)
+                        composeOrderForServer();
+                });
+
 
     }
 
@@ -271,9 +284,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
             orderDetails.add(orderDetail);
         }
 
-
         repository.addOrderItems(orderDetails);
-        order.getOrderDetails().addAll(orderDetails);
         return order;
     }
 
@@ -314,7 +325,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
             responseModel.setOrderDetails(order.getOrderDetails());
 
             disposable
-                    .add(webservice.saveOrder(responseModel).map(orderResponseModel -> {
+                    .add(webservice.calculatePricing(responseModel).map(orderResponseModel -> {
 
                         OrderModel orderModel = new OrderModel();
                         String orderString = new Gson().toJson(orderResponseModel);

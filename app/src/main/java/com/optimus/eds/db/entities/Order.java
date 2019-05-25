@@ -53,7 +53,7 @@ public class Order {
     @SerializedName("longitude")
     public double longitude;
 
-    @SerializedName("subTotal")
+    @SerializedName("subtotal")
     public Double subTotal;
     @SerializedName("payable")
     public Double payable;

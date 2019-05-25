@@ -10,8 +10,10 @@ import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 import android.icu.text.Replaceable;
 
+import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
+import com.optimus.eds.db.entities.UnitPriceBreakDown;
 import com.optimus.eds.model.OrderModel;
 
 import java.util.List;
@@ -50,6 +52,12 @@ public interface OrderDao {
 
     @Update
     void updateOrderItems(List<OrderDetail> orderItems);
+
+    @Insert(onConflict = REPLACE)
+    void insertCartonPriceBreakDown(List<CartonPriceBreakDown> priceBreakDowns);
+
+    @Insert(onConflict = REPLACE)
+    void insertUnitPriceBreakDown(List<UnitPriceBreakDown> priceBreakDowns);
 
     @Query("Delete From 'Order' ")
     void deleteAllOrders();

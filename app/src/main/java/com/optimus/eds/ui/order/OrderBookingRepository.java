@@ -8,12 +8,14 @@ import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
+import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
+import com.optimus.eds.db.entities.UnitPriceBreakDown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.source.API;
@@ -67,6 +69,13 @@ public class OrderBookingRepository {
         orderDao.insertOrderItems(orderDetail);
     }
 
+    public void addOrderCartonPriceBreakDown(List<CartonPriceBreakDown> cartonPriceBreakDowns){
+        orderDao.insertCartonPriceBreakDown(cartonPriceBreakDowns);
+    }
+
+    public void addOrderUnitPriceBreakDown(List<UnitPriceBreakDown> unitPriceBreakDowns){
+        orderDao.insertUnitPriceBreakDown(unitPriceBreakDowns);
+    }
     public void updateOrderItems(List<OrderDetail> orderDetails){
         orderDao.updateOrderItems(orderDetails);
     }

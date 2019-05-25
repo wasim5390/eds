@@ -10,9 +10,12 @@ import android.widget.TextView;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
+import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.ui.customer_input.CustomerInputActivity;
+import com.optimus.eds.ui.order.OrderManager;
 
 import java.util.List;
 
@@ -32,6 +35,14 @@ public class CashMemoActivity extends BaseActivity {
     @BindView(R.id.tvOutletName)
     TextView tvOutletName;
 
+    @BindView(R.id.tvGrandTotal)
+    TextView tvGrandTotal;
+
+    @BindView(R.id.tvDiscountedAmount)
+    TextView tvDiscountedAmount;
+
+    @BindView(R.id.tvQty)
+    TextView tvQty;
     private CashMemoAdapter cartAdapter;
     private CashMemoViewModel viewModel;
     public static void start(Context context, Long outletId) {
@@ -62,11 +73,18 @@ public class CashMemoActivity extends BaseActivity {
         viewModel.getOrder(outletId);
         viewModel.getOrder().observe(this, order -> {
             updateCart(order.getOrderDetails());
+            updatePricesOnUi(order);
+
         });
     }
 
     private void onOutletLoaded(Outlet outlet) {
         tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
+    }
+
+    private void updatePricesOnUi(OrderModel order){
+        tvGrandTotal.setText(String.valueOf(order.getOrder().getPayable()));
+
     }
 
     private void initAdapter(){

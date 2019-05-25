@@ -8,9 +8,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.db.entities.UnitPriceBreakDown;
 
 
 import java.util.ArrayList;
@@ -28,6 +30,21 @@ public class OrderModel {
     List<OrderDetail> orderDetails;
 
 
+/*    @Relation(parentColumn = "cartonOrderDetailId", entityColumn = "fk_odid")
+    List<CartonPriceBreakDown> cartonPriceBreakDowns;
+
+    @Relation(parentColumn = "unitOrderDetailId", entityColumn = "fk_odid")
+    List<UnitPriceBreakDown> unitPriceBreakDowns;
+
+
+    public void setCartonPriceBreakDowns(List<CartonPriceBreakDown> cartonPriceBreakDowns) {
+        this.cartonPriceBreakDowns = cartonPriceBreakDowns;
+    }
+
+    public void setUnitPriceBreakDowns(List<UnitPriceBreakDown> unitPriceBreakDowns) {
+        this.unitPriceBreakDowns = unitPriceBreakDowns;
+    }*/
+
     public List<OrderDetail> getOrderDetails() {
         return orderDetails==null?new ArrayList<>():orderDetails;
     }
@@ -36,6 +53,14 @@ public class OrderModel {
         this.orderDetails = orderDetails;
     }
 
+
+ /*   public List<CartonPriceBreakDown> getCartonPriceBreakDowns() {
+        return cartonPriceBreakDowns==null?new ArrayList<>():cartonPriceBreakDowns;
+    }
+
+    public List<UnitPriceBreakDown> getUnitPriceBreakDowns() {
+        return unitPriceBreakDowns==null?new ArrayList<>():unitPriceBreakDowns;
+    }*/
     public Order getOrder() {
         return order;
     }

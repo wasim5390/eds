@@ -42,8 +42,8 @@ public interface API {
     @GET("route/products")
     Call<PackageProductResponseModel> loadTodayPackageProduct();
 
-    @POST("order")
-    Single<OrderModel> calculatePricing(@Body JsonObject orderModel);
+    @POST("api/order/calculateprice")
+    Single<OrderResponseModel> calculatePricing(@Body OrderResponseModel order);
 
     @POST("api/order/PostOrder")
     Single<OrderResponseModel> saveOrder(@Body OrderResponseModel order);
