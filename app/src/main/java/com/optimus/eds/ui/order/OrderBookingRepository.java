@@ -80,12 +80,12 @@ public class OrderBookingRepository {
         orderDao.updateOrderItems(orderDetails);
     }
 
-    public void deleteOrderItems(Long orderId,Long groupId){
-        orderDao.deleteOrderItems(orderId,groupId);
+    public void deleteOrderItemsByGroup(Long orderId,Long groupId){
+        orderDao.deleteOrderItemsByGroup(orderId,groupId);
     }
 
-    public void deleteOrder(Long orderId){
-        orderDao.deleteOrder(orderId);
+    public void deleteOrderItems(Long orderId){
+        orderDao.deleteOrderItems(orderId);
     }
 
 

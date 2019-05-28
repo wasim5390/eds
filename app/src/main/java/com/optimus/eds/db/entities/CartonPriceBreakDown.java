@@ -8,24 +8,24 @@ import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
-@Entity(
-        foreignKeys = {
-                @ForeignKey(
-                        entity = OrderDetail.class,
-                        parentColumns = "cartonOrderDetailId",
-                        childColumns = "fk_odid",
-                        onDelete = ForeignKey.CASCADE),
+@Entity( foreignKeys = {
+        @ForeignKey(
+                entity = OrderDetail.class,
+                parentColumns = "pk_modid",
+                childColumns = "fk_modid",
+                onDelete = ForeignKey.CASCADE),
 
 
-        }, indices = { @Index(value = "fk_odid")})
+}, indices = { @Index(value = "fk_modid")})
 public class CartonPriceBreakDown {
-    @PrimaryKey @ColumnInfo(name = "pk_cpbd")
-    @SerializedName("id")
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "pk_cpbd")
     public Integer mId;
     @SerializedName("orderId")
     public Integer mOrderId;
-    @ColumnInfo(name = "fk_odid")
-    @SerializedName("cartonOrderDetailId")
+    @ColumnInfo(name = "fk_modid")
+    @SerializedName("mobileOrderDetailId")
     public Integer mOrderDetailId;
     @SerializedName("priceCondition")
     public String mPriceCondition;

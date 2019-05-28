@@ -70,8 +70,8 @@ public class CashMemoActivity extends BaseActivity {
 
     private void setObserver(){
         viewModel.loadOutlet(outletId).observe(this, this::onOutletLoaded);
-        viewModel.getOrder(outletId);
-        viewModel.getOrder().observe(this, order -> {
+       // viewModel.getOrder(outletId);
+        viewModel.getOrder(outletId).observe(this, order -> {
             updateCart(order.getOrderDetails());
             updatePricesOnUi(order);
 

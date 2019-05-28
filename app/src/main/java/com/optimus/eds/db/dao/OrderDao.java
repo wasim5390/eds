@@ -37,7 +37,8 @@ public interface OrderDao {
     @Query("SELECT * FROM OrderDetail where fk_oid=:orderId")
     Single<List<OrderDetail>> findOrderItemsByOrderId(Long orderId);
 
-    @Query("SELECT * FROM `Order`,Outlet where c_outletId=:outletId AND mOutletId=:outletId")
+    @Query("SELECT * FROM `Order`,Outlet" +
+            " where c_outletId=:outletId AND mOutletId=:outletId")
     @Transaction
     Maybe<OrderModel> getOrderWithItems(long outletId);
 
@@ -59,12 +60,12 @@ public interface OrderDao {
     @Insert(onConflict = REPLACE)
     void insertUnitPriceBreakDown(List<UnitPriceBreakDown> priceBreakDowns);
 
-    @Query("Delete From 'Order' ")
+    @Query("Delete From 'Order'")
     void deleteAllOrders();
 
     @Query("Delete From 'OrderDetail' WHERE fk_oid=:orderId AND mProductGroupId=:groupId")
-    void deleteOrderItems(Long orderId,Long groupId);
+    void deleteOrderItemsByGroup(Long orderId,Long groupId);
 
     @Query("Delete From 'OrderDetail' WHERE fk_oid=:orderId")
-    void deleteOrder(Long orderId);
+    void deleteOrderItems(Long orderId);
 }

@@ -12,22 +12,21 @@ import com.google.gson.annotations.SerializedName;
         foreignKeys = {
                 @ForeignKey(
                         entity = OrderDetail.class,
-                        parentColumns = "unitOrderDetailId",
-                        childColumns = "fk_odid",
+                        parentColumns = "pk_modid",
+                        childColumns = "fk_modid",
                         onDelete = ForeignKey.CASCADE),
 
 
-        }, indices = { @Index(value = "fk_odid")})
+        }, indices = { @Index(value = "fk_modid")})
 public class UnitPriceBreakDown {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "pk_upbd")
-    @SerializedName("id")
     public Integer mId;
     @SerializedName("orderId")
     public Integer mOrderId;
-    @ColumnInfo(name = "fk_odid")
-    @SerializedName("unitOrderDetailId")
+    @ColumnInfo(name = "fk_modid")
+    @SerializedName("mobileOrderDetailId")
     public Integer mOrderDetailId;
     @SerializedName("priceCondition")
     public String mPriceCondition;

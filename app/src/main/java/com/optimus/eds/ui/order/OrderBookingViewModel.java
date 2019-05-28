@@ -22,6 +22,7 @@ import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
+import com.optimus.eds.utils.Util;
 
 
 import java.io.IOException;
@@ -33,18 +34,13 @@ import java.util.concurrent.Executors;
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section;
 import io.reactivex.Completable;
 
-import io.reactivex.CompletableEmitter;
 import io.reactivex.CompletableObserver;
-import io.reactivex.CompletableOnSubscribe;
 import io.reactivex.Maybe;
-import io.reactivex.Observable;
+
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 
@@ -60,6 +56,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
     private MutableLiveData<String> msg;
     private MutableLiveData<Boolean> orderSaved;
     private LiveData<List<Package>> packages;
+    private List<Product> addedProducts;
 
 
     private Long outletId;
@@ -77,6 +74,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
         msg = new MutableLiveData<>();
         isSaving = new MutableLiveData<>();
         orderSaved = new MutableLiveData<>();
+        addedProducts = new ArrayList<>();
 
         onScreenCreated();
     }
@@ -143,13 +141,29 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
 
+    public List<Product> mergeProductsInLocalList(List<Product> products, List<Product> alreadyAddedProducts){
+        List<Product> productsToRemove = new ArrayList<>();
+        for(Product product:products){
+            for(Product addedProduct: alreadyAddedProducts){
+                if(product.getId()==addedProduct.getId()){
+                    productsToRemove.add(addedProduct);
+                }
+            }
+        }
+        alreadyAddedProducts.removeAll(productsToRemove);
+        alreadyAddedProducts.addAll(products);
+        return alreadyAddedProducts;
+    }
+
     public void addOrder(List<Product> orderItems,Long groupId,boolean sendToServer){
+        addedProducts=mergeProductsInLocalList(orderItems,addedProducts);
         Completable.create(e -> {
             if(order==null) {
                 Order order = new Order(outletId);
                 repository.createOrder(order);
             }else{
-                repository.deleteOrderItems(order.getOrder().getLocalOrderId(),groupId);
+                // @TODO remove all order items here instead of under group
+                repository.deleteOrderItems(order.getOrder().getLocalOrderId());
             }
             e.onComplete();
         }).subscribeOn(Schedulers.io())
@@ -161,7 +175,8 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
             @Override
             public void onComplete() {
-                addOrderItems(orderItems,sendToServer);
+                // TODO Keep all added items in local array and add all in once here
+                addOrderItems(addedProducts,sendToServer);
             }
 
             @Override
@@ -211,13 +226,18 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
     public void updateOrderWithPricingItems(List<OrderDetail> orderItems){
         Completable.create(e -> {
-            repository.updateOrderItems(orderItems);
+            //repository.updateOrderItems(orderItems);
+            repository.deleteOrderItems(order.getOrder().getLocalOrderId());
+            repository.addOrderItems(orderItems);
             for(OrderDetail orderDetail:orderItems){
-                if(!orderDetail.getCartonPriceBreakDown().isEmpty())
-                    repository.addOrderCartonPriceBreakDown(orderDetail.getCartonPriceBreakDown());
-                if(!orderDetail.getUnitPriceBreakDown().isEmpty())
+                if(!Util.isListEmpty(orderDetail.getUnitPriceBreakDown()))
                     repository.addOrderUnitPriceBreakDown(orderDetail.getUnitPriceBreakDown());
+
+                if(!Util.isListEmpty(orderDetail.getCartonPriceBreakDown()))
+                    repository.addOrderCartonPriceBreakDown(orderDetail.getCartonPriceBreakDown());
+
             }
+
             e.onComplete();
         }).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
@@ -227,6 +247,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
             @Override
             public void onComplete() {
+
                 orderSaved.postValue(true);
                 isSaving.postValue(false);
                 msg.postValue("Order Saved Successfully");
@@ -234,7 +255,9 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
             @Override
             public void onError(Throwable e) {
+                e.printStackTrace();
                 orderSaved.postValue(false);
+                isSaving.postValue(false);
                 msg.postValue(e.getMessage());
             }
         });
@@ -260,6 +283,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
     }
 
     private void onError(Throwable throwable) throws IOException {
+        throwable.printStackTrace();
         String errorBody = throwable.getMessage();
         if (throwable instanceof HttpException){
             HttpException error = (HttpException)throwable;

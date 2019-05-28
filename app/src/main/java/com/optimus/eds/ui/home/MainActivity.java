@@ -45,8 +45,7 @@ public class MainActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         //  viewModel.onScreenCreated();
           viewModel.isLoading().observe(this, this::setProgress);
-        //  viewModel.getRoutes();
-        //  viewModel.getOutlets();
+
         viewModel.getErrorMsg().observe(this, this::showError);
 
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);

@@ -1,6 +1,7 @@
 package com.optimus.eds.model;
 
 import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Relation;
 
 import com.google.gson.Gson;
@@ -26,26 +27,25 @@ public class OrderModel {
     @Embedded
     public Outlet outlet;
 
+
+
     @Relation(parentColumn = "pk_oid", entityColumn = "fk_oid")
     List<OrderDetail> orderDetails;
 
+ /*   @Relation(parentColumn = "pk_oid", entityColumn = "fk_oid")
+        List<OrderDetailAndCpriceBreakdown> orderDetailAndCPriceBreakdowns;
+    public List<OrderDetail> getOrderDetailsFromDb() {
+        if(orderDetails==null)
+            orderDetails = new ArrayList<>();
+        for(OrderDetailAndCpriceBreakdown orderDetailAndCpriceBreakdown:orderDetailAndCPriceBreakdowns){
+            orderDetails.add(orderDetailAndCpriceBreakdown.getOrderDetail());
+        }
 
-/*    @Relation(parentColumn = "cartonOrderDetailId", entityColumn = "fk_odid")
-    List<CartonPriceBreakDown> cartonPriceBreakDowns;
-
-    @Relation(parentColumn = "unitOrderDetailId", entityColumn = "fk_odid")
-    List<UnitPriceBreakDown> unitPriceBreakDowns;
-
-
-    public void setCartonPriceBreakDowns(List<CartonPriceBreakDown> cartonPriceBreakDowns) {
-        this.cartonPriceBreakDowns = cartonPriceBreakDowns;
-    }
-
-    public void setUnitPriceBreakDowns(List<UnitPriceBreakDown> unitPriceBreakDowns) {
-        this.unitPriceBreakDowns = unitPriceBreakDowns;
+        return orderDetails;
     }*/
 
     public List<OrderDetail> getOrderDetails() {
+
         return orderDetails==null?new ArrayList<>():orderDetails;
     }
 
@@ -54,13 +54,6 @@ public class OrderModel {
     }
 
 
- /*   public List<CartonPriceBreakDown> getCartonPriceBreakDowns() {
-        return cartonPriceBreakDowns==null?new ArrayList<>():cartonPriceBreakDowns;
-    }
-
-    public List<UnitPriceBreakDown> getUnitPriceBreakDowns() {
-        return unitPriceBreakDowns==null?new ArrayList<>():unitPriceBreakDowns;
-    }*/
     public Order getOrder() {
         return order;
     }

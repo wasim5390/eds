@@ -14,7 +14,6 @@ import java.util.List;
 
 
 @Entity(
-       /* primaryKeys = {"fk_pid","fk_oid"},*/
         foreignKeys = {
         @ForeignKey(
                 entity = Order.class,
@@ -22,11 +21,6 @@ import java.util.List;
                 childColumns = "fk_oid",
                 onDelete = ForeignKey.CASCADE),
 
-       /* @ForeignKey(
-                entity = Product.class,
-                parentColumns = "pk_pid",
-                childColumns = "fk_pid"
-        )*/
 }, indices = { @Index(value = "fk_oid")
         ,@Index(unique = true,value = "cartonOrderDetailId")
         ,@Index(unique = true,value = "unitOrderDetailId")})
@@ -37,7 +31,6 @@ public class OrderDetail {
     @SerializedName("mobileOrderDetailId")
     public Long orderDetailId;
 
-    /*@NonNull @ColumnInfo(name = "fk_pid")*/
     @SerializedName("productId")
     public Long mProductId;
 
@@ -266,7 +259,7 @@ public class OrderDetail {
     }
 
     public Double getUnitTotalPrice() {
-        return unitTotalPrice;
+        return unitTotalPrice==null?0:unitTotalPrice;
     }
 
     public void setUnitTotalPrice(Double unitTotalPrice) {
@@ -274,7 +267,7 @@ public class OrderDetail {
     }
 
     public Double getCartonTotalPrice() {
-        return cartonTotalPrice;
+        return cartonTotalPrice==null?0:cartonTotalPrice;
     }
 
     public void setCartonTotalPrice(Double cartonTotalPrice) {

@@ -24,7 +24,8 @@ public class OrderManager {
     public OrderQuantity calculateOrderQty(Long productUnitsPerCarton, Long orderedUnits, Long orderedCartons){
 
         OrderQuantity orderQuantity = new OrderQuantity(orderedUnits,orderedCartons);
-        if(orderedUnits>productUnitsPerCarton && productUnitsPerCarton!=null && productUnitsPerCarton>0) {
+        if(orderedUnits!=null && productUnitsPerCarton!=null && orderedUnits>productUnitsPerCarton  && productUnitsPerCarton>0) {
+            if(orderedCartons==null) orderedCartons = 0l;
             long quotient = orderedUnits / productUnitsPerCarton;
             long remainder = orderedUnits % productUnitsPerCarton;
             orderQuantity.setCarton(quotient+orderedCartons);

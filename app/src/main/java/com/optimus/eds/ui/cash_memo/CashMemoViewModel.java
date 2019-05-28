@@ -48,7 +48,7 @@ public class CashMemoViewModel extends AndroidViewModel {
 
     }
 
-    protected void getOrder(Long outletId){
+    protected LiveData<OrderModel> getOrder(Long outletId){
         repository.findOrder(outletId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new MaybeObserver<OrderModel>() {
@@ -72,6 +72,7 @@ public class CashMemoViewModel extends AndroidViewModel {
 
             }
         });
+        return orderLiveData;
     }
 
 
