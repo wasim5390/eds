@@ -4,29 +4,18 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.optimus.eds.db.AppDatabase;
-import com.optimus.eds.db.dao.OrderDao;
-import com.optimus.eds.db.dao.ProductsDao;
-import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
-import com.optimus.eds.db.entities.Product;
+import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import io.reactivex.Flowable;
 import io.reactivex.MaybeObserver;
-import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -49,9 +38,28 @@ public class CashMemoViewModel extends AndroidViewModel {
     }
 
     protected LiveData<OrderModel> getOrder(Long outletId){
-        repository.findOrder(outletId)
+
+
+
+
+
+        repository.findOrder(outletId).map(orderModel -> {
+            List<OrderDetail> freeGoods = new ArrayList<>();
+            for(OrderDetailAndPriceBreakdown orderWithDetails:orderModel.getOrderDetailAndCPriceBreakdowns()){
+                freeGoods.addAll(orderWithDetails.getOrderDetail().getCartonFreeGoods());
+                freeGoods.addAll(orderWithDetails.getOrderDetail().getUnitFreeGoods());
+                orderWithDetails.getOrderDetail().setCartonPriceBreakDown(orderWithDetails.getCartonPriceBreakDownList());
+                orderWithDetails.getOrderDetail().setUnitPriceBreakDown(orderWithDetails.getUnitPriceBreakDownList());
+            }
+
+            orderModel.setFreeGoods(freeGoods);
+            for(OrderDetail orderDetail:freeGoods)
+                orderModel.getOrderDetailAndCPriceBreakdowns().add(new OrderDetailAndPriceBreakdown(orderDetail));
+            return orderModel;
+        })
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new MaybeObserver<OrderModel>() {
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new MaybeObserver<OrderModel>() {
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -59,6 +67,7 @@ public class CashMemoViewModel extends AndroidViewModel {
 
             @Override
             public void onSuccess(OrderModel order) {
+
             orderLiveData.postValue(order);
             }
 

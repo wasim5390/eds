@@ -9,11 +9,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
-import com.optimus.eds.db.entities.UnitPriceBreakDown;
 
 
 import java.util.ArrayList;
@@ -27,22 +25,19 @@ public class OrderModel {
     @Embedded
     public Outlet outlet;
 
-
-
-    @Relation(parentColumn = "pk_oid", entityColumn = "fk_oid")
+    @Ignore
     List<OrderDetail> orderDetails;
 
- /*   @Relation(parentColumn = "pk_oid", entityColumn = "fk_oid")
-        List<OrderDetailAndCpriceBreakdown> orderDetailAndCPriceBreakdowns;
-    public List<OrderDetail> getOrderDetailsFromDb() {
-        if(orderDetails==null)
-            orderDetails = new ArrayList<>();
-        for(OrderDetailAndCpriceBreakdown orderDetailAndCpriceBreakdown:orderDetailAndCPriceBreakdowns){
-            orderDetails.add(orderDetailAndCpriceBreakdown.getOrderDetail());
-        }
+    @Ignore
+    List<OrderDetail> freeGoods;
 
-        return orderDetails;
-    }*/
+    @Relation(parentColumn = "pk_oid", entityColumn = "fk_oid", entity = OrderDetail.class)
+    public List<OrderDetailAndPriceBreakdown> orderDetailAndCPriceBreakdowns;
+
+    public List<OrderDetailAndPriceBreakdown> getOrderDetailAndCPriceBreakdowns() {
+        return orderDetailAndCPriceBreakdowns;
+    }
+
 
     public List<OrderDetail> getOrderDetails() {
 
@@ -51,6 +46,14 @@ public class OrderModel {
 
     public void setOrderDetails(List<OrderDetail> orderDetails) {
         this.orderDetails = orderDetails;
+    }
+
+    public List<OrderDetail> getFreeGoods() {
+        return freeGoods;
+    }
+
+    public void setFreeGoods(List<OrderDetail> freeGoods) {
+        this.freeGoods = freeGoods;
     }
 
 

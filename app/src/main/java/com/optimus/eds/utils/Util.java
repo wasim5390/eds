@@ -17,15 +17,9 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DateTimeException;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import static java.lang.Math.pow;
-import static java.lang.Math.log10;
 
 public class Util {
     public static final String DATE_FORMAT_1 = "MM/dd/yyyy hh:mm:ss";

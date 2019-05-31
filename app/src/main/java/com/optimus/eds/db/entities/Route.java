@@ -3,13 +3,11 @@ package com.optimus.eds.db.entities;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
 
 import com.google.gson.annotations.SerializedName;
 
 
 import java.io.Serializable;
-import java.util.List;
 
 @Entity(tableName = "Route")
 public class Route implements Serializable {

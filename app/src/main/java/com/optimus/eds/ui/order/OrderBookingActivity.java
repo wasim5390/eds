@@ -1,15 +1,13 @@
 package com.optimus.eds.ui.order;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.os.Handler;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,15 +16,11 @@ import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
-import com.optimus.eds.db.entities.Order;
-import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
-import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.ui.cash_memo.CashMemoActivity;
-import com.optimus.eds.ui.customer_input.CustomerInputActivity;
 
 import java.util.List;
 
@@ -106,9 +100,12 @@ public class OrderBookingActivity extends BaseActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                onAdd(false);
-                group = ((ProductGroup)(parent.getSelectedItem()));
-                viewModel.filterProductsByGroup(group.getProductGroupId());
+                if(group!=null)
+                    onAdd(group.getProductGroupId(),false);
+                viewModel.filterProductsByGroup(((ProductGroup)(parent.getSelectedItem())).getProductGroupId());
+                new Handler().postDelayed(() -> {
+                    group = ((ProductGroup)(parent.getSelectedItem()));
+                },1000);
 
             }
 
@@ -132,17 +129,17 @@ public class OrderBookingActivity extends BaseActivity {
 
 
 
-    public void onAdd(boolean sendToServer){
+    public void onAdd(Long groupId,boolean sendToServer){
         if(sectionAdapter!=null) {
             List<Product> orderItems = viewModel.filterOrderProducts(sectionAdapter.getCopyOfSectionsMap());
-            viewModel.addOrder(orderItems,group.getProductGroupId(),sendToServer);
+            viewModel.addOrder(orderItems,groupId,sendToServer);
         }
 
     }
 
     @OnClick(R.id.btnNext)
     public void onNextClick(){
-        onAdd(true);
+        onAdd(group.getProductGroupId(),true);
     }
 
 

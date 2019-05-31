@@ -3,7 +3,6 @@ package com.optimus.eds.ui.route.outlet;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 
-import com.optimus.eds.Injection;
 import com.optimus.eds.db.AppDatabase;
 
 import com.optimus.eds.db.dao.RouteDao;
@@ -16,7 +15,6 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
-import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 

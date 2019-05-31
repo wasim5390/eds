@@ -1,7 +1,5 @@
 package com.optimus.eds.source;
 
-import android.content.SharedPreferences;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.optimus.eds.AnnotationExclusionStrategy;
@@ -13,16 +11,11 @@ import com.optimus.eds.utils.Util;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.internal.http1.Http1Codec;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;

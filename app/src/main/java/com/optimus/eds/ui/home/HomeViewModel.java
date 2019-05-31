@@ -4,22 +4,11 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.optimus.eds.Injection;
-import com.optimus.eds.db.AppDatabase;
-import com.optimus.eds.db.dao.ProductsDao;
-import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Outlet;
-import com.optimus.eds.db.entities.Package;
-import com.optimus.eds.db.entities.Product;
-import com.optimus.eds.db.entities.Route;
-import com.optimus.eds.source.API;
 
 import com.optimus.eds.source.RetrofitHelper;
-import com.optimus.eds.ui.route.outlet.OutletListRepository;
 import com.optimus.eds.utils.PreferenceUtil;
 
 

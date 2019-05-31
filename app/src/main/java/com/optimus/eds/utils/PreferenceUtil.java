@@ -6,9 +6,6 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.optimus.eds.ui.home.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static android.content.Context.MODE_PRIVATE;
 
 /**

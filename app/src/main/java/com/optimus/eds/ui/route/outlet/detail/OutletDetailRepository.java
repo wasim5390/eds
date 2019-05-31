@@ -2,8 +2,6 @@ package com.optimus.eds.ui.route.outlet.detail;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.support.annotation.Nullable;
 
 import com.optimus.eds.db.AppDatabase;
 

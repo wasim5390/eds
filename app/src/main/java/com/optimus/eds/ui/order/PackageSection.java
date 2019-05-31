@@ -5,17 +5,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.optimus.eds.R;
-import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.utils.Util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;

@@ -20,7 +20,6 @@ public class BaseResponse {
     private boolean success;
 
 
-
     public int getHttpCode() {
         return httpCode;
     }

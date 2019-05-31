@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
-        android:layout_marginBottom="160dp"
+       android:layout_marginBottom="55dp"
         >
         <TextView
             android:id="@+id/outletName"
@@ -39,14 +39,119 @@
             android:padding="5dp"
             android:layout_margin="5dp"
             />
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            tool:layout_constraintTop_toBottomOf="@+id/tvOutletName"
+            android:layout_marginTop="5dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="80dp"
+            android:background="@color/colorAccent"
+            android:weightSum="30"
+            >
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_weight="6"
+                >
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/white"
+                    android:text="@string/qty"
+
+
+                    />
+
+                <TextView
+                    android:id="@+id/tvQty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/white"
+                    android:text="6000.0"
+
+                    android:layout_marginStart="5dp"
+
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_weight="13"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/white"
+                    android:text="@string/discount"
+
+
+                    />
+                <TextView
+                    android:id="@+id/tvDiscountedAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/white"
+                    android:text="15,300.0"
+
+                    android:layout_marginStart="5dp"
+
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical|right"
+                android:layout_weight="11"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="@string/total"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    />
+
+
+                <TextView
+                    android:id="@+id/tvGrandTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="123456789.00"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/white"
+
+                    android:gravity="center"
+                    android:layout_marginStart="5dp"
+                    />
+            </LinearLayout>
+        </LinearLayout>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvCartItems"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:listitem="@layout/cashmemo_item_view"
             android:layout_marginTop="5dp"
-            android:paddingBottom="10dp"
-            tool:layout_constraintTop_toBottomOf="@+id/tvOutletName"
+            android:paddingBottom="100dp"
+            tool:layout_constraintTop_toBottomOf="@+id/header"
             />
 
 
@@ -55,108 +160,7 @@
 
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="100dp"
-        android:background="@color/colorAccent"
-        android:weightSum="30"
-        >
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_weight="6"
-            >
-            <TextView
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="@color/white"
-                android:text="@string/qty"
-
-
-                />
-
-            <TextView
-                android:id="@+id/tvQty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="@color/white"
-                android:text="6000.0"
-
-                android:layout_marginStart="5dp"
-
-                />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_weight="13"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="@color/white"
-                android:text="@string/discount"
-
-
-                />
-            <TextView
-                android:id="@+id/tvDiscountedAmount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="@color/white"
-                android:text="15,300.0"
-
-                android:layout_marginStart="5dp"
-
-                />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical|right"
-            android:layout_weight="11"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_medium"
-                android:text="@string/total"
-                android:textColor="@color/white"
-                android:gravity="center"
-                />
-
-
-            <TextView
-                android:id="@+id/tvGrandTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="123456789.00"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="@color/white"
-
-                android:gravity="center"
-                android:layout_marginStart="5dp"
-                />
-        </LinearLayout>
-    </LinearLayout>
 
 
     <LinearLayout
@@ -178,7 +182,7 @@
             android:layout_weight="1"
             android:theme="@style/PositiveButton"
             android:backgroundTint="@color/colorPrimary"
-            android:text="@string/add_packages"
+            android:text="@string/edit"
             android:textSize="18sp"
             />
         <android.support.v7.widget.AppCompatButton

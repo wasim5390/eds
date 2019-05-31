@@ -1,6 +1,7 @@
 package com.optimus.eds.model;
 
 import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Relation;
 
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
@@ -9,18 +10,26 @@ import com.optimus.eds.db.entities.UnitPriceBreakDown;
 
 import java.util.List;
 
-public class OrderDetailAndCpriceBreakdown {
-
+public class OrderDetailAndPriceBreakdown {
 
     @Embedded
-    OrderDetail orderDetail;
+   public OrderDetail orderDetail;
 
-    @Relation(parentColumn = "pk_modid", entityColumn = "fk_modid")
-    List<CartonPriceBreakDown> cartonPriceBreakDownList;
+    @Relation(parentColumn = "pk_modid", entityColumn = "fk_modid", entity = CartonPriceBreakDown.class)
+   public List<CartonPriceBreakDown> cartonPriceBreakDownList;
 
 
-    @Relation(parentColumn = "pk_modid", entityColumn = "fk_modid")
-    List<UnitPriceBreakDown> unitPriceBreakDownList;
+    @Relation(parentColumn = "pk_modid", entityColumn = "fk_modid", entity = UnitPriceBreakDown.class)
+   public List<UnitPriceBreakDown> unitPriceBreakDownList;
+
+    @Ignore
+    public OrderDetailAndPriceBreakdown(OrderDetail orderDetail) {
+        this.orderDetail = orderDetail;
+    }
+
+    public OrderDetailAndPriceBreakdown() {
+    }
+
 
     public OrderDetail getOrderDetail() {
         return orderDetail;

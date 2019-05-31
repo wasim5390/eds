@@ -10,7 +10,6 @@ import android.arch.persistence.room.Update;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
-import com.optimus.eds.model.PackageModel;
 
 import java.util.List;
 

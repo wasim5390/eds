@@ -11,7 +11,6 @@ import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.model.OrderModel;
 
 import io.reactivex.Maybe;
-import io.reactivex.Single;
 
 public class CashMemoRepository {
     private ProductsDao productDao;
@@ -38,4 +37,6 @@ public class CashMemoRepository {
     protected Maybe<OrderModel> findOrder(Long outletId){
         return orderDao.getOrderWithItems(outletId);
     }
+
+
 }

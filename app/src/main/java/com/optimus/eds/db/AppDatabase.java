@@ -28,7 +28,7 @@ import com.optimus.eds.db.entities.UnitPriceBreakDown;
 
 
 @Database(entities = {Route.class, Outlet.class, Merchandise.class, ProductGroup.class, Product.class, Package.class, Order.class,
-        OrderDetail.class, CartonPriceBreakDown.class, UnitPriceBreakDown.class
+        OrderDetail.class, CartonPriceBreakDown.class, UnitPriceBreakDown.class,
 }, version = 1, exportSchema = false)
 @TypeConverters({OutletConverter.class, MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
 

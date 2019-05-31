@@ -6,10 +6,15 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverter;
+import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
+import com.optimus.eds.db.converters.OrderDetailConverter;
+import com.optimus.eds.db.converters.OutletConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,8 +27,7 @@ import java.util.List;
                 onDelete = ForeignKey.CASCADE),
 
 }, indices = { @Index(value = "fk_oid")
-        ,@Index(unique = true,value = "cartonOrderDetailId")
-        ,@Index(unique = true,value = "unitOrderDetailId")})
+        })
 
 public class OrderDetail {
 
@@ -113,11 +117,13 @@ public class OrderDetail {
     @Ignore
     public List<UnitPriceBreakDown> unitPriceBreakDown;
 
-    @Ignore
+
     @SerializedName("cartonFreeGoods")
+    @TypeConverters(OrderDetailConverter.class)
     public List<OrderDetail> cartonFreeGoods;
-    @Ignore
+
     @SerializedName("unitFreeGoods")
+    @TypeConverters(OrderDetailConverter.class)
     public List<OrderDetail> unitFreeGoods;
 
 
@@ -334,6 +340,20 @@ public class OrderDetail {
         this.avlUnitQuantity = avlUnitQuantity;
     }
 
+    public String getQuantity(){
+        Long cQty = getCartonQuantity();
+        Long uQty = getUnitQuantity();
+        return (cQty==null?0:cQty)+"/"+(uQty==null?0:uQty);
+    }
+
+    public void setCartonPriceBreakDown(List<CartonPriceBreakDown> cartonPriceBreakDown) {
+        this.cartonPriceBreakDown = cartonPriceBreakDown;
+    }
+
+    public void setUnitPriceBreakDown(List<UnitPriceBreakDown> unitPriceBreakDown) {
+        this.unitPriceBreakDown = unitPriceBreakDown;
+    }
+
     public List<CartonPriceBreakDown> getCartonPriceBreakDown() {
         return cartonPriceBreakDown;
     }
@@ -343,10 +363,10 @@ public class OrderDetail {
     }
 
     public List<OrderDetail> getCartonFreeGoods() {
-        return cartonFreeGoods;
+        return cartonFreeGoods==null?new ArrayList<>():cartonFreeGoods;
     }
 
     public List<OrderDetail> getUnitFreeGoods() {
-        return unitFreeGoods;
+        return unitFreeGoods==null?new ArrayList<>():unitFreeGoods;
     }
 }

@@ -10,12 +10,10 @@ import android.widget.TextView;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
-import com.optimus.eds.db.entities.Order;
-import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.ui.customer_input.CustomerInputActivity;
-import com.optimus.eds.ui.order.OrderManager;
 
 import java.util.List;
 
@@ -70,10 +68,10 @@ public class CashMemoActivity extends BaseActivity {
 
     private void setObserver(){
         viewModel.loadOutlet(outletId).observe(this, this::onOutletLoaded);
-       // viewModel.getOrder(outletId);
-        viewModel.getOrder(outletId).observe(this, order -> {
-            updateCart(order.getOrderDetails());
-            updatePricesOnUi(order);
+        viewModel.getOrder(outletId).observe(this, orderModel -> {
+
+            updateCart(orderModel.getOrderDetailAndCPriceBreakdowns());
+            updatePricesOnUi(orderModel);
 
         });
     }
@@ -84,7 +82,15 @@ public class CashMemoActivity extends BaseActivity {
 
     private void updatePricesOnUi(OrderModel order){
         tvGrandTotal.setText(String.valueOf(order.getOrder().getPayable()));
-
+        Long carton=0l,units=0l;
+        for(OrderDetailAndPriceBreakdown detailAndPriceBreakdown:order.getOrderDetailAndCPriceBreakdowns())
+        {
+            Long cQty = detailAndPriceBreakdown.getOrderDetail().getCartonQuantity();
+            Long uQty = detailAndPriceBreakdown.getOrderDetail().getUnitQuantity();
+            carton+= cQty!=null?cQty:0;
+            units+=uQty!=null?uQty:0;
+        }
+        tvQty.setText(String.valueOf(carton)+"."+String.valueOf(units));
     }
 
     private void initAdapter(){
@@ -98,12 +104,17 @@ public class CashMemoActivity extends BaseActivity {
     }
 
 
-    private void updateCart(List<OrderDetail> products) {
+    private void updateCart(List<OrderDetailAndPriceBreakdown> products) {
         cartAdapter.populateCartItems(products);
     }
 
     @OnClick(R.id.btnNext)
     public void navigateToCustomerInput(){
         CustomerInputActivity.start(this);
+    }
+
+    @OnClick(R.id.btnAddPackages)
+    public void upNavigate(){
+        onBackPressed();
     }
 }

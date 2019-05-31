@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.widget.LinearLayout;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.optimus.eds.BaseActivity;

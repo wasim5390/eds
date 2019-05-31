@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
-import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
@@ -20,20 +19,13 @@ import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.source.API;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 
 import io.reactivex.Completable;
-import io.reactivex.CompletableObserver;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import retrofit2.Response;
 
 public class OrderBookingRepository {
     private final String TAG=OrderBookingRepository.class.getSimpleName();
@@ -65,26 +57,30 @@ public class OrderBookingRepository {
             orderDao.insertOrder(order);
     }
 
-    public void addOrderItems(List<OrderDetail> orderDetail){
-        orderDao.insertOrderItems(orderDetail);
+    public Completable addOrderItems(List<OrderDetail> orderDetail){
+       return Completable.fromAction(()->orderDao.insertOrderItems(orderDetail));
     }
 
     public void addOrderCartonPriceBreakDown(List<CartonPriceBreakDown> cartonPriceBreakDowns){
-        orderDao.insertCartonPriceBreakDown(cartonPriceBreakDowns);
+       orderDao.insertCartonPriceBreakDown(cartonPriceBreakDowns);
     }
 
     public void addOrderUnitPriceBreakDown(List<UnitPriceBreakDown> unitPriceBreakDowns){
-        orderDao.insertUnitPriceBreakDown(unitPriceBreakDowns);
+      orderDao.insertUnitPriceBreakDown(unitPriceBreakDowns);
     }
-    public void updateOrderItems(List<OrderDetail> orderDetails){
-        orderDao.updateOrderItems(orderDetails);
+    public Completable updateOrderItems(List<OrderDetail> orderDetails){
+        return Completable.fromAction(()->orderDao.updateOrderItems(orderDetails));
     }
 
     public void deleteOrderItemsByGroup(Long orderId,Long groupId){
         orderDao.deleteOrderItemsByGroup(orderId,groupId);
     }
 
-    public void deleteOrderItems(Long orderId){
+    public Completable deleteOrderItems(Long orderId){
+       return Completable.fromAction(()->orderDao.deleteOrderItems(orderId));
+    }
+
+    public void deletePreviousItems(Long orderId){
         orderDao.deleteOrderItems(orderId);
     }
 
@@ -93,8 +89,8 @@ public class OrderBookingRepository {
         return orderDao.getOrderWithItems(outletId);
     }
 
-    public void updateOrder(Order order){
-        orderDao.updateOrder(order);
+    public Completable updateOrder(Order order){
+        return Completable.fromAction(()->orderDao.updateOrder(order));
     }
 
 

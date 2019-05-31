@@ -1,14 +1,10 @@
 package com.optimus.eds.db.dao;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
-import android.icu.text.Replaceable;
 
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.Order;
@@ -20,7 +16,6 @@ import java.util.List;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import retrofit2.http.DELETE;
 
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
@@ -41,6 +36,7 @@ public interface OrderDao {
             " where c_outletId=:outletId AND mOutletId=:outletId")
     @Transaction
     Maybe<OrderModel> getOrderWithItems(long outletId);
+
 
     @Insert(onConflict = REPLACE)
     void insertOrder(Order order);
@@ -68,4 +64,7 @@ public interface OrderDao {
 
     @Query("Delete From 'OrderDetail' WHERE fk_oid=:orderId")
     void deleteOrderItems(Long orderId);
+
+
+
 }

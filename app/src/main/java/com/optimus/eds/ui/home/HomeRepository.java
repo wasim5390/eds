@@ -22,11 +22,8 @@ import com.optimus.eds.utils.PreferenceUtil;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeRepository {

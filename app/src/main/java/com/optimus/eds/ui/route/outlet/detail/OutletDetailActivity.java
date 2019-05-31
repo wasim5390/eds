@@ -22,7 +22,6 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.CustomObject;
 import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.order.OrderBookingActivity;
-import com.optimus.eds.ui.merchandize.OutletMerchandizeActivity;
 import com.optimus.eds.utils.Util;
 
 

@@ -1,5 +1,7 @@
 package com.optimus.eds.ui.cash_memo;
 
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Relation;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -8,10 +10,16 @@ import android.widget.TextView;
 
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
+import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.UnitPriceBreakDown;
+import com.optimus.eds.model.PriceBreakDownModel;
 import com.optimus.eds.utils.Util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import butterknife.ButterKnife;
 
@@ -36,46 +44,67 @@ public class CashMemoRateView extends LinearLayout {
 
     }
 
-    public void setRates(PriceBreakDown priceBreakDown){
-        if(priceBreakDown.isPriceEmpty())
-            return;
-        if(Util.isListEmpty(priceBreakDown.getCartonPriceBreakDownList()))
+    public void setRates(OrderDetail orderDetail){
+        if(Util.isListEmpty(orderDetail.getUnitPriceBreakDown()) && Util.isListEmpty(orderDetail.getCartonPriceBreakDown()))
             return;
         LayoutInflater inflater =  LayoutInflater.from(getContext());
 
-        for(CartonPriceBreakDown priceBreakDown1:priceBreakDown.getCartonPriceBreakDownList()){
+        HashMap<Integer,List<Object>> listHashMap =calculate(orderDetail.getCartonPriceBreakDown(),orderDetail.getUnitPriceBreakDown());
+
+        for (Map.Entry<Integer, List<Object>> entry : listHashMap.entrySet())
+        {
             LinearLayout rateView = (LinearLayout) inflater.inflate(R.layout.rate_child_layout,null);
-            TextView title = (TextView)rateView.findViewById(R.id.productRate);
-            TextView rate = (TextView)rateView.findViewById(R.id.tvProductRate);
-            rate.setText(priceBreakDown1.getBlockPrice()+"");
-            title.setText(priceBreakDown1.getPriceConditionType());
-            this.addView(rate);
+            TextView title = rateView.findViewById(R.id.productRate);
+            TextView rate = rateView.findViewById(R.id.tvProductRate);
+            Float unitPrice=0f,cartonPrice=0f;
+            String type="";
+            for(Object breakDown:entry.getValue()) {
+
+                if(breakDown instanceof CartonPriceBreakDown) {
+                    cartonPrice = ((CartonPriceBreakDown) breakDown).getBlockPrice();
+                    type = ((CartonPriceBreakDown) breakDown).getPriceConditionType();
+                }
+                else {
+                    unitPrice = ((UnitPriceBreakDown) breakDown).getBlockPrice();
+                    type = ((UnitPriceBreakDown) breakDown).getPriceConditionType();
+                }
+            }
+            rate.setText(cartonPrice + "/"+unitPrice);
+            title.setText(type);
+            this.addView(rateView);
         }
+
+
     }
 
-    public static class PriceBreakDown{
-        public List<UnitPriceBreakDown> getUnitPriceBreakDowns() {
-            return unitPriceBreakDowns;
+
+    public HashMap<Integer,List<Object>> calculate(List<CartonPriceBreakDown> cartonPriceBreakDownList,List<UnitPriceBreakDown> unitPriceBreakDownList){
+        List<Object> breakDowns = new ArrayList<>();
+        breakDowns.addAll(cartonPriceBreakDownList==null?new ArrayList<>():cartonPriceBreakDownList);
+        breakDowns.addAll(unitPriceBreakDownList==null?new ArrayList<>():unitPriceBreakDownList);
+
+        HashMap<Integer, List<Object>> hashMap = new HashMap();
+        for (Object breakDown:breakDowns){
+            Integer key;
+            if(breakDown instanceof CartonPriceBreakDown)
+                key=((CartonPriceBreakDown) breakDown).getPriceConditionId();
+            else
+                key = ((UnitPriceBreakDown) breakDown).getPriceConditionId();
+
+            if (!hashMap.containsKey(key)) {
+                List<Object> list = new ArrayList<>();
+                list.add(breakDown);
+
+                hashMap.put(key, list);
+            } else {
+                hashMap.get(key).add(breakDown);
+            }
         }
-
-        public void setUnitPriceBreakDowns(List<UnitPriceBreakDown> unitPriceBreakDowns) {
-            this.unitPriceBreakDowns = unitPriceBreakDowns;
-        }
-
-        public List<CartonPriceBreakDown> getCartonPriceBreakDownList() {
-            return cartonPriceBreakDownList;
-        }
-
-        public void setCartonPriceBreakDownList(List<CartonPriceBreakDown> cartonPriceBreakDownList) {
-            this.cartonPriceBreakDownList = cartonPriceBreakDownList;
-        }
-
-        List<UnitPriceBreakDown> unitPriceBreakDowns;
-        List<CartonPriceBreakDown> cartonPriceBreakDownList;
-
-        public boolean isPriceEmpty(){
-            return (Util.isListEmpty(getCartonPriceBreakDownList()) && Util.isListEmpty(getUnitPriceBreakDowns()));
-        }
-
+        return hashMap;
     }
+
+
+
+
+
 }
