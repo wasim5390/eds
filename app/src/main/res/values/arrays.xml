@@ -10,7 +10,7 @@
     <string-array name="asset_verification">
         <item></item>
         <item>Scanning Not being done</item>
+        <item>No Asset</item>
         <item>No Barcode</item>
-        <item>No Cooler</item>
     </string-array>
 </resources>

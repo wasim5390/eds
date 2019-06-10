@@ -157,8 +157,8 @@ public class ImageCropperActivity extends BaseActivity {
      * Save cropped image and send image path back to calling activity
      */
     private void saveCroppedImage() {
-        boolean saved = saveOutput();
-        if (saved) {
+      //  boolean saved = saveOutput();
+        if (mImageUri!=null) {
             Intent intent = new Intent();
             intent.putExtra(Constant.IntentExtras.IMAGE_PATH, mImagePath);
             setResult(RESULT_OK, intent);
@@ -290,7 +290,7 @@ public class ImageCropperActivity extends BaseActivity {
             try {
                 outputStream = mContentResolver.openOutputStream(mImageUri);
                 if (outputStream != null) {
-                    croppedImage.compress(mOutputFormat, 80, outputStream);
+                    croppedImage.compress(mOutputFormat, 70, outputStream);
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();

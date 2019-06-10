@@ -23,6 +23,7 @@ import com.optimus.eds.ui.order.OrderBookingActivity;
 import com.optimus.eds.ui.camera.ImageCropperActivity;
 import com.optimus.eds.ui.merchandize.coolerverification.AssetsVerificationActivity;
 import com.optimus.eds.ui.merchandize.planogaram.ImageDialog;
+import com.optimus.eds.utils.Util;
 
 import java.io.File;
 import java.util.List;
@@ -30,6 +31,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import id.zelory.compressor.Compressor;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class OutletMerchandizeActivity extends BaseActivity {
 
@@ -98,12 +102,12 @@ public class OutletMerchandizeActivity extends BaseActivity {
     private void onOutletLoaded(Outlet outlet) {
         tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
     }
-    public void removeImage(MerchandiseItem item){
+    public void removeImage(MerchandiseImage item){
         viewModel.removeImage(item);
     }
 
-    private void updateMerchandiseList(List<MerchandiseItem> merchandiseItems) {
-        merchandiseAdapter.populateMerchandise(merchandiseItems);
+    private void updateMerchandiseList(List<MerchandiseImage> merchandiseImages) {
+        merchandiseAdapter.populateMerchandise(merchandiseImages);
     }
 
     private void setProgress(boolean isLoading) {
@@ -145,7 +149,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
 
     @OnClick(R.id.btnAssetVerification)
     public void coolerVerification(){
-        AssetsVerificationActivity.start(this);
+        AssetsVerificationActivity.start(this,outletId);
     }
 
     @OnClick(R.id.btnBeforeMerchandize)
@@ -183,10 +187,28 @@ public class OutletMerchandizeActivity extends BaseActivity {
                         // @TODO send to server and show in adapter
                         Log.e("ImagePath",imagePath);
                         File imageFile = new File(imagePath);
-                        viewModel.saveImages(imagePath,type);
+                        compress(imagePath,type);
                     }
                     break;
             }
         }
     }
+
+    public void compress(String actualImagePath,int type){
+        File actualImage = new File(actualImagePath);
+        new Compressor(this)
+                .compressToFileAsFlowable(actualImage)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        file ->{
+                            if(Util.moveFile(file,actualImage.getParentFile()))
+                                viewModel.saveImages(actualImage.getPath(),type
+                                );}, throwable -> {
+                            throwable.printStackTrace();
+                            Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
+    }
+
+
 }

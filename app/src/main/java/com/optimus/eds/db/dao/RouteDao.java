@@ -7,6 +7,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.optimus.eds.db.entities.Asset;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
 
@@ -18,7 +19,7 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 
 @Dao
-public interface RouteDao {
+public interface RouteDao extends MerchandiseDao{
 
     @Query("SELECT * FROM Route ORDER BY mRouteName ASC")
     LiveData<List<Route>> findAllRoutes();
@@ -60,6 +61,9 @@ public interface RouteDao {
     @Insert(onConflict = REPLACE)
     void insertOutlets(List<Outlet> outlets);
 
+    @Insert(onConflict = REPLACE)
+    void insertAssets(List<Asset> assets);
+
     @Update
     int updateOutlet(Outlet outlet);
 
@@ -74,4 +78,6 @@ public interface RouteDao {
 
     @Query("DELETE FROM Route")
     void deleteAllRoutes();
+
+
 }

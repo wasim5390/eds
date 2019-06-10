@@ -23,15 +23,15 @@ import butterknife.ButterKnife;
 public class MerchandiseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<MerchandiseItem> merchandiseItems;
+    private List<MerchandiseImage> merchandiseImages;
 
     public MerchandiseAdapter(Context context) {
         this.mContext = context;
-        this.merchandiseItems = new ArrayList<>();
+        this.merchandiseImages = new ArrayList<>();
     }
 
-    public void populateMerchandise(List<MerchandiseItem> merchandiseItems) {
-        this.merchandiseItems = merchandiseItems;
+    public void populateMerchandise(List<MerchandiseImage> merchandiseImages) {
+        this.merchandiseImages = merchandiseImages;
         notifyDataSetChanged();
     }
 
@@ -47,8 +47,8 @@ public class MerchandiseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         MerchandiseListHolder merchandiseListHolder = (MerchandiseListHolder) holder;
-        MerchandiseItem merchandiseItem = merchandiseItems.get(position);
-        File imgFile = new File(merchandiseItem.path);
+        MerchandiseImage merchandiseImage = merchandiseImages.get(position);
+        File imgFile = new File(merchandiseImage.path);
 //
 //        if (imgFile.exists()) {
 //            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
@@ -59,14 +59,14 @@ public class MerchandiseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         merchandiseListHolder.deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((OutletMerchandizeActivity) mContext).removeImage(merchandiseItem);
+                ((OutletMerchandizeActivity) mContext).removeImage(merchandiseImage);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return merchandiseItems.size();
+        return merchandiseImages.size();
     }
 
     static class MerchandiseListHolder extends RecyclerView.ViewHolder {

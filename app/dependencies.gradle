@@ -63,4 +63,7 @@ dependencies {
 
     implementation deps.butterknife.main
     annotationProcessor deps.butterknife.compiler
+
+    // Image Compressor
+    implementation deps.image_compressor
 }

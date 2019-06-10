@@ -46,52 +46,5 @@ public class OutletListRepository  {
     }
 
 
-    public void insertOutlets(List<Outlet> outlets){
-        Completable.create(e -> {
-            routeDao.insertOutlets(outlets);
-            e.onComplete();
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
 
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                });
-
-    }
-
-
-    public void insertRoutes(List<Route> routes){
-        Completable.create(e -> {
-            routeDao.insertRoutes(routes);
-            e.onComplete();
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                });
-
-    }
 }

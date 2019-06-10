@@ -15,6 +15,7 @@ import com.optimus.eds.db.dao.MerchandiseDao;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
+import com.optimus.eds.db.entities.Asset;
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.db.entities.Order;
@@ -27,7 +28,7 @@ import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.db.entities.UnitPriceBreakDown;
 
 
-@Database(entities = {Route.class, Outlet.class, Merchandise.class, ProductGroup.class, Product.class, Package.class, Order.class,
+@Database(entities = {Route.class, Outlet.class, Merchandise.class, Asset.class,ProductGroup.class, Product.class, Package.class, Order.class,
         OrderDetail.class, CartonPriceBreakDown.class, UnitPriceBreakDown.class,
 }, version = 1, exportSchema = false)
 @TypeConverters({OutletConverter.class, MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})

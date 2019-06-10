@@ -7,9 +7,12 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.optimus.eds.db.entities.Asset;
 import com.optimus.eds.db.entities.Merchandise;
 
 import java.util.List;
+
+import io.reactivex.Single;
 
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
@@ -21,7 +24,7 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 public interface MerchandiseDao {
 
 
-    @Query("SELECT * FROM Merchandise WHERE mOutletId=:outletId")
+    @Query("SELECT * FROM Merchandise WHERE outletId=:outletId")
     LiveData<List<Merchandise>> findMerchandiseByOutletId(Long outletId);
 
 
@@ -31,15 +34,19 @@ public interface MerchandiseDao {
     @Insert(onConflict = REPLACE)
     void insertMerchandise(List<Merchandise> merchandises);
 
-    @Update
-    int updateOutlet(Merchandise merchandise);
+    @Query("SELECT * FROM Asset WHERE outletId=:outletId")
+    Single<List<Asset>> findAllAssetsForOutlet(Long outletId);
 
     @Update
-    void updateOutlet(List<Merchandise> merchandises);
+    int updateMerchandise(Merchandise merchandise);
 
-    @Delete
-    void deleteOutlet(Merchandise outlet);
+    @Update
+    void updateMerchandise(List<Merchandise> merchandises);
 
-    @Query("DELETE FROM Outlet")
-    void deleteAll();
+    @Update
+    void updateAsset(Asset asset);
+
+
+    @Query("DELETE FROM Asset")
+    void deleteAllAssets();
 }

@@ -4,7 +4,7 @@ import android.arch.persistence.room.TypeConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.optimus.eds.ui.merchandize.MerchandiseItem;
+import com.optimus.eds.ui.merchandize.MerchandiseImage;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -17,15 +17,15 @@ import java.util.List;
 public class MerchandiseItemConverter {
 
     @TypeConverter
-    public static List<MerchandiseItem> fromString(String value) {
+    public static List<MerchandiseImage> fromString(String value) {
         if(value==null)
             return (null);
-        Type listType = new TypeToken<ArrayList<MerchandiseItem>>() {}.getType();
+        Type listType = new TypeToken<ArrayList<MerchandiseImage>>() {}.getType();
         return new Gson().fromJson(value, listType);
     }
 
     @TypeConverter
-    public static String fromList(List<MerchandiseItem> list) {
+    public static String fromList(List<MerchandiseImage> list) {
         Gson gson = new Gson();
         String json = gson.toJson(list);
         return json;

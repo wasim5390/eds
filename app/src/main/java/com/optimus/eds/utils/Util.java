@@ -11,10 +11,13 @@ import android.util.Patterns;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -217,6 +220,30 @@ public class Util {
 
     public static boolean isListEmpty(List list){
         return (list==null || list.isEmpty());
+    }
+
+    public static boolean moveFile(File file, File dir) throws Exception {
+        boolean fileMoved=false;
+        File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            file.delete();
+
+            fileMoved = true;
+        } catch (IOException exception){
+            fileMoved = false;
+        }
+        finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+            return fileMoved;
+
+        }
     }
 
 }

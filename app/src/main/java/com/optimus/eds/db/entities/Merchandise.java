@@ -1,9 +1,10 @@
 package com.optimus.eds.db.entities;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.optimus.eds.ui.merchandize.MerchandiseItem;
+import com.optimus.eds.ui.merchandize.MerchandiseImage;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.List;
 public class Merchandise implements Serializable {
 
     @PrimaryKey
+    @ColumnInfo(name = "outletId")
     private Long mOutletId;
 
-    private List<MerchandiseItem> mMerchandiseItems;
+    @ColumnInfo(name = "merchandiseImages")
+    private List<MerchandiseImage> mMerchandiseImages;
 
 
     public Long getOutletId() {
@@ -29,11 +32,11 @@ public class Merchandise implements Serializable {
         this.mOutletId = mOutletId;
     }
 
-    public List<MerchandiseItem> getMerchandiseItems() {
-        return mMerchandiseItems;
+    public List<MerchandiseImage> getMerchandiseImages() {
+        return mMerchandiseImages;
     }
 
-    public void setMerchandiseItems(List<MerchandiseItem> mMerchandiseItems) {
-        this.mMerchandiseItems = mMerchandiseItems;
+    public void setMerchandiseImages(List<MerchandiseImage> mMerchandiseImages) {
+        this.mMerchandiseImages = mMerchandiseImages;
     }
 }

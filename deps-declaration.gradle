@@ -41,6 +41,8 @@ versions.expandablerecyclerview = '1.4'
 
 versions.sectioned_recyclerview = '1.2.0'
 
+versions.image_compressor= '2.1.0'
+
 
 ext.versions = versions
 
@@ -153,6 +155,6 @@ deps.scanner = "me.dm7.barcodescanner:zxing:$versions.scanner"
 
 //deps.expandablerecyclerview = "com.thoughtbot:expandablerecyclerview:$versions.expandablerecyclerview"
 deps.expandablerecyclerview = "com.thoughtbot:expandablecheckrecyclerview:$versions.expandablerecyclerview"
-
+deps.image_compressor="id.zelory:compressor:$versions.image_compressor"
 
 ext.deps = deps

@@ -5,35 +5,42 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
+import com.optimus.eds.db.entities.Asset;
 import com.optimus.eds.ui.scanner.ScannerActivity;
 
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created By apple on 4/30/19
  */
-public class AssetsVerificationActivity extends BaseActivity {
+public class AssetsVerificationActivity extends BaseActivity implements AssetVerificationStatusListener {
 
     @BindView(R.id.rv_assets)
     RecyclerView recyclerView;
     @BindView(R.id.btnScanBarcode)
     Button btnScanBarcode;
+    private Long outletId;
     private AssetsVerificationAdapter assetsVerificationAdapter;
     private final int SCANNER_REQUEST_CODE = 0x0001;
 
     AssetsViewModel viewModel;
 
-    public static void start(Context context) {
+    public static void start(Context context,Long outletId) {
         Intent starter = new Intent(context, AssetsVerificationActivity.class);
+        starter.putExtra("OutletId",outletId);
         context.startActivity(starter);
     }
 
@@ -45,25 +52,18 @@ public class AssetsVerificationActivity extends BaseActivity {
     @Override
     public void created(Bundle savedInstanceState) {
         ButterKnife.bind(this);
-        setToolbar(getString(R.string.cooler_verification));
+        setToolbar(getString(R.string.asset_verification));
         initAssetsAdapter();
+        outletId =  getIntent().getLongExtra("OutletId",0);
         viewModel = ViewModelProviders.of(this).get(AssetsViewModel.class);
+        viewModel.loadAssets(outletId).observe(this, assets -> updateAssets(assets));
 
-
-        viewModel.getCoolerAssets().observe(this, new Observer<List<CoolerAsset>>() {
-            @Override
-            public void onChanged(@Nullable List<CoolerAsset> coolerAssets) {
-                updateAssets(coolerAssets);
-            }
-        });
-
-        viewModel.getAssets();
 
 
     }
 
-    private void updateAssets(List<CoolerAsset> merchandiseItems) {
-        assetsVerificationAdapter.populateAssets(merchandiseItems);
+    private void updateAssets(List<Asset> assets) {
+        assetsVerificationAdapter.populateAssets(assets);
     }
 
     private void initAssetsAdapter() {
@@ -71,7 +71,7 @@ public class AssetsVerificationActivity extends BaseActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-        assetsVerificationAdapter = new AssetsVerificationAdapter(this);
+        assetsVerificationAdapter = new AssetsVerificationAdapter(this,this);
         recyclerView.setAdapter(assetsVerificationAdapter);
         recyclerView.setNestedScrollingEnabled(false);
     }
@@ -95,5 +95,12 @@ public class AssetsVerificationActivity extends BaseActivity {
             }
         }
     }
+
+    @Override
+    public void onStatusChange(Asset asset) {
+        viewModel.updateAsset(asset);
+    }
+
+
 
 }

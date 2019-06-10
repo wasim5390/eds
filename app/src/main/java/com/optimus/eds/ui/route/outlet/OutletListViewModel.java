@@ -78,59 +78,6 @@ public class OutletListViewModel extends AndroidViewModel {
 
         return routeList;
     }
-
-    public void insertIntoDb() {
-        List<Outlet> outlets = new ArrayList<>();
-        List<Route> routes = new ArrayList<>();
-        Outlet outlet;
-        for(int i=0; i<10;i++){
-            outlet = new Outlet();
-            outlet.setRouteId(1023L);
-            outlet.setOutletCode("Bkt"+String.valueOf(new Random(126*i).nextInt()));
-            outlet.setOutletName("Shop "+ i);
-            outlet.setAddress("Main boulevard Iqbal town, lhr");
-            outlet.setOutletId((Long.valueOf(new Random(16*i).nextInt())));
-           // outlet.setLastSaleDate(new Date().getTime());
-            outlet.setVisitFrequency((i+1));
-            outlet.setTotalAmount(12030*i/1.00);
-            outlets.add(outlet);
-        }
-
-        repository.insertOutlets(outlets);
-
-        Route route = new Route();
-        route.setRouteId(1023L);
-        route.setRouteName("Barkat Market");
-
-        routes.add(route);
-
-        /******************/
-        for(int i=0; i<10;i++){
-            outlet = new Outlet();
-            outlet.setRouteId(101023L);
-            outlet.setOutletCode("IQB"+String.valueOf(new Random(136*i).nextInt()));
-            outlet.setOutletName("Shop_IQB "+ i);
-            outlet.setAddress("Main boulevard Iqbal town, lhr");
-            outlet.setOutletId((Long.valueOf(new Random(36*i).nextInt())));
-           // outlet.setLastSaleDate(new Date().getTime());
-            outlet.setVisitFrequency((i+1));
-            outlet.setTotalAmount(12030*i/1.00);
-            outlets.add(outlet);
-        }
-        repository.insertOutlets(outlets);
-
-         route = new Route();
-        route.setRouteId(101023L);
-        route.setRouteName("Moon Market");
-
-        routes.add(route);
-        repository.insertRoutes(routes);
-
-
-
-    }
-
-
     private void onError(Throwable throwable) {
         isLoading.setValue(false);
         errorMsg.setValue(throwable.getMessage());

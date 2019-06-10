@@ -41,7 +41,7 @@
     <string name="after_merchandize">After Merchandize</string>
     <string name="before_merchandize">Before Merchandize</string>
     <string name="show_planogram">Show Planogram</string>
-    <string name="cooler_verification">Cooler Verification</string>
+    <string name="asset_verification">Asset Verification</string>
     <string name="customer_complaint">Customer Complaint</string>
     <string name="scanner">Scanner</string>
     <string name="mobile_number_for_order">Mobile No. for Order:</string>
@@ -49,7 +49,7 @@
     <string name="remarks_hint">Type Remarks Here</string>
     <string name="complete_order">Complete Order</string>
     <string name="no_order_reason">Reason For No Sale</string>
-    <string name="asset_code">Cooler Code</string>
+    <string name="asset_code">Asset Code</string>
     <string name="verification">Verification</string>
     <string name="reason">Reason</string>
     <string name="scan_barcode">Barcode Scan</string>

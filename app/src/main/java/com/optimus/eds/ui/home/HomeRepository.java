@@ -84,8 +84,10 @@ public class HomeRepository {
                 if(response.isSuccessful()){
                     routeDao.deleteAllRoutes();
                     routeDao.deleteAllOutlets();
+                    routeDao.deleteAllAssets();
                     routeDao.insertRoutes(response.body().getRouteList());
                     routeDao.insertOutlets(response.body().getOutletList());
+                    routeDao.insertAssets(response.body().getAssetList());
 
                 }
                 else{

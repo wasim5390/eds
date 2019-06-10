@@ -34,18 +34,15 @@ public class OrderBookingRepository {
     private ProductsDao productsDao;
     private MutableLiveData<List<ProductGroup>> allGroups;
 
-    private API webService;
-    private Executor executor;
 
     public static OrderBookingRepository singleInstance(Application application, API api, Executor executor){
         if(repository==null)
-            repository = new OrderBookingRepository(application,api,executor);
+            repository = new OrderBookingRepository(application);
         return repository;
     }
 
-    public OrderBookingRepository(Application application, API api, Executor executor) {
-        webService = api;
-        this.executor = executor;
+    public OrderBookingRepository(Application application) {
+
         AppDatabase appDatabase = AppDatabase.getDatabase(application);
         productsDao = appDatabase.productsDao();
         orderDao = appDatabase.orderDao();

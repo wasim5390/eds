@@ -7,7 +7,8 @@ import java.io.Serializable;
  */
 
 
-public class MerchandiseItem implements Serializable {
+
+public class MerchandiseImage implements Serializable {
 
     int id;
     String path;

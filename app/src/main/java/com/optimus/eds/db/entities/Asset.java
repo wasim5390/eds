@@ -2,6 +2,7 @@
 package com.optimus.eds.db.entities;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
@@ -12,9 +13,9 @@ import java.io.Serializable;
 @Entity
 public class Asset implements Serializable {
 
-
     @SerializedName("outletId")
     private Long outletId;
+
     @SerializedName("assetId")
     @PrimaryKey
     private Long mAssetId;
@@ -40,6 +41,61 @@ public class Asset implements Serializable {
     private Double mDeposit;
     @SerializedName("documentNumber")
     private String mDocumentNumber;
+
+    public void setAssetModel(String mAssetModel) {
+        this.mAssetModel = mAssetModel;
+    }
+
+
+    public void setAssetName(String mAssetName) {
+        this.mAssetName = mAssetName;
+    }
+
+    public void setAssetNumber(String mAssetNumber) {
+        this.mAssetNumber = mAssetNumber;
+    }
+
+    public void setAssetType(String mAssetType) {
+        this.mAssetType = mAssetType;
+    }
+
+
+    public void setAssignedDate(Long mAssignedDate) {
+        this.mAssignedDate = mAssignedDate;
+    }
+
+    public void setAssignmentCode(String mAssignmentCode) {
+        this.mAssignmentCode = mAssignmentCode;
+    }
+
+    public void setCost(Double mCost) {
+        this.mCost = mCost;
+    }
+
+    public void setDeposit(Double mDeposit) {
+        this.mDeposit = mDeposit;
+    }
+
+    public void setDocumentNumber(String mDocumentNumber) {
+        this.mDocumentNumber = mDocumentNumber;
+    }
+
+    public void setExpiryDate(Long mExpiryDate) {
+        this.mExpiryDate = mExpiryDate;
+    }
+
+    public void setReturnDate(Long mReturnDate) {
+        this.mReturnDate = mReturnDate;
+    }
+
+    public void setSerialNumber(String mSerialNumber) {
+        this.mSerialNumber = mSerialNumber;
+    }
+
+    public void setTransactionType(String mTransactionType) {
+        this.mTransactionType = mTransactionType;
+    }
+
     @SerializedName("expiryDate")
     private Long mExpiryDate;
     @SerializedName("returnDate")
@@ -48,6 +104,19 @@ public class Asset implements Serializable {
     private String mSerialNumber;
     @SerializedName("TransactionType")
     private String mTransactionType;
+
+
+    public String getReason() {
+        return reason==null?"":reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    private String reason;
+    @Ignore
+    private Boolean verified;
 
     public Long getOutletId() {
         return outletId;
@@ -98,7 +167,9 @@ public class Asset implements Serializable {
     public String getAssignmentCode() {
         return mAssignmentCode;
     }
-
+    public void setAssetId(Long mAssetId) {
+        this.mAssetId = mAssetId;
+    }
     public Double getCost() {
         return mCost;
     }
@@ -126,6 +197,12 @@ public class Asset implements Serializable {
     public String getTransactionType() {
         return mTransactionType;
     }
+    public Boolean getVerified() {
+        return verified==null?false:verified;
+    }
 
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
 
 }
