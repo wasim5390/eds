@@ -1,4 +1,4 @@
-package com.optimus.eds.ui.merchandize.coolerverification;
+package com.optimus.eds.ui.merchandize.asset_verification;
 
 import com.optimus.eds.db.entities.Asset;
 

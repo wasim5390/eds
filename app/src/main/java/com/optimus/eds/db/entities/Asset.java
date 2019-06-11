@@ -115,7 +115,7 @@ public class Asset implements Serializable {
     }
 
     private String reason;
-    @Ignore
+
     private Boolean verified;
 
     public Long getOutletId() {
@@ -191,7 +191,7 @@ public class Asset implements Serializable {
     }
 
     public String getSerialNumber() {
-        return mSerialNumber;
+        return mSerialNumber==null?"":mSerialNumber;
     }
 
     public String getTransactionType() {

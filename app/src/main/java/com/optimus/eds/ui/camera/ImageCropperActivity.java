@@ -134,11 +134,6 @@ public class ImageCropperActivity extends BaseActivity {
                         getIntent().removeExtra("ACTION");
                         takePic();
                         return;
-                    case Constant.IntentExtras.ACTION_GALLERY:
-                        getIntent().removeExtra("ACTION");
-                        pickImage();
-                        mImageUri = Util.getImageUri(mImagePath);
-                        return;
                 }
             }
         }
@@ -157,8 +152,8 @@ public class ImageCropperActivity extends BaseActivity {
      * Save cropped image and send image path back to calling activity
      */
     private void saveCroppedImage() {
-      //  boolean saved = saveOutput();
-        if (mImageUri!=null) {
+        boolean saved = saveOutput();
+        if (saved) {
             Intent intent = new Intent();
             intent.putExtra(Constant.IntentExtras.IMAGE_PATH, mImagePath);
             setResult(RESULT_OK, intent);
@@ -221,17 +216,6 @@ public class ImageCropperActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Choose pic from gallery
-     */
-    private void pickImage() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
-        try {
-            startActivityForResult(intent, REQUEST_CODE_PICK_GALLERY);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, "No image source available", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
@@ -253,27 +237,6 @@ public class ImageCropperActivity extends BaseActivity {
                 errored();
             }
 
-        } else if (requestCode == REQUEST_CODE_PICK_GALLERY) {
-            if (resultCode == RESULT_CANCELED) {
-                userCancelled();
-                return;
-            } else if (resultCode == RESULT_OK) {
-                try {
-                    InputStream inputStream = getContentResolver().openInputStream(result.getData()); // Got the bitmap .. Copy it to the temp file for cropping
-                    FileOutputStream fileOutputStream = new FileOutputStream(mFileTemp);
-                    Util.copyStream(inputStream, fileOutputStream);
-                    fileOutputStream.close();
-                    inputStream.close();
-                    mImagePath = mFileTemp.getPath();
-                    mImageUri = Util.getImageUri(mImagePath);
-                    mImageView.setImageUriAsync(mImageUri);
-                } catch (Exception e) {
-                    errored();
-                }
-            } else {
-                errored();
-            }
-
         }
     }
 
@@ -290,7 +253,7 @@ public class ImageCropperActivity extends BaseActivity {
             try {
                 outputStream = mContentResolver.openOutputStream(mImageUri);
                 if (outputStream != null) {
-                    croppedImage.compress(mOutputFormat, 70, outputStream);
+                    croppedImage.compress(mOutputFormat, 80, outputStream);
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();

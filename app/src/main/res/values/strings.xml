@@ -82,5 +82,7 @@
     <string name="unit">Unit(s)</string>
     <string name="carton_s">Carton(s)</string>
     <string name="edit">Edit Order</string>
+    <string name="scanned">Scanned</string>
+    <string name="enter_remarks_here">Enter Remarks Here</string>
 
 </resources>

@@ -20,6 +20,9 @@ public class Merchandise implements Serializable {
     @ColumnInfo(name = "outletId")
     private Long mOutletId;
 
+    @ColumnInfo(name = "remarks")
+    private String mRemarks;
+
     @ColumnInfo(name = "merchandiseImages")
     private List<MerchandiseImage> mMerchandiseImages;
 
@@ -38,5 +41,13 @@ public class Merchandise implements Serializable {
 
     public void setMerchandiseImages(List<MerchandiseImage> mMerchandiseImages) {
         this.mMerchandiseImages = mMerchandiseImages;
+    }
+
+    public String getRemarks() {
+        return mRemarks==null?"":mRemarks;
+    }
+
+    public void setRemarks(String mRemarks) {
+        this.mRemarks = mRemarks;
     }
 }

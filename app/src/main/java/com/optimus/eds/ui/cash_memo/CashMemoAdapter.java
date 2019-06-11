@@ -29,7 +29,6 @@ public class CashMemoAdapter extends
     public void populateCartItems(List<OrderDetailAndPriceBreakdown> products) {
         this.products = products;
         notifyDataSetChanged();
-
     }
 
     @NonNull

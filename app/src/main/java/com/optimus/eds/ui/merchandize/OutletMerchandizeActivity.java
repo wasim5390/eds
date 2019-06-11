@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +22,7 @@ import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.ui.order.OrderBookingActivity;
 import com.optimus.eds.ui.camera.ImageCropperActivity;
-import com.optimus.eds.ui.merchandize.coolerverification.AssetsVerificationActivity;
+import com.optimus.eds.ui.merchandize.asset_verification.AssetsVerificationActivity;
 import com.optimus.eds.ui.merchandize.planogaram.ImageDialog;
 import com.optimus.eds.utils.Util;
 
@@ -47,6 +48,8 @@ public class OutletMerchandizeActivity extends BaseActivity {
     Button btnNext;
     @BindView(R.id.tvName)
     TextView tvOutletName;
+    @BindView(R.id.etRemarks)
+    EditText etRemarks;
     private MerchandiseAdapter merchandiseAdapter;
     private Long outletId;
     private static final int REQUEST_CODE_IMAGE = 0x0005;
@@ -74,7 +77,13 @@ public class OutletMerchandizeActivity extends BaseActivity {
         outletId =  getIntent().getLongExtra("OutletId",0);
         viewModel = ViewModelProviders.of(this).get(MerchandiseViewModel.class);
         viewModel.loadOutlet(outletId).observe(this, outlet -> onOutletLoaded(outlet));
-        viewModel.getmMerchandise().observe(this, merchandiseItems -> {
+        viewModel.loadMerchandise(outletId).observe(this,merchandise -> {
+            etRemarks.setText(merchandise.getRemarks());
+            updateMerchandiseList(merchandise.getMerchandiseImages());
+
+        });
+
+        viewModel.getMerchandiseImages().observe(this, merchandiseItems -> {
             updateMerchandiseList(merchandiseItems);
         });
 
@@ -101,6 +110,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
     }
     private void onOutletLoaded(Outlet outlet) {
         tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
+
     }
     public void removeImage(MerchandiseImage item){
         viewModel.removeImage(item);
@@ -131,7 +141,8 @@ public class OutletMerchandizeActivity extends BaseActivity {
 
     @OnClick(R.id.btnNext)
     public void onNextClick(){
-        viewModel.insertMerchandiseIntoDB(outletId);
+        String remarks = etRemarks.getText().toString();
+        viewModel.insertMerchandiseIntoDB(outletId,remarks);
     }
 
 
@@ -202,9 +213,9 @@ public class OutletMerchandizeActivity extends BaseActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         file ->{
-                            if(Util.moveFile(file,actualImage.getParentFile()))
-                                viewModel.saveImages(actualImage.getPath(),type
-                                );}, throwable -> {
+                            //if(Util.moveFile(file,actualImage.getParentFile()))
+                                viewModel.saveImages(file.getPath(),
+                                        Util.imageFileToBase64(file),type);}, throwable -> {
                             throwable.printStackTrace();
                             Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         });

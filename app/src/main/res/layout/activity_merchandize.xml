@@ -79,14 +79,14 @@
                     app:layout_constraintTop_toTopOf="@+id/name" />
 
                 <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/tvRemarks"
+                    android:id="@+id/etRemarks"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:background="@drawable/input_bg"
                     android:focusableInTouchMode="true"
                     android:gravity="top"
-                    android:hint="Enter Remarks Here"
+                    android:hint="@string/enter_remarks_here"
                     android:minHeight="80dp"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"

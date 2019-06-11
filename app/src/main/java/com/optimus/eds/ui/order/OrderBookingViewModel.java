@@ -67,7 +67,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
         super(application);
         disposable = new CompositeDisposable();
         webservice = RetrofitHelper.getInstance().getApi();
-        repository = OrderBookingRepository.singleInstance(application, webservice,Executors.newSingleThreadExecutor());
+        repository = OrderBookingRepository.singleInstance(application);
         outletDetailRepository = new OutletDetailRepository(application);
         mutablePkgList = new MutableLiveData<>();
         msg = new MutableLiveData<>();

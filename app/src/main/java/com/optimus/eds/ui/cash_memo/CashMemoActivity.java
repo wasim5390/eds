@@ -110,7 +110,7 @@ public class CashMemoActivity extends BaseActivity {
 
     @OnClick(R.id.btnNext)
     public void navigateToCustomerInput(){
-        CustomerInputActivity.start(this);
+        CustomerInputActivity.start(this,outletId);
     }
 
     @OnClick(R.id.btnAddPackages)

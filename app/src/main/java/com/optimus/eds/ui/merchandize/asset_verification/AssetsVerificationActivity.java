@@ -1,11 +1,9 @@
-package com.optimus.eds.ui.merchandize.coolerverification;
+package com.optimus.eds.ui.merchandize.asset_verification;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,9 +17,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created By apple on 4/30/19
@@ -56,8 +51,8 @@ public class AssetsVerificationActivity extends BaseActivity implements AssetVer
         initAssetsAdapter();
         outletId =  getIntent().getLongExtra("OutletId",0);
         viewModel = ViewModelProviders.of(this).get(AssetsViewModel.class);
-        viewModel.loadAssets(outletId).observe(this, assets -> updateAssets(assets));
-
+        viewModel.loadAssets(outletId);
+        viewModel.getAssets().observe(this,assets -> updateAssets(assets));
 
 
     }
@@ -88,9 +83,9 @@ public class AssetsVerificationActivity extends BaseActivity implements AssetVer
 
         if(resultCode==RESULT_OK){
             switch (requestCode){
-
                 case SCANNER_REQUEST_CODE:
                     String barcode = data.getStringExtra(KEY_SCANNER_RESULT);
+                    viewModel.verifyAsset(barcode);
                     break;
             }
         }

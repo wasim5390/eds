@@ -69,7 +69,7 @@ public class HomeRepository {
 
             @Override
             public void onError(Throwable e) {
-
+                isLoading.postValue(false);
             }
         });
 

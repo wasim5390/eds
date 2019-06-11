@@ -49,19 +49,9 @@ public class MerchandiseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         MerchandiseListHolder merchandiseListHolder = (MerchandiseListHolder) holder;
         MerchandiseImage merchandiseImage = merchandiseImages.get(position);
         File imgFile = new File(merchandiseImage.path);
-//
-//        if (imgFile.exists()) {
-//            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-//            merchandiseListHolder.imageView.setImageBitmap(myBitmap);
-//        }
 
         Picasso.get().load(imgFile).fit().into(merchandiseListHolder.imageView);
-        merchandiseListHolder.deleteImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((OutletMerchandizeActivity) mContext).removeImage(merchandiseImage);
-            }
-        });
+        merchandiseListHolder.deleteImageView.setOnClickListener(view -> ((OutletMerchandizeActivity) mContext).removeImage(merchandiseImage));
     }
 
     @Override

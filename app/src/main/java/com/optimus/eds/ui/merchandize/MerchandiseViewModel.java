@@ -27,9 +27,9 @@ public class MerchandiseViewModel extends AndroidViewModel {
 
     private MerchandiseRepository repository;
     private OutletDetailRepository outletDetailRepository;
-    private int imagesCount;
-    private MutableLiveData<List<MerchandiseImage>> mMerchandise;
-    private List<MerchandiseImage> list;
+    private int imagesCount=0;
+    private MutableLiveData<List<MerchandiseImage>> imagesLiveDate;
+    private List<MerchandiseImage> listImages;
     private MutableLiveData<Boolean> isSaved;
     private MutableLiveData<Boolean> inProgress;
     private MutableLiveData<Boolean> enableAfterMerchandiseButton;
@@ -42,12 +42,11 @@ public class MerchandiseViewModel extends AndroidViewModel {
         super(application);
         repository = new MerchandiseRepository(application);
         outletDetailRepository = new OutletDetailRepository(application);
-        mMerchandise = new MutableLiveData<>();
-        imagesCount=0;
-        list=new ArrayList<>();
+        listImages=new ArrayList<>();
         isSaved = new MutableLiveData<>();
         inProgress = new MutableLiveData<>();
         enableAfterMerchandiseButton = new MutableLiveData<>();
+        imagesLiveDate = new MutableLiveData<>();
         enableNextButton = new MutableLiveData<>();
         lessImages = new MutableLiveData<>();
         mPlanogram = new MutableLiveData<>();
@@ -61,42 +60,63 @@ public class MerchandiseViewModel extends AndroidViewModel {
 
     }
 
-    public void saveImages(String path, int type) {
+    public void saveImages(String path,String base64Image, int type) {
 
         imagesCount++;
         MerchandiseImage item = new MerchandiseImage();
         item.setId(imagesCount);
+        item.setBase64Image(base64Image);
         item.setPath(path);
         item.setType(type);
-        list.add(item);
 
+        listImages.add(item);
+
+        setEnableNextButton(type);
+
+    }
+
+    private void setEnableNextButton(int type){
         enableAfterMerchandiseButton.setValue(true);
-        if(list.size()>1 && item.getType()==1){
+        if(listImages.size()>1 && type==1){
             enableNextButton.setValue(true);
         }
-
-        mMerchandise.setValue(list);
+        imagesLiveDate.setValue(listImages);
     }
 
 
 
 
 
-    public void insertMerchandiseIntoDB(Long outletId){
+    public void insertMerchandiseIntoDB(Long outletId,String remarks){
 
-        if(list.size()>=3) {
+        if(listImages.size()>=3) {
             inProgress.postValue(true);
-            saveMerchandise(outletId, mMerchandise.getValue());
+            saveMerchandise(outletId, remarks,imagesLiveDate.getValue());
         }else {
             lessImages.setValue(true);
         }
     }
 
-    public void saveMerchandise(Long outletId, List<MerchandiseImage> merchandiseImages){
+    public LiveData<Merchandise> loadMerchandise(Long outletId){
+        MutableLiveData<Merchandise> mutableLiveData = new MutableLiveData<>();
+        repository.findMerchandise(outletId).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(merchandise -> {
+                    listImages.clear();
+                    listImages.addAll(merchandise.getMerchandiseImages());
+                    imagesCount=listImages.size();
+                    mutableLiveData.postValue(merchandise);
+                    if(imagesCount>2)
+                    setEnableNextButton(1);
+        });
+        return mutableLiveData;
+    }
+
+    public void saveMerchandise(Long outletId, String remarks,List<MerchandiseImage> merchandiseImages){
 
         Completable.create(e -> {
             Merchandise merchandise = new Merchandise();
             merchandise.setOutletId(outletId);
+            merchandise.setRemarks(remarks);
             merchandise.setMerchandiseImages(merchandiseImages);
             repository.insertIntoDb(merchandise);
             e.onComplete();
@@ -132,8 +152,8 @@ public class MerchandiseViewModel extends AndroidViewModel {
 
 
     public void removeImage(MerchandiseImage item){
-        list.remove(item);
-        mMerchandise.setValue(list);
+        listImages.remove(item);
+        imagesLiveDate.setValue(listImages);
     }
 
     public LiveData<Boolean> isSaved() {
@@ -156,8 +176,8 @@ public class MerchandiseViewModel extends AndroidViewModel {
         return lessImages;
     }
 
-    public MutableLiveData<List<MerchandiseImage>> getmMerchandise() {
-        return mMerchandise;
+    public MutableLiveData<List<MerchandiseImage>> getMerchandiseImages() {
+        return imagesLiveDate;
     }
     public LiveData<Outlet> loadOutlet(Long outletId) {
         return outletDetailRepository.getOutletById(outletId);

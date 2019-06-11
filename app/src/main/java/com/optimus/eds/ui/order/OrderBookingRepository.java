@@ -35,7 +35,7 @@ public class OrderBookingRepository {
     private MutableLiveData<List<ProductGroup>> allGroups;
 
 
-    public static OrderBookingRepository singleInstance(Application application, API api, Executor executor){
+    public static OrderBookingRepository singleInstance(Application application){
         if(repository==null)
             repository = new OrderBookingRepository(application);
         return repository;
@@ -82,7 +82,7 @@ public class OrderBookingRepository {
     }
 
 
-    protected Maybe<OrderModel> findOrder(Long outletId){
+    public Maybe<OrderModel> findOrder(Long outletId){
         return orderDao.getOrderWithItems(outletId);
     }
 

@@ -48,7 +48,7 @@
         <activity android:name=".ui.customer_input.CustomerInputActivity"/>
 
 
-        <activity android:name=".ui.merchandize.coolerverification.AssetsVerificationActivity"/>
+        <activity android:name=".ui.merchandize.asset_verification.AssetsVerificationActivity"/>
 
         <activity android:name=".ui.scanner.ScannerActivity"/>
 

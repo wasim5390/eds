@@ -1,4 +1,4 @@
-package com.optimus.eds.ui.merchandize.coolerverification;
+package com.optimus.eds.ui.merchandize.asset_verification;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +15,7 @@ import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Asset;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -41,15 +42,15 @@ public class AssetsVerificationAdapter extends RecyclerView.Adapter<RecyclerView
         notifyDataSetChanged();
     }
 
-    public List<String> getReasons(boolean isVerified){
-        List<String> list = new ArrayList<>();
-        list.add("");
-        if(!isVerified) {
-            list.add("Scanning Not being done");
-            list.add("No Asset");
-            list.add("No Barcode");
-        }
-        return list;
+    public List<String> getReasons(boolean approved){
+        List<String> reasons = new ArrayList<>();
+        if(approved)
+            reasons.add(mContext.getString(R.string.scanned));
+        else
+            reasons.addAll(Arrays.asList(mContext.getResources().getStringArray(R.array.asset_verification)));
+
+        return reasons;
+
     }
 
     @Override
@@ -73,8 +74,8 @@ public class AssetsVerificationAdapter extends RecyclerView.Adapter<RecyclerView
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
 
-
         assetsListHolder.reasonsSpinner.setAdapter(spinnerArrayAdapter);
+
         String reason = asset.getReason();
         if(!reason.isEmpty()){
             int index = reasons.indexOf(reason);

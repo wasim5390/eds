@@ -146,9 +146,9 @@ public class Util {
         if (file.exists() && file.length() > 0) {
             Bitmap bm = BitmapFactory.decodeFile(file.getPath());
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-            bm.compress(Bitmap.CompressFormat.PNG, 100, bOut);
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, bOut);
             String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.DEFAULT);
-            encoded = "data:image/png;base64,"+encoded;
+            encoded = "data:image/jpeg;base64,"+encoded;
             return encoded;
         }
         return null;

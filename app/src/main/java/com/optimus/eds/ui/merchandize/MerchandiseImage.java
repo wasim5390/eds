@@ -12,6 +12,7 @@ public class MerchandiseImage implements Serializable {
 
     int id;
     String path;
+    String image;
     int type;
 
     public int getId() {
@@ -36,5 +37,13 @@ public class MerchandiseImage implements Serializable {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getBase64Image() {
+        return image;
+    }
+
+    public void setBase64Image(String image) {
+        this.image = image;
     }
 }
