@@ -21,6 +21,7 @@ import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
+import com.optimus.eds.utils.NetworkManager;
 import com.optimus.eds.utils.Util;
 
 
@@ -212,7 +213,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
                     public void onComplete() {
                         orderSaved.postValue(true);
                         isSaving.postValue(false);
-                        msg.postValue("Order Saved Successfully");
+                        // msg.postValue("Order Saved Successfully");
                     }
 
                     @Override
@@ -295,39 +296,46 @@ public class OrderBookingViewModel extends AndroidViewModel {
         return productList;
     }
 
-    private void composeOrderForServer(){
-        if(order!=null){
-            isSaving.postValue(true);
-            Order mOrder = new Order(order.getOrder().getOutletId());
-            mOrder.setRouteId(order.getOutlet().getRouteId());
-            mOrder.setVisitDayId(order.getOutlet().getVisitDay());
-            mOrder.setOrderStatus(2);
-            mOrder.setLocalOrderId(order.getOrder().getLocalOrderId());
-            mOrder.setLatitude(order.getOutlet().getLatitude());
-            mOrder.setLongitude(order.getOutlet().getLongitude());
-            order.setOrder(mOrder);
+    private void composeOrderForServer() {
+        NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {
+            if (!aBoolean){
+                isSaving.postValue(false);
+                orderSaved.postValue(true);
+                return;
+            }else {
 
-            Gson gson  = new Gson();
-            String json = gson.toJson(mOrder);
-            OrderResponseModel responseModel = gson.fromJson(json,OrderResponseModel.class);
-            responseModel.setOrderDetails(order.getOrderDetails());
+                if (order != null) {
+                    isSaving.postValue(true);
+                    Order mOrder = new Order(order.getOrder().getOutletId());
+                    mOrder.setRouteId(order.getOutlet().getRouteId());
+                    mOrder.setVisitDayId(order.getOutlet().getVisitDay());
+                    mOrder.setOrderStatus(2);
+                    mOrder.setLocalOrderId(order.getOrder().getLocalOrderId());
+                    mOrder.setLatitude(order.getOutlet().getLatitude());
+                    mOrder.setLongitude(order.getOutlet().getLongitude());
+                    order.setOrder(mOrder);
 
-            disposable
-                    .add(webservice.calculatePricing(responseModel).map(orderResponseModel -> {
+                    Gson gson = new Gson();
+                    String json = gson.toJson(mOrder);
+                    OrderResponseModel responseModel = gson.fromJson(json, OrderResponseModel.class);
+                    responseModel.setOrderDetails(order.getOrderDetails());
 
-                        OrderModel orderModel = new OrderModel();
-                        String orderString = new Gson().toJson(orderResponseModel);
-                        Order order = new Gson().fromJson(orderString,Order.class);
-                        orderModel.setOrderDetails(orderResponseModel.getOrderDetails());
-                        orderModel.setOrder(order);
-                        orderModel.setOutlet(this.order.getOutlet());
-                        return orderModel;
-                    }).observeOn(AndroidSchedulers.mainThread())
-                            .subscribeOn(Schedulers.io())
-                            .subscribe(this::updateOrder,this::onError));
-        }
+                    disposable
+                            .add(webservice.calculatePricing(responseModel).map(orderResponseModel -> {
 
-
+                                OrderModel orderModel = new OrderModel();
+                                String orderString = new Gson().toJson(orderResponseModel);
+                                Order order = new Gson().fromJson(orderString, Order.class);
+                                orderModel.setOrderDetails(orderResponseModel.getOrderDetails());
+                                orderModel.setOrder(order);
+                                orderModel.setOutlet(this.order.getOutlet());
+                                return orderModel;
+                            }).observeOn(AndroidSchedulers.mainThread())
+                                    .subscribeOn(Schedulers.io())
+                                    .subscribe(this::updateOrder, this::onError));
+                }
+            }
+        }) ;
     }
 
 

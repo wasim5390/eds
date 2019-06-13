@@ -3,7 +3,9 @@ package com.optimus.eds.db.entities;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
 
+import com.optimus.eds.db.converters.AssetConverter;
 import com.optimus.eds.ui.merchandize.MerchandiseImage;
 
 import java.io.Serializable;
@@ -26,6 +28,9 @@ public class Merchandise implements Serializable {
     @ColumnInfo(name = "merchandiseImages")
     private List<MerchandiseImage> mMerchandiseImages;
 
+    @ColumnInfo(name = "assets")
+    private List<Asset> assetList;
+
 
     public Long getOutletId() {
         return mOutletId;
@@ -41,6 +46,14 @@ public class Merchandise implements Serializable {
 
     public void setMerchandiseImages(List<MerchandiseImage> mMerchandiseImages) {
         this.mMerchandiseImages = mMerchandiseImages;
+    }
+
+    public List<Asset> getAssetList() {
+        return assetList;
+    }
+
+    public void setAssetList(List<Asset> assetList) {
+        this.assetList = assetList;
     }
 
     public String getRemarks() {

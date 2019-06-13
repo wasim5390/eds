@@ -53,4 +53,7 @@ public interface MerchandiseDao {
     @Query("DELETE FROM Asset")
     void deleteAllAssets();
 
+    @Query("DELETE FROM Merchandise")
+    void deleteAllMerchandise();
+
 }

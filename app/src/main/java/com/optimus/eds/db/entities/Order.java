@@ -7,6 +7,7 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 @Entity (foreignKeys =
@@ -54,6 +55,16 @@ public class Order {
     @SerializedName("deliveryDate")
     public Long deliveryDate;
 
+    public Long getDistributionId() {
+        return distributionId;
+    }
+
+    public void setDistributionId(Long distributionId) {
+        this.distributionId = distributionId;
+    }
+
+    @SerializedName("distributionId")
+    private Long distributionId;
 
     public Order(Long outletId) {
         this.outletId = outletId;

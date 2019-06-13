@@ -11,12 +11,14 @@ import com.optimus.eds.db.converters.AssetConverter;
 import com.optimus.eds.db.converters.MerchandiseItemConverter;
 import com.optimus.eds.db.converters.OutletConverter;
 import com.optimus.eds.db.converters.ProductConverter;
+import com.optimus.eds.db.dao.CustomerDao;
 import com.optimus.eds.db.dao.MerchandiseDao;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Asset;
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
+import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
@@ -28,9 +30,11 @@ import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.db.entities.UnitPriceBreakDown;
 
 
-@Database(entities = {Route.class, Outlet.class, Merchandise.class, Asset.class,ProductGroup.class, Product.class, Package.class, Order.class,
-        OrderDetail.class, CartonPriceBreakDown.class, UnitPriceBreakDown.class,
-}, version = 1, exportSchema = false)
+@Database(entities = {Route.class, Outlet.class, Merchandise.class, Asset.class,ProductGroup.class,
+        Product.class, Package.class, Order.class,
+        OrderDetail.class, CartonPriceBreakDown.class,
+        UnitPriceBreakDown.class, CustomerInput.class
+}, version = 2, exportSchema = false)
 @TypeConverters({OutletConverter.class, MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
 
 public abstract class AppDatabase extends RoomDatabase {
@@ -41,7 +45,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ProductsDao productsDao();
     public abstract OrderDao orderDao();
     public abstract MerchandiseDao merchandiseDao();
-
+    public abstract CustomerDao customerDao();
     public static synchronized AppDatabase getDatabase(Context context) {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "eds")

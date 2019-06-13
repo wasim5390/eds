@@ -148,22 +148,17 @@ public class Util {
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
             bm.compress(Bitmap.CompressFormat.JPEG, 100, bOut);
             String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.DEFAULT);
-            encoded = "data:image/jpeg;base64,"+encoded;
+            //encoded = "data:image/jpeg;base64,"+encoded;
             return encoded;
         }
         return null;
     }
 
-    public static String compressBitmap(File file){
-        if (file.exists() && file.length() > 0) {
-            Bitmap bm = BitmapFactory.decodeFile(file.getPath());
+    public static String compressBitmap(Bitmap bitmap){
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-            bm.compress(Bitmap.CompressFormat.JPEG, 80, bOut);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bOut);
             String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.DEFAULT);
-            encoded = "data:image/png;base64,"+encoded;
             return encoded;
-        }
-        return null;
     }
 
     public static int dpToPx(int dp)
@@ -244,6 +239,11 @@ public class Util {
             return fileMoved;
 
         }
+    }
+
+    public static boolean isConnected() throws InterruptedException, IOException {
+        final String command = "ping -i 5 -c 1 http://optimuseds.com";
+        return Runtime.getRuntime().exec(command).waitFor() == 0;
     }
 
 }

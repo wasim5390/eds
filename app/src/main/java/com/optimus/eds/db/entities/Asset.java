@@ -113,9 +113,9 @@ public class Asset implements Serializable {
     public void setReason(String reason) {
         this.reason = reason;
     }
-
+    @SerializedName("reason")
     private String reason;
-
+    @SerializedName("verified")
     private Boolean verified;
 
     public Long getOutletId() {

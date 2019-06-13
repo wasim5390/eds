@@ -2,6 +2,7 @@ package com.optimus.eds.source;
 
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
+import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.model.PackageProductResponseModel;
 import com.optimus.eds.model.RouteOutletResponseModel;
@@ -39,7 +40,7 @@ public interface API {
     Single<OrderResponseModel> calculatePricing(@Body OrderResponseModel order);
 
     @POST("api/order/PostOrder")
-    Single<OrderResponseModel> saveOrder(@Body OrderResponseModel order);
+    Single<OrderResponseModel> saveOrder(@Body MasterModel order);
 
     @GET("routes")
     Call<List<Route>> getRoutes(@Query("id") String userId);

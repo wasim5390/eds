@@ -1,5 +1,7 @@
 package com.optimus.eds.ui.merchandize;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**

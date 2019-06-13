@@ -77,6 +77,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
         outletId =  getIntent().getLongExtra("OutletId",0);
         viewModel = ViewModelProviders.of(this).get(MerchandiseViewModel.class);
         viewModel.loadOutlet(outletId).observe(this, outlet -> onOutletLoaded(outlet));
+        viewModel.loadAssets(outletId);
         viewModel.loadMerchandise(outletId).observe(this,merchandise -> {
             etRemarks.setText(merchandise.getRemarks());
             updateMerchandiseList(merchandise.getMerchandiseImages());
@@ -114,6 +115,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
     }
     public void removeImage(MerchandiseImage item){
         viewModel.removeImage(item);
+
     }
 
     private void updateMerchandiseList(List<MerchandiseImage> merchandiseImages) {
@@ -165,13 +167,13 @@ public class OutletMerchandizeActivity extends BaseActivity {
 
     @OnClick(R.id.btnBeforeMerchandize)
     public void onBeforeMerchandiseClick(){
-        type=0;
+        type= MerchandiseImgType.BEFORE_MERCHANDISE;
         actionPic(Constant.IntentExtras.ACTION_CAMERA);
     }
 
     @OnClick(R.id.btnAfterMerchandize)
     public void onAfterMerchandiseClick(){
-        type=1;
+        type=MerchandiseImgType.AFTER_MERCHANDISE;
         actionPic(Constant.IntentExtras.ACTION_CAMERA);
     }
 
@@ -196,8 +198,6 @@ public class OutletMerchandizeActivity extends BaseActivity {
                     String imagePath = data.getStringExtra(Constant.IntentExtras.IMAGE_PATH);
                     if(imagePath!=null) {
                         // @TODO send to server and show in adapter
-                        Log.e("ImagePath",imagePath);
-                        File imageFile = new File(imagePath);
                         compress(imagePath,type);
                     }
                     break;
@@ -213,9 +213,10 @@ public class OutletMerchandizeActivity extends BaseActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         file ->{
-                            //if(Util.moveFile(file,actualImage.getParentFile()))
-                                viewModel.saveImages(file.getPath(),
-                                        Util.imageFileToBase64(file),type);}, throwable -> {
+                            if(Util.moveFile(file,actualImage.getParentFile()))
+                                viewModel.saveImages(actualImage.getPath(),type);
+                            }, throwable -> {
+
                             throwable.printStackTrace();
                             Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         });

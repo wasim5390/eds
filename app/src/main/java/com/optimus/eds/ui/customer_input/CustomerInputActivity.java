@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
+import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.ui.cash_memo.CashMemoViewModel;
@@ -76,15 +78,36 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
     private void setObserver(){
         viewModel.loadOutlet(outletId).observe(this, this::onOutletLoaded);
         viewModel.findOrder(outletId);
-        viewModel.order().observe(this, orderModel -> {
-            tvOrderAmount.setText(String.valueOf(orderModel.getOrder().getPayable()));
-
-
+        viewModel.order().observe(this, this::onOrderLoaded);
+        viewModel.orderSaved().observe(this,aBoolean -> {
+            if (aBoolean)
+            CustomerComplaintsActivity.start(this);
         });
+        viewModel.isSaving().observe(this,this::setProgress);
+        viewModel.showMessage().observe(this,this::showMsg);
     }
+
 
     private void onOutletLoaded(Outlet outlet) {
         tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
+    }
+
+
+    private void onOrderLoaded(OrderModel orderModel) {
+        tvOrderAmount.setText(String.valueOf(orderModel.getOrder().getPayable()));
+    }
+
+
+    private void showMsg(String error){
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setProgress(boolean isLoading) {
+        if (isLoading) {
+            showProgress();
+        } else {
+            hideProgress();
+        }
     }
 
     private void onDatePickerClick(){
@@ -94,7 +117,6 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
     }
 
     DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
-
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, monthOfYear);
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -120,7 +142,9 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
         }
         String mobileNumber = etMobileNumber.getText().toString();
         String remarks = etCustomerRemarks.getText().toString();
-        CustomerComplaintsActivity.start(this);
+        String base64Sign = Util.compressBitmap(signature);
+        String deliveryDate = tvDeliveryDate.getText().toString();
+        viewModel.saveOrder(mobileNumber,remarks,base64Sign,deliveryDate);
     }
     @Override
     public void onStartSigning() {
@@ -130,6 +154,7 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
     @Override
     public void onSigned() {
         signature = signaturePad.getSignatureBitmap();
+
     }
 
     @Override

@@ -5,7 +5,9 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.optimus.eds.db.entities.Asset;
 import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
@@ -35,7 +37,7 @@ public class MerchandiseViewModel extends AndroidViewModel {
     private MutableLiveData<Boolean> enableAfterMerchandiseButton;
     private MutableLiveData<Boolean> enableNextButton;
     private MutableLiveData<Boolean> lessImages;
-
+    private MutableLiveData<List<Asset>> mAssets;
     private MutableLiveData<List<String>> mPlanogram;
     private Long outletId;
     public MerchandiseViewModel(@NonNull Application application) {
@@ -45,6 +47,7 @@ public class MerchandiseViewModel extends AndroidViewModel {
         listImages=new ArrayList<>();
         isSaved = new MutableLiveData<>();
         inProgress = new MutableLiveData<>();
+        mAssets = new MutableLiveData<>();
         enableAfterMerchandiseButton = new MutableLiveData<>();
         imagesLiveDate = new MutableLiveData<>();
         enableNextButton = new MutableLiveData<>();
@@ -55,22 +58,18 @@ public class MerchandiseViewModel extends AndroidViewModel {
 
     }
 
-    public void setOutletId(Long outletId) {
-        this.outletId = outletId;
 
-    }
-
-    public void saveImages(String path,String base64Image, int type) {
+    public void saveImages(String path, int type) {
 
         imagesCount++;
         MerchandiseImage item = new MerchandiseImage();
         item.setId(imagesCount);
-        item.setBase64Image(base64Image);
+        //item.setBase64Image(base64Image);
         item.setPath(path);
         item.setType(type);
 
         listImages.add(item);
-
+        Log.i("ImagePath::",path);
         setEnableNextButton(type);
 
     }
@@ -111,6 +110,14 @@ public class MerchandiseViewModel extends AndroidViewModel {
         return mutableLiveData;
     }
 
+    public void loadAssets(Long outletId){
+        this.outletId=outletId;
+        repository.loadAssets(outletId).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(assets -> {
+            mAssets.postValue(assets);
+        });
+
+    }
     public void saveMerchandise(Long outletId, String remarks,List<MerchandiseImage> merchandiseImages){
 
         Completable.create(e -> {
@@ -118,6 +125,7 @@ public class MerchandiseViewModel extends AndroidViewModel {
             merchandise.setOutletId(outletId);
             merchandise.setRemarks(remarks);
             merchandise.setMerchandiseImages(merchandiseImages);
+            merchandise.setAssetList(mAssets.getValue());
             repository.insertIntoDb(merchandise);
             e.onComplete();
         }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {

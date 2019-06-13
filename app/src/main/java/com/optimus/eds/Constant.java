@@ -50,4 +50,9 @@ public interface Constant {
         String PAID = "paid";
 
     }
+
+    interface MerchandiseImgType{
+        int BEFORE_MERCHANDISE=0;
+        int AFTER_MERCHANDISE=1;
+    }
 }

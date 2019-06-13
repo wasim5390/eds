@@ -8,6 +8,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
 import com.optimus.eds.db.AppDatabase;
+import com.optimus.eds.db.dao.CustomerDao;
+import com.optimus.eds.db.dao.MerchandiseDao;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
@@ -32,6 +34,8 @@ public class HomeRepository {
     private static HomeRepository repository;
     private PreferenceUtil preferenceUtil;
     private OrderDao orderDao;
+    private CustomerDao customerDao;
+    MerchandiseDao merchandiseDao;
     private ProductsDao productsDao;
     private RouteDao routeDao;
 
@@ -52,6 +56,8 @@ public class HomeRepository {
         productsDao = appDatabase.productsDao();
         orderDao = appDatabase.orderDao();
         routeDao = appDatabase.routeDao();
+        merchandiseDao = appDatabase.merchandiseDao();
+        customerDao = appDatabase.customerDao();
         isLoading = new MutableLiveData<>();
         webService = api;
         this.executor = executor;
@@ -85,6 +91,8 @@ public class HomeRepository {
                     routeDao.deleteAllRoutes();
                     routeDao.deleteAllOutlets();
                     routeDao.deleteAllAssets();
+                    merchandiseDao.deleteAllMerchandise();
+                    customerDao.deleteAllCustomerInput();
                     routeDao.insertRoutes(response.body().getRouteList());
                     routeDao.insertOutlets(response.body().getOutletList());
                     routeDao.insertAssets(response.body().getAssetList());

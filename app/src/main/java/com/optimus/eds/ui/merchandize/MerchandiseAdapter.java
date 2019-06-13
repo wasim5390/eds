@@ -1,13 +1,16 @@
 package com.optimus.eds.ui.merchandize;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.optimus.eds.R;
+import com.optimus.eds.utils.Util;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -48,8 +51,7 @@ public class MerchandiseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         MerchandiseListHolder merchandiseListHolder = (MerchandiseListHolder) holder;
         MerchandiseImage merchandiseImage = merchandiseImages.get(position);
-        File imgFile = new File(merchandiseImage.path);
-
+        File imgFile = new File(merchandiseImage.getPath());
         Picasso.get().load(imgFile).fit().into(merchandiseListHolder.imageView);
         merchandiseListHolder.deleteImageView.setOnClickListener(view -> ((OutletMerchandizeActivity) mContext).removeImage(merchandiseImage));
     }
