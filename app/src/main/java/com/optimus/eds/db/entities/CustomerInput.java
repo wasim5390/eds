@@ -1,8 +1,8 @@
 package com.optimus.eds.db.entities;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.support.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.annotation.NonNull;
 
 
 @Entity(primaryKeys = {"outletId","orderId"})
@@ -12,7 +12,8 @@ public class CustomerInput {
     private Long outletId;
     @NonNull
     private Long orderId;
-    private String deliveryDate;
+
+    private Long requiredDeliveryDate;
     private String mobileNumber;
     private String remarks;
     private String signature;
@@ -29,10 +30,10 @@ public class CustomerInput {
     }
 
     @Ignore
-    public CustomerInput(@NonNull Long outletId,@NonNull Long orderId, String deliveryDate, String mobileNumber, String remarks, String signature) {
+    public CustomerInput(@NonNull Long outletId,@NonNull Long orderId, Long deliveryDate, String mobileNumber, String remarks, String signature) {
         this.outletId = outletId;
         this.orderId = orderId;
-        this.deliveryDate = deliveryDate;
+        this.requiredDeliveryDate = deliveryDate;
         this.mobileNumber = mobileNumber;
         this.remarks = remarks;
         this.signature = signature;
@@ -64,12 +65,12 @@ public class CustomerInput {
         this.orderId = orderId;
     }
 
-    public String getDeliveryDate() {
-        return deliveryDate;
+    public Long getRequiredDeliveryDate() {
+        return requiredDeliveryDate;
     }
 
-    public void setDeliveryDate(String deliveryDate) {
-        this.deliveryDate = deliveryDate;
+    public void setRequiredDeliveryDate(Long deliveryDate) {
+        this.requiredDeliveryDate = deliveryDate;
     }
 
     public String getSignature() {

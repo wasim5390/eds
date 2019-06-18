@@ -1,11 +1,10 @@
 package com.optimus.eds.db.entities;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-import com.optimus.eds.db.converters.AssetConverter;
+import com.google.gson.annotations.SerializedName;
 import com.optimus.eds.ui.merchandize.MerchandiseImage;
 
 import java.io.Serializable;
@@ -20,32 +19,33 @@ public class Merchandise implements Serializable {
 
     @PrimaryKey
     @ColumnInfo(name = "outletId")
-    private Long mOutletId;
+    private Long outletId;
 
     @ColumnInfo(name = "remarks")
-    private String mRemarks;
+    private String remarks;
 
     @ColumnInfo(name = "merchandiseImages")
-    private List<MerchandiseImage> mMerchandiseImages;
+    private List<MerchandiseImage> merchandiseImages;
 
     @ColumnInfo(name = "assets")
+    @SerializedName("assets")
     private List<Asset> assetList;
 
 
     public Long getOutletId() {
-        return mOutletId;
+        return outletId;
     }
 
-    public void setOutletId(Long mOutletId) {
-        this.mOutletId = mOutletId;
+    public void setOutletId(Long outletId) {
+        this.outletId = outletId;
     }
 
     public List<MerchandiseImage> getMerchandiseImages() {
-        return mMerchandiseImages;
+        return merchandiseImages;
     }
 
-    public void setMerchandiseImages(List<MerchandiseImage> mMerchandiseImages) {
-        this.mMerchandiseImages = mMerchandiseImages;
+    public void setMerchandiseImages(List<MerchandiseImage> merchandiseImages) {
+        this.merchandiseImages = merchandiseImages;
     }
 
     public List<Asset> getAssetList() {
@@ -57,10 +57,10 @@ public class Merchandise implements Serializable {
     }
 
     public String getRemarks() {
-        return mRemarks==null?"":mRemarks;
+        return remarks==null?"":remarks;
     }
 
-    public void setRemarks(String mRemarks) {
-        this.mRemarks = mRemarks;
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
 }

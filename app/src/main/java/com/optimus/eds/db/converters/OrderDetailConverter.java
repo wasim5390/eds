@@ -1,11 +1,10 @@
 package com.optimus.eds.db.converters;
 
-import android.arch.persistence.room.TypeConverter;
+import androidx.room.TypeConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.optimus.eds.db.entities.Asset;
-import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 
 import java.lang.reflect.Type;

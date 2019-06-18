@@ -1,17 +1,15 @@
 package com.optimus.eds.ui.route.outlet;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.annotation.NonNull;
 
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import io.reactivex.disposables.CompositeDisposable;
 

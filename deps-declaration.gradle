@@ -17,7 +17,7 @@ versions.support_lib = '28.0.0'
 versions.support_test = '1.0.1'
 versions.multidex = '1.0.1'
 versions.espresso = '2.2.2'
-versions.butterknife = '8.8.1'
+versions.butterknife = '10.1.0'
 versions.circularimageview = '2.2.0'
 versions.dexter='5.0.0'
 versions.scanner='1.9.13'
@@ -25,13 +25,13 @@ versions.imagecropper = '2.7.0'
 versions.glide = '4.3.1'
 versions.glide_okhttp_integration = '4.3.1@aar'
 versions.gson = '2.8.2'
-versions.junit = '4.12'
 versions.mockito = '2.12.0'
 versions.okhttp = '3.9.0'
 versions.okhttp_urlconnection = '2.7.5'
 versions.retrofit = '2.2.0'
 versions.rxjava = '2.0.1'
 versions.rxbinding = '2.0.0'
+versions.work = '2.0.1'
 versions.findbugs = '3.0.1'
 versions.picasso='2.71828'
 versions.paging = '1.0.0'
@@ -93,8 +93,6 @@ deps.butterknife = butterknife
 
 deps.gson = "com.google.code.gson:gson:$versions.gson"
 
-deps.junit = "junit:junit:$versions.junit"
-
 
 def mockito = [:]
 mockito.core = "org.mockito:mockito-core:$versions.mockito"
@@ -151,7 +149,7 @@ deps.room = room
 deps.dexter = "com.karumi:dexter:$versions.dexter"
 
 deps.scanner = "me.dm7.barcodescanner:zxing:$versions.scanner"
-
+deps.work = "androidx.work:work-runtime:$versions.work"
 
 //deps.expandablerecyclerview = "com.thoughtbot:expandablerecyclerview:$versions.expandablerecyclerview"
 deps.expandablerecyclerview = "com.thoughtbot:expandablecheckrecyclerview:$versions.expandablerecyclerview"

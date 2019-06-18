@@ -1,8 +1,8 @@
 package com.optimus.eds.ui.order;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.OrderDao;
@@ -17,11 +17,9 @@ import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.db.entities.UnitPriceBreakDown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.PackageModel;
-import com.optimus.eds.source.API;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;

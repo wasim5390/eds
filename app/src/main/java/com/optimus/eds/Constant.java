@@ -39,6 +39,7 @@ public interface Constant {
 
     String KEY_SCANNER_STARTER="key_scanner_starter";
     String KEY_SCANNER_RESULT="key_scanner_result";
+    String EXTRA_PARAM_OUTLET_ID = "param_outlet_id" ;
 
     interface IntentExtras {
         String ACTION_CAMERA = "action-camera";

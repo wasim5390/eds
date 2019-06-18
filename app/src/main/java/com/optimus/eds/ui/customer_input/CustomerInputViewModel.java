@@ -1,13 +1,13 @@
 package com.optimus.eds.ui.customer_input;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.db.entities.Order;
@@ -18,6 +18,7 @@ import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.source.API;
+import com.optimus.eds.source.MerchandiseWorker;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.merchandize.MerchandiseImage;
 import com.optimus.eds.ui.merchandize.MerchandiseRepository;
@@ -29,6 +30,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -48,7 +54,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
     private Long outletId;
     private MutableLiveData<OrderModel> orderModelLiveData;
     private MutableLiveData<Merchandise> merchandiseMutableLiveData;
-
+    private WorkManager mWorkManager;
     private final API webservice;
 
     public CustomerInputViewModel(@NonNull Application application) {
@@ -63,13 +69,14 @@ public class CustomerInputViewModel extends AndroidViewModel {
         customerInputRepository = new CustomerInputRepository(application);
         orderRepository = OrderBookingRepository.singleInstance(application);
         merchandiseRepository = new MerchandiseRepository(application);
+        mWorkManager  = WorkManager.getInstance();
     }
 
     private void loadMerchandise(Long outletId){
         Disposable merchandiseDisposable = merchandiseRepository.findMerchandise(outletId)
                 .map(merchandise -> {
                     for(MerchandiseImage merchandiseImage: merchandise.getMerchandiseImages()){
-                    merchandiseImage.setBase64Image(Util.imageFileToBase64(new File(merchandiseImage.getPath())));
+                        merchandiseImage.setBase64Image(Util.imageFileToBase64(new File(merchandiseImage.getPath())));
                     }
                     return merchandise;
                 }).observeOn(AndroidSchedulers.mainThread())
@@ -109,10 +116,11 @@ public class CustomerInputViewModel extends AndroidViewModel {
         disposable.add(orderDisposable);
     }
 
-    public void saveOrder(String mobileNumber,String remarks,String base64Sign,String deliveryDate){
+    public void saveOrder(String mobileNumber,String remarks,String base64Sign,long deliveryDate){
         isSaving.postValue(true);
         OrderModel orderModel = orderModelLiveData.getValue();
         Merchandise merchandise = merchandiseMutableLiveData.getValue();
+       // MerchandiseModel merchandiseModel = new MerchandiseModel(merchandise);
         Order order = orderModel.getOrder();
         Gson gson  = new Gson();
         String json = gson.toJson(order);
@@ -123,12 +131,47 @@ public class CustomerInputViewModel extends AndroidViewModel {
         MasterModel masterModel = new MasterModel();
         masterModel.setOutletId(order.getOutletId());
         masterModel.setOrderModel(responseModel);
-        masterModel.setMerchandise(merchandise);
         masterModel.setCustomerInput(customerInput);
-        disposable.add(webservice.saveOrder(masterModel).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(this::orderSavedSuccess,this::onError));
+
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest merchandiseUploadReq =
+                new OneTimeWorkRequest.Builder(MerchandiseWorker.class)
+                        .setConstraints(constraints)
+                        .setInputData(createInputDataForUri(outletId))
+                        .build();
+        mWorkManager.enqueue(merchandiseUploadReq);
+
+
+        isSaving.postValue(false);
+        orderSaved.postValue(true);
+      //  disposable.add(webservice.postMerchandise(merchandiseModel).subscribeOn(Schedulers.io())
+      //          .observeOn(Schedulers.io()).subscribe(baseResponse -> {},this::onError));
+      //  UploadFileService.uploadMedia(getApplication(),String.valueOf(outletId));
+
+
+
+      //  disposable.add(webservice.saveOrder(masterModel).subscribeOn(Schedulers.io())
+      //          .observeOn(AndroidSchedulers.mainThread()).subscribe(this::orderSavedSuccess,this::onError));
+
 
     }
+
+    /**
+     * Creates the input data bundle which includes the Uri to operate on
+     * @return Data which contains the OutletId as a Long
+     */
+    private Data createInputDataForUri(Long outletId) {
+        Data.Builder builder = new Data.Builder();
+        if (outletId != null) {
+            builder.putLong(Constant.EXTRA_PARAM_OUTLET_ID, outletId);
+        }
+        return builder.build();
+    }
+
     private void orderSavedSuccess(OrderResponseModel order) {
         isSaving.postValue(false);
         orderSaved.postValue(true);

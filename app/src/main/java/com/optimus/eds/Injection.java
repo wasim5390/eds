@@ -1,7 +1,7 @@
 package com.optimus.eds;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 
 import com.optimus.eds.source.ApiRepository;

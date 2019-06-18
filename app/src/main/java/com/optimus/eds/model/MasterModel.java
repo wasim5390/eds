@@ -12,8 +12,7 @@ public class MasterModel extends BaseResponse {
     private Integer outletStatus;
     @Expose
     private String reason;
-    @Expose
-    private Merchandise merchandise;
+
     @Expose
     private CustomerInput customerInput;
     @Expose
@@ -41,14 +40,6 @@ public class MasterModel extends BaseResponse {
 
     public void setReason(String reason) {
         this.reason = reason;
-    }
-
-    public Merchandise getMerchandise() {
-        return merchandise;
-    }
-
-    public void setMerchandise(Merchandise merchandise) {
-        this.merchandise = merchandise;
     }
 
     public OrderResponseModel getOrderModel() {

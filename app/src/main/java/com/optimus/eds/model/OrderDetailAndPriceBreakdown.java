@@ -1,8 +1,8 @@
 package com.optimus.eds.model;
 
-import android.arch.persistence.room.Embedded;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.Relation;
+import androidx.room.Embedded;
+import androidx.room.Ignore;
+import androidx.room.Relation;
 
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.OrderDetail;

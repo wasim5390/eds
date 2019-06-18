@@ -3,7 +3,7 @@ package com.optimus.eds.ui.scanner;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import com.google.zxing.Result;
 import com.optimus.eds.BaseActivity;

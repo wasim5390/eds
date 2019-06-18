@@ -1,13 +1,11 @@
 package com.optimus.eds.ui.customer_input;
 
 import android.app.DatePickerDialog;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,10 +13,8 @@ import android.widget.Toast;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
-import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.OrderModel;
-import com.optimus.eds.ui.cash_memo.CashMemoViewModel;
 import com.optimus.eds.ui.customer_complaints.CustomerComplaintsActivity;
 import com.optimus.eds.utils.Util;
 
@@ -143,8 +139,8 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
         String mobileNumber = etMobileNumber.getText().toString();
         String remarks = etCustomerRemarks.getText().toString();
         String base64Sign = Util.compressBitmap(signature);
-        String deliveryDate = tvDeliveryDate.getText().toString();
-        viewModel.saveOrder(mobileNumber,remarks,base64Sign,deliveryDate);
+        //String deliveryDate = tvDeliveryDate.getText().toString();
+        viewModel.saveOrder(mobileNumber,remarks,base64Sign,calendar.getTimeInMillis());
     }
     @Override
     public void onStartSigning() {

@@ -1,12 +1,12 @@
 package com.optimus.eds.ui.route.outlet.detail;
 
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatSpinner;
+import androidx.appcompat.widget.AppCompatSpinner;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,7 +22,6 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.CustomObject;
 import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.merchandize.OutletMerchandizeActivity;
-import com.optimus.eds.ui.order.OrderBookingActivity;
 import com.optimus.eds.utils.Util;
 
 

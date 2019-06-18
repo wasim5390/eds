@@ -1,7 +1,7 @@
 package com.optimus.eds.ui.route.outlet;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 
 import com.optimus.eds.db.AppDatabase;
 
@@ -12,11 +12,6 @@ import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
 
 import java.util.List;
-
-import io.reactivex.Completable;
-import io.reactivex.CompletableObserver;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class OutletListRepository  {
 

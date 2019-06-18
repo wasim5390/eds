@@ -147,7 +147,7 @@ public class Util {
             Bitmap bm = BitmapFactory.decodeFile(file.getPath());
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
             bm.compress(Bitmap.CompressFormat.JPEG, 100, bOut);
-            String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.DEFAULT);
+            String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.NO_WRAP);
             //encoded = "data:image/jpeg;base64,"+encoded;
             return encoded;
         }
@@ -157,7 +157,7 @@ public class Util {
     public static String compressBitmap(Bitmap bitmap){
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bOut);
-            String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.DEFAULT);
+            String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.NO_WRAP);
             return encoded;
     }
 

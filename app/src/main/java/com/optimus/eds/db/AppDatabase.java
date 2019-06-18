@@ -1,10 +1,10 @@
 package com.optimus.eds.db;
 
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.TypeConverters;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 import android.content.Context;
 
 import com.optimus.eds.db.converters.AssetConverter;
@@ -34,7 +34,7 @@ import com.optimus.eds.db.entities.UnitPriceBreakDown;
         Product.class, Package.class, Order.class,
         OrderDetail.class, CartonPriceBreakDown.class,
         UnitPriceBreakDown.class, CustomerInput.class
-}, version = 2, exportSchema = false)
+}, version = 3, exportSchema = false)
 @TypeConverters({OutletConverter.class, MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
 
 public abstract class AppDatabase extends RoomDatabase {

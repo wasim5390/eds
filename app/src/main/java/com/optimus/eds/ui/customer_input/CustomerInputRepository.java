@@ -1,7 +1,7 @@
 package com.optimus.eds.ui.customer_input;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 import android.os.AsyncTask;
 
 import com.optimus.eds.db.AppDatabase;

@@ -1,7 +1,7 @@
 package com.optimus.eds.ui.cash_memo;
 
 import android.content.Context;
-import android.support.design.card.MaterialCardView;
+import com.google.android.material.card.MaterialCardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +10,6 @@ import android.widget.TextView;
 
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.OrderDetail;
-import com.optimus.eds.model.OrderPriceBreakDownModel;
-import com.optimus.eds.model.PriceBreakDownModel;
 
 import java.text.DecimalFormat;
 

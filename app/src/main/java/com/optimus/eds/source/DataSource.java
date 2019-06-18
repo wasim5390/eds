@@ -1,7 +1,7 @@
 package com.optimus.eds.source;
 
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;

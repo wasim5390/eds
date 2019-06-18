@@ -16,7 +16,6 @@ dependencies {
     implementation deps.expandablerecyclerview
     implementation deps.sectioned_recyclerview
     implementation deps.multidex
-    testImplementation deps.junit
     androidTestImplementation deps.findbugs_jsr
 
     implementation deps.rxjava.android
@@ -66,4 +65,6 @@ dependencies {
 
     // Image Compressor
     implementation deps.image_compressor
+
+    implementation deps.work
 }

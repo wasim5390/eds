@@ -4,7 +4,7 @@
     android:background="#88808080"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.v4.widget.ContentLoadingProgressBar
+    <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/progressBar"
         style="@style/Base.Widget.AppCompat.ProgressBar"
         android:layout_width="match_parent"

@@ -36,7 +36,7 @@ Do you want to download data?"
         android:gravity="center_vertical"
         android:layout_marginTop="010dp"
         >
-        <android.support.v7.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnCancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -45,7 +45,7 @@ Do you want to download data?"
             android:theme="@style/NegativeButton"
 
             />
-        <android.support.v7.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnOk"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

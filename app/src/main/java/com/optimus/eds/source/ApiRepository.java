@@ -1,7 +1,7 @@
 package com.optimus.eds.source;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.Outlet;

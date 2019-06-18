@@ -1,7 +1,5 @@
 package com.optimus.eds.ui.cash_memo;
 
-import android.arch.persistence.room.Embedded;
-import android.arch.persistence.room.Relation;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -12,14 +10,12 @@ import com.optimus.eds.R;
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.UnitPriceBreakDown;
-import com.optimus.eds.model.PriceBreakDownModel;
 import com.optimus.eds.utils.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import butterknife.ButterKnife;
 
