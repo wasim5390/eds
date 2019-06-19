@@ -66,5 +66,6 @@ dependencies {
     // Image Compressor
     implementation deps.image_compressor
 
-    implementation deps.work
+    //implementation deps.work
+    implementation "android.arch.work:work-rxjava2:1.0.1"
 }

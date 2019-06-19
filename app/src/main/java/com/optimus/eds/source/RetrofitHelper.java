@@ -65,9 +65,11 @@ public class RetrofitHelper implements Constant {
             String token = Util.getAuthorizationHeader(EdsApplication.getInstance());
 
             if (token!=null) {
-
+                if(originalRequest.header("Authorization")==null || originalRequest.header("Authorization").isEmpty())
                 request = originalRequest.newBuilder()
                         .header("Authorization", "Bearer " + token).build();
+                else
+                    request = originalRequest;
                 response = chain.proceed(request);
 
                 if (response.code()== 401) {
@@ -75,11 +77,12 @@ public class RetrofitHelper implements Constant {
                     retrofit2.Response<TokenResponse> tokenResponse= tokenApi.refreshToken("password","imran","imranshabrati").execute();
                     if(tokenResponse.isSuccessful()){
                         TokenResponse tokenResponseObj=tokenResponse.body();
-                        PreferenceUtil.getInstance(EdsApplication.getInstance()).saveToken(tokenResponseObj.getAccessToken());
+
                         try {
                             request= response.request().newBuilder()
                                     .header("Authorization", "Bearer " + tokenResponseObj.getAccessToken()).build();
                             response = chain.proceed(request);
+                            PreferenceUtil.getInstance(EdsApplication.getInstance()).saveToken(tokenResponseObj.getAccessToken());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -105,6 +108,7 @@ public class RetrofitHelper implements Constant {
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder()
                 .readTimeout(30, TimeUnit.SECONDS)
                 .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(60,TimeUnit.SECONDS)
                 .addInterceptor(httpLoggingInterceptor)
                 .addInterceptor(new AuthorizationInterceptor());
         Gson builder = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).create();

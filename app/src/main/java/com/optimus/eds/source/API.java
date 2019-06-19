@@ -23,6 +23,8 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -50,8 +52,9 @@ public interface API {
     @POST("api/order/PostOrder")
     Single<OrderResponseModel> saveOrder(@Body MasterModel order);
 
+    @Headers({ "Content-Type: application/json;charset=UTF-8"})
     @POST("api/route/PostOutletVisit")
-    Single<BaseResponse> postMerchandise(@Body MerchandiseModel merchandise);
+    Single<BaseResponse> postMerchandise(@Body MerchandiseModel merchandise,@Header("Authorization") String auth);
 
     @GET("routes")
     Call<List<Route>> getRoutes(@Query("id") String userId);

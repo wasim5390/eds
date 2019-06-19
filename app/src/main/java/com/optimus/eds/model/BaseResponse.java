@@ -8,42 +8,17 @@ import com.google.gson.annotations.SerializedName;
 
 public class BaseResponse {
 
-    @SerializedName("http_code")
-    private int httpCode;
-    @SerializedName("response_code")
-    private String responseCode;
-
-    @SerializedName("message")
-    private String responseMsg;
-
-    @SerializedName("success")
-    private boolean success;
-
-
-    public int getHttpCode() {
-        return httpCode;
-    }
-
-    public void setHttpCode(int httpCode) {
-        this.httpCode = httpCode;
-    }
-
-    public String getResponseCode() {
-        return responseCode;
-    }
-
-    public void setResponseCode(String responseCode) {
-        this.responseCode = responseCode;
-    }
+    private String message;
+    private Boolean success;
 
     public String getResponseMsg() {
-        return responseMsg;
+        return message;
     }
 
     public void setResponseMsg(String responseMsg) {
-        this.responseMsg = responseMsg;
+        this.message = responseMsg;
     }
-    public boolean isSuccess() {
+    public Boolean isSuccess() {
         return success;
     }
 }
