@@ -22,6 +22,7 @@ import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 import com.optimus.eds.utils.NetworkManager;
+import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
 
@@ -56,6 +57,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
     private final MutableLiveData<String> msg;
     private final MutableLiveData<Boolean> orderSaved;
     private LiveData<List<Package>> packages;
+    private MutableLiveData<Boolean> noOrder;
 
 
     private Long outletId;
@@ -73,11 +75,13 @@ public class OrderBookingViewModel extends AndroidViewModel {
         msg = new MutableLiveData<>();
         isSaving = new MutableLiveData<>();
         orderSaved = new MutableLiveData<>();
+        noOrder = new MutableLiveData<>();
         onScreenCreated();
     }
 
     private void onScreenCreated(){
         isSaving.setValue(true);
+        noOrder.setValue(false);
         productGroupList = repository.findAllGroups();
         packages = repository.findAllPackages();
 
@@ -228,13 +232,20 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
 
     private void onInsertedInDb(OrderModel orderModel, boolean sendToServer) {
+
         repository.getOrderItems(orderModel.getOrder().getLocalOrderId())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
                 .subscribe(orderDetails -> {
+                    if(orderDetails.isEmpty() && sendToServer) {
+                        noOrder.postValue(true); return;
+                    }
+                    else
+                        noOrder.postValue(false);
                     orderModel.setOrderDetails(orderDetails);
                     setOrder(orderModel);
-                    if(sendToServer)
+                    if(sendToServer) {
                         composeOrderForServer();
+                    }
                 });
 
 
@@ -318,7 +329,6 @@ public class OrderBookingViewModel extends AndroidViewModel {
                     String json = gson.toJson(mOrder);
                     OrderResponseModel responseModel = gson.fromJson(json, OrderResponseModel.class);
                     responseModel.setOrderDetails(order.getOrderDetails());
-
                     disposable
                             .add(webservice.calculatePricing(responseModel).map(orderResponseModel -> {
 
@@ -360,6 +370,10 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> orderSaved(){
         return orderSaved;
+    }
+
+    public LiveData<Boolean> noOrderTaken(){
+        return noOrder;
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.optimus.eds.R;
 import com.optimus.eds.model.CustomObject;
@@ -14,6 +15,9 @@ import com.optimus.eds.model.CustomObject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.core.content.ContextCompat;
 
 public class AlertDialogManager {
     private static final AlertDialogManager ourInstance = new AlertDialogManager();
@@ -69,8 +73,35 @@ public class AlertDialogManager {
         builderSingle.show();
     }
 
+    /**
+     * Provide current reason for no order
+     * @param context
+     */
+    public void showNoOrderAlertDialog(Context context,NoSaleReasonListener reasonListener) {
+
+        LayoutInflater inflater  = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.dialog_input,null);
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+        builderSingle.setTitle(context.getString(R.string.no_order_reason));
+        builderSingle.setView(view);
+        builderSingle.setPositiveButton("Ok", (dialog1, which1) ->{
+            String reason = ((AppCompatEditText) view.findViewById(R.id.etNoSaleReason)).getText().toString();
+            if(reason.isEmpty())
+                Toast.makeText(context, context.getString(R.string.please_enter_reason_for_no_sale), Toast.LENGTH_SHORT).show();
+            else {
+                reasonListener.onNoSaleReasonEntered(reason);
+                dialog1.dismiss();
+            }
+        });
+        builderSingle.show();
+    }
+
     public interface ListAlertItemClickListener{
         void onAlertItemClick(CustomObject object);
+    }
+
+    public interface NoSaleReasonListener{
+        void onNoSaleReasonEntered(String reason);
     }
 
 }

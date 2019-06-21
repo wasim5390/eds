@@ -22,6 +22,7 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.CustomObject;
 import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.merchandize.OutletMerchandizeActivity;
+import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
 
@@ -81,6 +82,20 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         popSpinner.setAdapter(adapter);
         popSpinner.setOnItemSelectedListener(this);
         viewModel.findOutlet(outletId).observe(this, outlet -> onOutletLoaded(outlet));
+        viewModel.getStatusLiveData().observe(this,integer -> {
+           // updateBtn(integer==1?true:false);
+            updateBtn(integer==1?true:true);
+        });
+
+        viewModel.getUploadStatus().observe(this,aBoolean -> {
+            if(aBoolean){
+                viewModel.scheduleMasterJob(this,outletId, PreferenceUtil.getInstance(getApplication()).getToken());
+                finish(); // finish activity after sending status
+            }else{
+                OutletMerchandizeActivity.start(this,outletId);
+
+            }
+        });
 
     }
 
@@ -89,26 +104,10 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         int code=  getOutletPopCode(popSpinner.getSelectedItem().toString());
-        checkOutletStatus(code);
+        viewModel.updateOutletStatusCode(code);
+
     }
 
-    public void checkOutletStatus(int statusCode) {
-
-        switch (statusCode){
-            case 1:
-                onContinueOrder();
-                break;
-            case 2:
-                onOutletClosed();
-                break;
-            case 3:
-                onAreaInaccessible();
-                break;
-            case 4:
-                onNoTime();
-                break;
-        }
-    }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
@@ -116,23 +115,6 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
     }
 
 
-    private void onContinueOrder() {
-        updateBtn(true);
-    }
-
-
-    private void onOutletClosed() {
-        updateBtn(false);
-    }
-
-
-    private void onAreaInaccessible() {
-        updateBtn(false);
-    }
-
-    private void onNoTime() {
-        updateBtn(false);
-    }
 
     private void onOutletLoaded(Outlet outlet) {
         setTitle(outlet.getOutletName());
@@ -170,9 +152,10 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         outletLocation.setLatitude(31.5237925);
         outletLocation.setLongitude(74.3580681);
         double distance = location.distanceTo(outletLocation);
+        viewModel.onNextClick();
        // if(distance<20)
        //AlertDialogManager.getInstance().showLocationMissMatchAlertDialog(this,location,outletLocation);
-        OutletMerchandizeActivity.start(this,outletId);
-       // OrderBookingActivity.start(this,outletId);
+
+
     }
 }

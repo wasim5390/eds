@@ -49,8 +49,9 @@ public interface API {
     @POST("api/order/calculateprice")
     Single<OrderResponseModel> calculatePricing(@Body OrderResponseModel order);
 
+    @Headers({ "Content-Type: application/json;charset=UTF-8"})
     @POST("api/order/PostOrder")
-    Single<OrderResponseModel> saveOrder(@Body MasterModel order);
+    Single<OrderResponseModel> saveOrder(@Body MasterModel order,@Header("Authorization") String auth);
 
     @Headers({ "Content-Type: application/json;charset=UTF-8"})
     @POST("api/route/PostOutletVisit")

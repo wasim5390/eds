@@ -20,6 +20,7 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.model.PackageModel;
+import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.cash_memo.CashMemoActivity;
 
 import java.util.List;
@@ -31,7 +32,7 @@ import butterknife.OnClick;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 
 
-public class OrderBookingActivity extends BaseActivity {
+public class OrderBookingActivity extends BaseActivity implements AlertDialogManager.NoSaleReasonListener {
 
     @BindView(R.id.rvProducts)
     RecyclerView rvProducts;
@@ -84,6 +85,11 @@ public class OrderBookingActivity extends BaseActivity {
                 hideProgress();
         });
         viewModel.orderSaved().observe(this, aBoolean -> { if(aBoolean) CashMemoActivity.start(OrderBookingActivity.this,outletId);
+        });
+
+        viewModel.noOrderTaken().observe(this,aBoolean -> {
+            if(aBoolean)
+            AlertDialogManager.getInstance().showNoOrderAlertDialog(this,this::onNoSaleReasonEntered);
         });
 
         viewModel.showMessage().observe(this,s -> Toast.makeText(this, s, Toast.LENGTH_SHORT).show());
@@ -143,4 +149,8 @@ public class OrderBookingActivity extends BaseActivity {
     }
 
 
+    @Override
+    public void onNoSaleReasonEntered(String reason) {
+        Toast.makeText(this, reason, Toast.LENGTH_SHORT).show();
+    }
 }

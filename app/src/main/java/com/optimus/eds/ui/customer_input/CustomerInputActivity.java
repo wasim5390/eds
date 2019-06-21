@@ -139,7 +139,6 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
         String mobileNumber = etMobileNumber.getText().toString();
         String remarks = etCustomerRemarks.getText().toString();
         String base64Sign = Util.compressBitmap(signature);
-        //String deliveryDate = tvDeliveryDate.getText().toString();
         viewModel.saveOrder(mobileNumber,remarks,base64Sign,calendar.getTimeInMillis());
     }
     @Override

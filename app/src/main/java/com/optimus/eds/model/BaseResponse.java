@@ -8,15 +8,16 @@ import com.google.gson.annotations.SerializedName;
 
 public class BaseResponse {
 
-    private String message;
+
     private Boolean success;
+    private String errorMessage;
 
     public String getResponseMsg() {
-        return message;
+        return errorMessage;
     }
 
     public void setResponseMsg(String responseMsg) {
-        this.message = responseMsg;
+        this.errorMessage = responseMsg;
     }
     public Boolean isSuccess() {
         return success;

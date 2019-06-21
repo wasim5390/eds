@@ -1,16 +1,20 @@
 package com.optimus.eds.source;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.optimus.eds.AnnotationExclusionStrategy;
 import com.optimus.eds.Constant;
 import com.optimus.eds.EdsApplication;
+import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -57,49 +61,53 @@ public class RetrofitHelper implements Constant {
 
 
     public class AuthorizationInterceptor implements Interceptor {
-        Request request;
         Response response;
         @Override
         public Response intercept(Chain chain) throws IOException {
-            Request originalRequest = chain.request();
-            String token = Util.getAuthorizationHeader(EdsApplication.getInstance());
-
+            Request request = chain.request();
+            //String token = Util.getAuthorizationHeader(EdsApplication.getInstance());
+/*
             if (token!=null) {
-                if(originalRequest.header("Authorization")==null || originalRequest.header("Authorization").isEmpty())
+
                 request = originalRequest.newBuilder()
-                        .header("Authorization", "Bearer " + token).build();
-                else
-                    request = originalRequest;
-                response = chain.proceed(request);
+                        .header("Authorization", "Bearer " + token).build();*/
 
-                if (response.code()== 401) {
-                    API tokenApi =  getRetrofit().create(API.class);
-                    retrofit2.Response<TokenResponse> tokenResponse= tokenApi.refreshToken("password","imran","imranshabrati").execute();
-                    if(tokenResponse.isSuccessful()){
-                        TokenResponse tokenResponseObj=tokenResponse.body();
-
-                        try {
-                            request= response.request().newBuilder()
-                                    .header("Authorization", "Bearer " + tokenResponseObj.getAccessToken()).build();
-                            response = chain.proceed(request);
-                            PreferenceUtil.getInstance(EdsApplication.getInstance()).saveToken(tokenResponseObj.getAccessToken());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }else{
-                        // goto Login as we cannot refresh token
-                    }
-
-                }
-
-                return response;
-            } else {
-                return chain.proceed(originalRequest);
+            if(request.headers().get("Authorization")==null || request.headers().get("Authorization").isEmpty()){
+                String token = Util.getAuthorizationHeader(EdsApplication.getInstance());
+                Headers headers = request.headers().newBuilder().add("Authorization","Bearer "+ token).build();
+                request = request.newBuilder().headers(headers).build();
             }
 
+            response = chain.proceed(request);
+            if (response.code()== 401) {
+                API tokenApi =  getRetrofit().create(API.class);
+                retrofit2.Response<TokenResponse> tokenResponse= tokenApi.refreshToken("password","imran","imranshabrati").execute();
+                if(tokenResponse.isSuccessful()){
+                    TokenResponse tokenResponseObj=tokenResponse.body();
 
+                    try {
+                        request= response.request().newBuilder()
+                                .header("Authorization", "Bearer " + tokenResponseObj.getAccessToken()).build();
+                        response = chain.proceed(request);
+                        PreferenceUtil.getInstance(EdsApplication.getInstance()).saveToken(tokenResponseObj.getAccessToken());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    // goto Login as we cannot refresh token
+                }
 
+            }
+
+            return response;
         }
+           /* else {
+                return chain.proceed(originalRequest);
+            }*/
+
+
+
+        // }
     }
 
     private Retrofit getRetrofit(){
@@ -108,7 +116,6 @@ public class RetrofitHelper implements Constant {
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder()
                 .readTimeout(30, TimeUnit.SECONDS)
                 .connectTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(60,TimeUnit.SECONDS)
                 .addInterceptor(httpLoggingInterceptor)
                 .addInterceptor(new AuthorizationInterceptor());
         Gson builder = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).create();
@@ -119,6 +126,8 @@ public class RetrofitHelper implements Constant {
                 .client(okHttpClientBuilder.build())
                 .build();
     }
+
+
 
 
 }

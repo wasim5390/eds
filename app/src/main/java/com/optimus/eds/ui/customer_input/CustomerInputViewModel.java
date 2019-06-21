@@ -3,11 +3,9 @@ package com.optimus.eds.ui.customer_input;
 import android.app.Application;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
-import android.app.job.JobWorkItem;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.PersistableBundle;
-import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
@@ -18,7 +16,6 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.CustomerInput;
-import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
@@ -27,20 +24,16 @@ import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.source.API;
-import com.optimus.eds.source.MerchandiseWorker;
 import com.optimus.eds.source.RetrofitHelper;
-import com.optimus.eds.source.UploadFileService;
-import com.optimus.eds.ui.merchandize.MerchandiseImage;
+import com.optimus.eds.source.MerchandiseUploadService;
 import com.optimus.eds.ui.merchandize.MerchandiseRepository;
 import com.optimus.eds.ui.order.OrderBookingRepository;
-import com.optimus.eds.utils.Util;
+import com.optimus.eds.utils.PreferenceUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.work.WorkManager;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -121,19 +114,21 @@ public class CustomerInputViewModel extends AndroidViewModel {
       //  disposable.add(webservice.postMerchandise(merchandiseModel).subscribeOn(Schedulers.io())
       //          .observeOn(Schedulers.io()).subscribe(baseResponse -> {},this::onError));
 
-        scheduleMerchandiseJob(getApplication(),outletId);
 
-        disposable.add(webservice.saveOrder(masterModel).subscribeOn(Schedulers.io())
+        disposable.add(webservice.saveOrder(masterModel,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(this::orderSavedSuccess,this::onError));
+       scheduleMerchandiseJob(getApplication(),outletId, PreferenceUtil.getInstance(getApplication()).getToken());
 
 
     }
 
     // schedule
-    public void scheduleMerchandiseJob(Context context,Long outletId) {
+    public void scheduleMerchandiseJob(Context context,Long outletId,String token) {
         PersistableBundle extras = new PersistableBundle();
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outletId);
-        ComponentName serviceComponent = new ComponentName(context, UploadFileService.class);
+        extras.putString(Constant.TOKEN, "Bearer "+token);
+        ComponentName serviceComponent = new ComponentName(context, MerchandiseUploadService.class);
         JobInfo.Builder builder = new JobInfo.Builder(outletId.intValue(), serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
         builder.setExtras(extras);

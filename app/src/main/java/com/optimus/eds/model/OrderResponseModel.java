@@ -15,8 +15,6 @@ public class OrderResponseModel extends BaseResponse{
     @Expose
     private Long distributionId;
     @Expose
-    private String errorMessage;
-    @Expose
     private Double latitude;
     @Expose
     private Double longitude;
@@ -68,14 +66,6 @@ public class OrderResponseModel extends BaseResponse{
 
     public void setDistributionId(Long distributionId) {
         this.distributionId = distributionId;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
     }
 
     public Double getLatitude() {

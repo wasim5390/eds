@@ -10,6 +10,7 @@ public class MasterModel extends BaseResponse {
     private Long outletId;
     @Expose
     private Integer outletStatus;
+
     @Expose
     private String reason;
 

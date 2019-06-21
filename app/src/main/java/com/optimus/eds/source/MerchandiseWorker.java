@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.optimus.eds.Constant;
+import com.optimus.eds.EdsApplication;
 import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.model.BaseResponse;
@@ -19,11 +20,9 @@ import java.util.function.Function;
 
 import androidx.annotation.NonNull;
 
-import androidx.work.RxWorker;
+
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
-import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
@@ -60,7 +59,7 @@ public class MerchandiseWorker extends Worker {
     private void uploadMerchandise(Merchandise merchandise) {
 
         MerchandiseModel merchandiseModel  = new MerchandiseModel(merchandise);
-        RetrofitHelper.getInstance().getApi().postMerchandise(merchandiseModel,PreferenceUtil.getInstance(getApplicationContext()).getToken())
+        RetrofitHelper.getInstance().getApi().postMerchandise(merchandiseModel,PreferenceUtil.getInstance(EdsApplication.getInstance()).getToken())
                 .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(this::onUpload,this::error);
     }
 
