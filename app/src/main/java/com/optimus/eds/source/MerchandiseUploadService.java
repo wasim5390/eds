@@ -2,6 +2,7 @@ package com.optimus.eds.source;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 
@@ -83,8 +84,9 @@ public class MerchandiseUploadService extends JobService implements Constant {
     }
 
     private void onUpload(BaseResponse baseResponse) {
-        if(baseResponse.isSuccess())
-            Log.i(iTAG,"File Uploaded");
+        if(baseResponse.isSuccess()) {
+            Log.i(iTAG, "File Uploaded");
+        }
         else
             Log.i(iTAG,baseResponse.getResponseMsg());
 

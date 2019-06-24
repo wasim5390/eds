@@ -19,6 +19,7 @@ public class MasterDataUploadService extends JobService implements Constant {
 
     private final String iTAG = MasterDataUploadService.class.getSimpleName();
     String token;
+    private int jobId;
     public MasterDataUploadService() {
 
     }
@@ -27,7 +28,7 @@ public class MasterDataUploadService extends JobService implements Constant {
     public boolean onStartJob(JobParameters params) {
         if (params != null) {
             PersistableBundle bundle = params.getExtras();
-
+            jobId=params.getJobId();
             final Long outletId = bundle.getLong(EXTRA_PARAM_OUTLET_ID);
             final Integer statusId = bundle.getInt(EXTRA_PARAM_OUTLET_STATUS_ID);
             final String reason = bundle.getString(EXTRA_PARAM_OUTLET_REASON_N_ORDER,"");
@@ -65,7 +66,7 @@ public class MasterDataUploadService extends JobService implements Constant {
      * parameters.
      */
     private void uploadMasterData(MasterModel masterModel) {
-
+        Log.i(iTAG,"JobId: "+jobId);
 
         RetrofitHelper.getInstance().getApi().saveOrder(masterModel,token)
                 .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(this::onUpload,this::error);

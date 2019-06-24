@@ -16,6 +16,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
+import com.optimus.eds.source.JobIdManager;
 import com.optimus.eds.source.MasterDataUploadService;
 import com.optimus.eds.source.MerchandiseUploadService;
 
@@ -56,9 +57,10 @@ public class OutletDetailViewModel extends AndroidViewModel {
         extras.putInt(Constant.EXTRA_PARAM_OUTLET_STATUS_ID,outletStatus);
         extras.putString(Constant.TOKEN, "Bearer "+token);
         ComponentName serviceComponent = new ComponentName(context, MasterDataUploadService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(outletId.intValue(), serviceComponent);
+        JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue()), serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
         builder.setExtras(extras);
+        builder.setPersisted(true);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
         jobScheduler.schedule(builder.build());
     }
