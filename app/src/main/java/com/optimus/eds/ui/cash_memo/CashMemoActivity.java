@@ -21,6 +21,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.optimus.eds.utils.Util.formatCurrency;
+
 public class CashMemoActivity extends BaseActivity {
 
 
@@ -81,7 +83,7 @@ public class CashMemoActivity extends BaseActivity {
     }
 
     private void updatePricesOnUi(OrderModel order){
-        tvGrandTotal.setText(String.valueOf(order.getOrder().getPayable()));
+        tvGrandTotal.setText(formatCurrency(order.getOrder().getPayable()));
         Long carton=0l,units=0l;
         for(OrderDetailAndPriceBreakdown detailAndPriceBreakdown:order.getOrderDetailAndCPriceBreakdowns())
         {
@@ -95,7 +97,7 @@ public class CashMemoActivity extends BaseActivity {
 
     private void initAdapter(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
         rvCartItems.setLayoutManager(layoutManager);
         rvCartItems.setHasFixedSize(true);
         cartAdapter = new CashMemoAdapter(this);

@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.google.android.material.tabs.TabLayout;
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
@@ -39,6 +40,8 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
     RecyclerView recyclerView;
     @BindView(R.id.route_spinner)
     AppCompatSpinner spinner;
+    //@BindView(R.id.tabLayout)
+    //TabLayout tabLayout;
     SearchView searchView;
     private OutletListAdapter outletListAdapter;
     private OutletListViewModel viewModel;
@@ -77,13 +80,33 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
 
     private void initOutletsAdapter() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         outletListAdapter = new OutletListAdapter(this,new ArrayList<>(),this);
         recyclerView.setAdapter(outletListAdapter);
         recyclerView.setNestedScrollingEnabled(false);
+/*        tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int pos = tab.getPosition();
+                if(pos<1)
+                    Toast.makeText(OutletListActivity.this, "PJP", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(OutletListActivity.this, "Non PJP", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });*/
 
 
     }

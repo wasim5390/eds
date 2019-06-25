@@ -2,6 +2,9 @@ package com.optimus.eds.ui.cash_memo;
 
 import android.content.Context;
 import com.google.android.material.card.MaterialCardView;
+
+import android.os.Build;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +15,13 @@ import com.optimus.eds.R;
 import com.optimus.eds.db.entities.OrderDetail;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.optimus.eds.utils.Util.formatCurrency;
 
 public class CashMemoItemView extends MaterialCardView {
 
@@ -54,15 +61,22 @@ public class CashMemoItemView extends MaterialCardView {
 
     }
 
+
+
     public void setCartItem(OrderDetail item) {
 
-        DecimalFormat df = new DecimalFormat("#.##");
         this.order = item;
         if (item != null) {
-
-            productName.setText(item.getProductName());
+            Double totalPrice = order.getCartonTotalPrice()+order.getUnitTotalPrice();
+            String free = "";
+            free = totalPrice>0?"":" &#127379;";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                productName.setText(Html.fromHtml(item.getProductName().concat(free),Html.FROM_HTML_MODE_LEGACY));
+            }else{
+                productName.setText(Html.fromHtml(item.getProductName().concat(free)));
+            }
             productQty.setText(order.getQuantity());
-            total.setText(df.format((order.getCartonTotalPrice()+order.getUnitTotalPrice())));
+            total.setText(formatCurrency(totalPrice));
 
             rateContainer.addView(addPricingView(item));
         }

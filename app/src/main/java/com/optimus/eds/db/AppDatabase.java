@@ -34,7 +34,7 @@ import com.optimus.eds.db.entities.UnitPriceBreakDown;
         Product.class, Package.class, Order.class,
         OrderDetail.class, CartonPriceBreakDown.class,
         UnitPriceBreakDown.class, CustomerInput.class
-}, version = 3, exportSchema = false)
+}, version = 1, exportSchema = false)
 @TypeConverters({OutletConverter.class, MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
 
 public abstract class AppDatabase extends RoomDatabase {

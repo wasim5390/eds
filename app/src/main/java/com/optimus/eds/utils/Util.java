@@ -18,11 +18,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class Util {
     public static final String DATE_FORMAT_1 = "MM/dd/yyyy hh:mm:ss";
@@ -244,6 +248,23 @@ public class Util {
     public static boolean isConnected() throws InterruptedException, IOException {
         final String command = "ping -i 5 -c 1 http://optimuseds.com";
         return Runtime.getRuntime().exec(command).waitFor() == 0;
+    }
+
+    public static String formatCurrency(Double price){
+        if(price==null)
+            price=0d;
+
+        DecimalFormat fmt = (DecimalFormat) NumberFormat.getInstance();
+        Locale locale = new Locale("en", "pk");
+        String symbol = Currency.getInstance(locale).getSymbol(locale);
+        fmt.setGroupingUsed(true);
+        fmt.setPositivePrefix(symbol + " ");
+        fmt.setNegativePrefix("-" + symbol + " ");
+        fmt.setMinimumFractionDigits(2);
+        fmt.setMaximumFractionDigits(2);
+        return fmt.format(price);
+
+
     }
 
 }

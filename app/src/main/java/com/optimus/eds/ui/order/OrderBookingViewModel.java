@@ -190,7 +190,10 @@ public class OrderBookingViewModel extends AndroidViewModel {
         if(order==null) return;
         setOrder(order);
         Completable orderUpdateCompletable= repository.updateOrder(order.getOrder());
-        Completable updateOrderItems = repository.updateOrderItems(order.getOrderDetails());
+        Completable removeOrderItems = repository.deleteOrderItems(order.getOrder().getLocalOrderId());
+        Completable insertOrderItems = repository.addOrderItems(order.getOrderDetails());
+      //  Completable updateOrderItems = repository.updateOrderItems(order.getOrderDetails());
+
         Completable insertBreakdown= Completable.fromAction(()-> {
             for(OrderDetail orderDetail:order.getOrderDetails()){
                 if(!Util.isListEmpty(orderDetail.getUnitPriceBreakDown()))
@@ -201,8 +204,9 @@ public class OrderBookingViewModel extends AndroidViewModel {
         });
 
         orderUpdateCompletable.andThen(Completable.fromAction(()-> System.out.println("Update Order finished")))
-                .andThen(updateOrderItems)
-                .andThen(Completable.fromAction(() -> System.out.println("Update Order Items finished")))
+                .andThen(removeOrderItems)
+                .andThen(Completable.fromAction(() -> System.out.println("Remove Order Items finished")))
+                .andThen(insertOrderItems).andThen(Completable.fromAction(() -> System.out.println("Insert Order Items")))
                 .andThen(insertBreakdown).andThen(Completable.fromAction(() -> System.out.println("Insert Breakdown")))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.single())

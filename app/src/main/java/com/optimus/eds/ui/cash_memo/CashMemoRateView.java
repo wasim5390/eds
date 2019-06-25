@@ -19,6 +19,8 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 
+import static com.optimus.eds.utils.Util.formatCurrency;
+
 public class CashMemoRateView extends LinearLayout {
 
 
@@ -65,7 +67,7 @@ public class CashMemoRateView extends LinearLayout {
                     type = ((UnitPriceBreakDown) breakDown).getPriceConditionType();
                 }
             }
-            rate.setText(cartonPrice + "/"+unitPrice);
+            rate.setText(formatCurrency(cartonPrice.doubleValue()) + " / "+formatCurrency(unitPrice.doubleValue()));
             title.setText(type);
             this.addView(rateView);
         }

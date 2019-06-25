@@ -18,14 +18,14 @@ import java.util.List;
 
 @Entity(
         foreignKeys = {
-        @ForeignKey(
-                entity = Order.class,
-                parentColumns = "pk_oid",
-                childColumns = "fk_oid",
-                onDelete = ForeignKey.CASCADE),
+                @ForeignKey(
+                        entity = Order.class,
+                        parentColumns = "pk_oid",
+                        childColumns = "fk_oid",
+                        onDelete = ForeignKey.CASCADE),
 
-}, indices = { @Index(value = "fk_oid")
-        })
+        }, indices = { @Index(value = "fk_oid")
+})
 
 public class OrderDetail {
 
@@ -52,6 +52,18 @@ public class OrderDetail {
     public Long mCartonOrderDetailId;
     @SerializedName("productGroupId")
     public Long mProductGroupId;
+    @SerializedName("unitFreeGoodGroupId")
+    public Long unitFreeGoodGroupId;
+    @SerializedName("cartonFreeGoodGroupId")
+    public Long cartonFreeGoodGroupId;
+    @SerializedName("unitFreeGoodDetailId")
+    public Long unitFreeGoodDetailId;
+    @SerializedName("cartonFreeGoodDetailId")
+    public Long cartonFreeGoodDetailId;
+    @SerializedName("unitFreeGoodExclusiveId")
+    public Long unitFreeGoodExclusiveId;
+    @SerializedName("cartonFreeGoodExclusiveId")
+    public Long cartonFreeGoodExclusiveId;
 
     @SerializedName("productName")
     public String mProductName;
@@ -367,4 +379,70 @@ public class OrderDetail {
     public List<OrderDetail> getUnitFreeGoods() {
         return unitFreeGoods==null?new ArrayList<>():unitFreeGoods;
     }
+
+    public Long getUnitFreeGoodGroupId() {
+        return unitFreeGoodGroupId;
+    }
+
+    public void setUnitFreeGoodGroupId(Long unitFreeGoodGroupId) {
+        this.unitFreeGoodGroupId = unitFreeGoodGroupId;
+    }
+
+    public Long getCartonFreeGoodGroupId() {
+        return cartonFreeGoodGroupId;
+    }
+
+    public void setCartonFreeGoodGroupId(Long cartonFreeGoodGroupId) {
+        this.cartonFreeGoodGroupId = cartonFreeGoodGroupId;
+    }
+
+    public Long getUnitFreeGoodDetailId() {
+        return unitFreeGoodDetailId;
+    }
+
+    public void setUnitFreeGoodDetailId(Long unitFreeGoodDetailId) {
+        this.unitFreeGoodDetailId = unitFreeGoodDetailId;
+    }
+
+    public Long getCartonFreeGoodDetailId() {
+        return cartonFreeGoodDetailId;
+    }
+
+    public void setCartonFreeGoodDetailId(Long cartonFreeGoodDetailId) {
+        this.cartonFreeGoodDetailId = cartonFreeGoodDetailId;
+    }
+
+    public Long getUnitFreeGoodExclusiveId() {
+        return unitFreeGoodExclusiveId;
+    }
+
+    public void setUnitFreeGoodExclusiveId(Long unitFreeGoodExclusiveId) {
+        this.unitFreeGoodExclusiveId = unitFreeGoodExclusiveId;
+    }
+
+    public Long getCartonFreeGoodExclusiveId() {
+        return cartonFreeGoodExclusiveId;
+    }
+
+    public void setCartonFreeGoodExclusiveId(Long cartonFreeGoodExclusiveId) {
+        this.cartonFreeGoodExclusiveId = cartonFreeGoodExclusiveId;
+    }
+
+    public Integer getUnitSelectedFreeGoodQuantity() {
+        return unitSelectedFreeGoodQuantity;
+    }
+
+    public void setUnitSelectedFreeGoodQuantity(Integer unitSelectedFreeGoodQuantity) {
+        this.unitSelectedFreeGoodQuantity = unitSelectedFreeGoodQuantity;
+    }
+
+    public Integer getCartonSelectedFreeGoodQuantity() {
+        return cartonSelectedFreeGoodQuantity;
+    }
+
+    public void setCartonSelectedFreeGoodQuantity(Integer cartonSelectedFreeGoodQuantity) {
+        this.cartonSelectedFreeGoodQuantity = cartonSelectedFreeGoodQuantity;
+    }
+
+
 }

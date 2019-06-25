@@ -42,6 +42,7 @@ public class CashMemoViewModel extends AndroidViewModel {
         repository.findOrder(outletId).map(orderModel -> {
             List<OrderDetail> freeGoods = new ArrayList<>();
             for(OrderDetailAndPriceBreakdown orderWithDetails:orderModel.getOrderDetailAndCPriceBreakdowns()){
+
                 freeGoods.addAll(orderWithDetails.getOrderDetail().getCartonFreeGoods());
                 freeGoods.addAll(orderWithDetails.getOrderDetail().getUnitFreeGoods());
                 orderWithDetails.getOrderDetail().setCartonPriceBreakDown(orderWithDetails.getCartonPriceBreakDownList());
@@ -69,7 +70,7 @@ public class CashMemoViewModel extends AndroidViewModel {
 
             @Override
             public void onError(Throwable e) {
-
+            e.printStackTrace();
             }
 
             @Override
@@ -84,7 +85,5 @@ public class CashMemoViewModel extends AndroidViewModel {
     public LiveData<Outlet> loadOutlet(Long outletId) {
         return outletDetailRepository.getOutletById(outletId);
     }
-    LiveData<OrderModel> getOrder(){
-        return orderLiveData;
-    }
+
 }

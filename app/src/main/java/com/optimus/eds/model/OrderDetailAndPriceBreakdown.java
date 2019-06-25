@@ -8,6 +8,7 @@ import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.UnitPriceBreakDown;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class OrderDetailAndPriceBreakdown {

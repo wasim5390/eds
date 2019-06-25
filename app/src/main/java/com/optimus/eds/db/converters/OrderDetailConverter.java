@@ -17,7 +17,7 @@ public class OrderDetailConverter {
     public static List<OrderDetail> fromString(String value) {
         if(value==null)
             return (null);
-        Type listType = new TypeToken<ArrayList<Asset>>() {}.getType();
+        Type listType = new TypeToken<ArrayList<OrderDetail>>() {}.getType();
         return new Gson().fromJson(value, listType);
     }
 
