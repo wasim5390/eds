@@ -49,9 +49,9 @@ public class CashMemoViewModel extends AndroidViewModel {
                 orderWithDetails.getOrderDetail().setUnitPriceBreakDown(orderWithDetails.getUnitPriceBreakDownList());
             }
 
-            orderModel.setFreeGoods(freeGoods);
-            for(OrderDetail orderDetail:freeGoods)
-                orderModel.getOrderDetailAndCPriceBreakdowns().add(new OrderDetailAndPriceBreakdown(orderDetail));
+           // orderModel.setFreeGoods(freeGoods);
+           // for(OrderDetail orderDetail:freeGoods)
+           //     orderModel.getOrderDetailAndCPriceBreakdowns().add(new OrderDetailAndPriceBreakdown(orderDetail));
             return orderModel;
         })
                 .subscribeOn(Schedulers.io())

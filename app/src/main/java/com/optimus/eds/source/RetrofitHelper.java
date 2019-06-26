@@ -73,7 +73,7 @@ public class RetrofitHelper implements Constant {
                         .header("Authorization", "Bearer " + token).build();*/
 
             if(request.headers().get("Authorization")==null || request.headers().get("Authorization").isEmpty()){
-                String token = Util.getAuthorizationHeader(EdsApplication.getInstance());
+                String token = Util.getAuthorizationHeader(EdsApplication.getContext());
                 Headers headers = request.headers().newBuilder().add("Authorization","Bearer "+ token).build();
                 request = request.newBuilder().headers(headers).build();
             }
@@ -89,7 +89,7 @@ public class RetrofitHelper implements Constant {
                         request= response.request().newBuilder()
                                 .header("Authorization", "Bearer " + tokenResponseObj.getAccessToken()).build();
                         response = chain.proceed(request);
-                        PreferenceUtil.getInstance(EdsApplication.getInstance()).saveToken(tokenResponseObj.getAccessToken());
+                        PreferenceUtil.getInstance(EdsApplication.getContext()).saveToken(tokenResponseObj.getAccessToken());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

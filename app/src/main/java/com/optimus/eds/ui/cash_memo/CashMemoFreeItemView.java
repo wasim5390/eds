@@ -1,30 +1,27 @@
 package com.optimus.eds.ui.cash_memo;
 
 import android.content.Context;
-import com.google.android.material.card.MaterialCardView;
-
 import android.os.Build;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.card.MaterialCardView;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.OrderDetail;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
-
+import androidx.appcompat.widget.AppCompatButton;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static com.optimus.eds.utils.Util.formatCurrency;
 
-public class CashMemoItemView extends MaterialCardView {
+public class CashMemoFreeItemView extends MaterialCardView {
+
 
     @BindView(R.id.tvProductName)
     TextView productName;
@@ -33,26 +30,27 @@ public class CashMemoItemView extends MaterialCardView {
 
     @BindView(R.id.tvProductTotal)
     TextView total;
+    @BindView(R.id.btnAdd)
+    AppCompatButton btnAdd;
+    @BindView(R.id.btnRemove)
+    AppCompatButton btnRemove;
 
     @BindView(R.id.rate_container)
     FrameLayout rateContainer;
 
-    @BindView(R.id.free_items_container)
-    LinearLayout freeItemsContainer;
-
     private OrderDetail order;
 
-    private CashMemoFreeItemView.FreeItemSelector freeItemSelector;
+    FreeItemSelector mListener;
 
-    public CashMemoItemView(Context context) {
+    public CashMemoFreeItemView(Context context) {
         super(context);
     }
 
-    public CashMemoItemView(Context context, AttributeSet attrs) {
+    public CashMemoFreeItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CashMemoItemView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CashMemoFreeItemView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -63,12 +61,11 @@ public class CashMemoItemView extends MaterialCardView {
 
     }
 
-
-
-    public void setCartItem(OrderDetail item, CashMemoFreeItemView.FreeItemSelector listener) {
-        freeItemsContainer.removeAllViews();
+    public void setCartItem(OrderDetail item, int freeQuantityTypeId,FreeItemSelector listener) {
         this.order = item;
-        this.freeItemSelector = listener;
+        this.mListener = listener;
+        btnAdd.setVisibility(freeQuantityTypeId==2?VISIBLE:GONE);
+        btnRemove.setVisibility(freeQuantityTypeId==2?VISIBLE:GONE);
         if (item != null) {
             Double totalPrice = order.getCartonTotalPrice()+order.getUnitTotalPrice();
             String free = "";
@@ -82,16 +79,9 @@ public class CashMemoItemView extends MaterialCardView {
             total.setText(formatCurrency(totalPrice));
 
             rateContainer.addView(addPricingView(item));
-            for(OrderDetail freeItems:item.getCartonFreeGoods()){
-                freeItemsContainer.addView(addFreeItemsView(freeItems,1));
-            }
 
-            for(OrderDetail freeItems:item.getUnitFreeGoods()){
-                freeItemsContainer.addView(addFreeItemsView(freeItems,2));
-            }
         }
     }
-
 
     private View addPricingView(OrderDetail item){
         LayoutInflater inflater =  LayoutInflater.from(getContext());
@@ -100,11 +90,20 @@ public class CashMemoItemView extends MaterialCardView {
         rateView.setRates(item);
         return rateView;
     }
-    private View addFreeItemsView(OrderDetail item,int freeGoodType){
-        LayoutInflater inflater =  LayoutInflater.from(getContext());
-        CashMemoFreeItemView freeItemsView = (CashMemoFreeItemView) inflater.inflate(R.layout.cashmemo_free_item_view,null);
-        freeItemsView.setCartItem(item,freeGoodType==1?order.getCartonFreeQuantityTypeId():order.getUnitFreeQuantityTypeId(),freeItemSelector);
-        return freeItemsView;
+    @OnClick({R.id.btnAdd,R.id.btnRemove})
+    public void OnFreeItemUpdateClick(View view){
+        switch (view.getId()){
+            case R.id.btnAdd:
+                mListener.onFreeItemAdd(order);
+                break;
+            case R.id.btnRemove:
+                mListener.onFreeItemRemove(order);
+                break;
+        }
     }
 
+    public interface FreeItemSelector{
+        void onFreeItemAdd(OrderDetail freeItem);
+        void onFreeItemRemove(OrderDetail freeItem);
+    }
 }

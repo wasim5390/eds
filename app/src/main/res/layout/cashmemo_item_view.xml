@@ -125,5 +125,18 @@
             android:textSize="14sp"
 
             />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/productTotal"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/free_items_container"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:orientation="vertical"
+            >
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.optimus.eds.ui.cash_memo.CashMemoItemView>

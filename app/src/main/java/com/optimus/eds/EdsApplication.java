@@ -7,15 +7,21 @@ public class EdsApplication extends MultiDexApplication implements AppLifecycleH
     private AppLifecycleHandler lifeCycleHandler;
     private static EdsApplication instance;
 
-    public static Context getInstance() {
+
+    public static EdsApplication getInstance() {
         return instance==null?new EdsApplication():instance;
 
+    }
+
+    public static Context getContext() {
+          return instance.getApplicationContext();
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
+
         lifeCycleHandler = new AppLifecycleHandler(this);
         registerLifecycleHandler(lifeCycleHandler);
 

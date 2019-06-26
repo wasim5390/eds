@@ -428,21 +428,8 @@ public class OrderDetail {
         this.cartonFreeGoodExclusiveId = cartonFreeGoodExclusiveId;
     }
 
-    public Integer getUnitSelectedFreeGoodQuantity() {
-        return unitSelectedFreeGoodQuantity;
-    }
 
-    public void setUnitSelectedFreeGoodQuantity(Integer unitSelectedFreeGoodQuantity) {
-        this.unitSelectedFreeGoodQuantity = unitSelectedFreeGoodQuantity;
-    }
 
-    public Integer getCartonSelectedFreeGoodQuantity() {
-        return cartonSelectedFreeGoodQuantity;
-    }
-
-    public void setCartonSelectedFreeGoodQuantity(Integer cartonSelectedFreeGoodQuantity) {
-        this.cartonSelectedFreeGoodQuantity = cartonSelectedFreeGoodQuantity;
-    }
 
 
 }

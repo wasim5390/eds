@@ -24,6 +24,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.optimus.eds.utils.Util.formatCurrency;
+
 
 public class CustomerInputActivity extends BaseActivity implements SignaturePad.OnSignedListener{
 
@@ -90,7 +92,7 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
 
 
     private void onOrderLoaded(OrderModel orderModel) {
-        tvOrderAmount.setText(String.valueOf(orderModel.getOrder().getPayable()));
+        tvOrderAmount.setText(formatCurrency(orderModel.getOrder().getPayable()));
     }
 
 
