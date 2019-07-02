@@ -2,11 +2,18 @@ package com.optimus.eds.ui.route.outlet.detail;
 
 
 import androidx.lifecycle.ViewModelProviders;
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import androidx.appcompat.widget.AppCompatSpinner;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,11 +21,19 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationRequest;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
 
 import com.optimus.eds.db.entities.Outlet;
 
+import com.optimus.eds.location_services.GpsUtils;
+import com.optimus.eds.location_services.LocationService;
 import com.optimus.eds.model.CustomObject;
 import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.merchandize.OutletMerchandizeActivity;
@@ -27,14 +42,22 @@ import com.optimus.eds.utils.Util;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.optimus.eds.location_services.GpsUtils.GPS_REQUEST;
+import static com.optimus.eds.location_services.LocationService.ACTION;
+import static com.optimus.eds.location_services.LocationService.LOCATION;
+
 public class OutletDetailActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
 
+
+    private static final String TAG = OutletDetailActivity.class.getName();
 
     private Long outletId;
     @BindView(R.id.tvName)
@@ -57,6 +80,11 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
     Button btnOk;
 
     OutletDetailViewModel viewModel;
+    private Outlet outlet;
+
+    private BroadcastReceiver locationBroadcastReceiver;
+    private boolean isGPS=false;
+    private Location currentLocation = new Location("CurrentLocation");
 
     public static void start(Context context, Long outletId,Long routeId) {
         Intent starter = new Intent(context, OutletDetailActivity.class);
@@ -82,23 +110,92 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         popSpinner.setAdapter(adapter);
         popSpinner.setOnItemSelectedListener(this);
         viewModel.findOutlet(outletId).observe(this, outlet -> onOutletLoaded(outlet));
-        viewModel.getStatusLiveData().observe(this,integer -> {
-           // updateBtn(integer==1?true:false);
-            updateBtn(integer==1?true:true);
+        viewModel.getStatusLiveData().observe(this,integer -> updateBtn(true));
+        viewModel.getOutletNearbyPos().observe(this,outletLocation -> {
+            AlertDialogManager.getInstance().showLocationMissMatchAlertDialog(OutletDetailActivity.this,currentLocation,outletLocation);
         });
-
         viewModel.getUploadStatus().observe(this,aBoolean -> {
             if(aBoolean){
-                viewModel.scheduleMasterJob(this,outletId, PreferenceUtil.getInstance(getApplication()).getToken());
+                viewModel.scheduleMasterJob(this,outletId,currentLocation, Calendar.getInstance().getTimeInMillis(), PreferenceUtil.getInstance(getApplication()).getToken());
                 finish(); // finish activity after sending status
             }else{
                 OutletMerchandizeActivity.start(this,outletId);
-
             }
         });
 
+        locationBroadcastReceiver = new BroadcastReceiver(){
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (null != intent && intent.getAction().equals(ACTION)) {
+                    updateBtn(true);
+
+                    Location locationData = intent.getParcelableExtra(LOCATION);
+                    currentLocation  = locationData;
+
+                }
+            }
+        };
+        enableLocationServices();
+
     }
 
+    public void enableLocationServices() {
+        new GpsUtils(this, LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY))
+                .turnGPSOn(isGPSEnable -> {
+                    // turn on GPS
+                    isGPS = isGPSEnable;
+                    if(isGPS) {
+                        startLocationService();
+                    }
+                });
+
+    }
+
+    private void startLocationService() {
+        startService(new Intent(this, LocationService.class));
+    }
+
+    private void stopLocationService() {
+        stopService(new Intent(this, LocationService.class ));
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart fired ..............");
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(locationBroadcastReceiver, new IntentFilter(ACTION));
+
+        Dexter.withActivity(this)
+                .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()){
+
+                            startLocationService();
+                        }
+                        else{
+                            if(report.isAnyPermissionPermanentlyDenied())
+                                openSettings();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(locationBroadcastReceiver);
+        stopLocationService();
+
+    }
 
 
     @Override
@@ -117,6 +214,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
 
 
     private void onOutletLoaded(Outlet outlet) {
+        this.outlet = outlet;
         setTitle(outlet.getOutletName());
         outletAddress.setText(outlet.getAddress());
         outletLastSale.setText(outlet.getLastSaleString());
@@ -125,6 +223,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         outletLastSaleDate.setText(Util.formatDate(Util.DATE_FORMAT_2,outlet.getLastSaleDate()));
         outletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
         outletVisits.setText(String.valueOf(outlet.getVisitFrequency()));
+        viewModel.setOutlet(outlet);
     }
 
 
@@ -144,18 +243,18 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
 
     @OnClick(R.id.btnOk)
     public void onOkClick(){
-        Location location = new Location("Current Location");
-        location.setLatitude(31.4148103);
-        location.setLongitude(74.2533637);
 
-        Location outletLocation = new Location("Outlet Location");
-        outletLocation.setLatitude(31.5237925);
-        outletLocation.setLongitude(74.3580681);
-        double distance = location.distanceTo(outletLocation);
-        viewModel.onNextClick();
-       // if(distance<20)
-       //AlertDialogManager.getInstance().showLocationMissMatchAlertDialog(this,location,outletLocation);
+            viewModel.onNextClick(currentLocation);
+    }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == GPS_REQUEST) {
+                isGPS = true; // flag maintain before get location
+                startLocationService();
+            }
+        }
     }
 }

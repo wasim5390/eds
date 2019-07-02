@@ -108,18 +108,13 @@ public class CustomerInputViewModel extends AndroidViewModel {
         masterModel.setOutletId(order.getOutletId());
         masterModel.setOrderModel(responseModel);
         masterModel.setCustomerInput(customerInput);
-
-
-
-      //  disposable.add(webservice.postMerchandise(merchandiseModel).subscribeOn(Schedulers.io())
-      //          .observeOn(Schedulers.io()).subscribe(baseResponse -> {},this::onError));
+        masterModel.setOutletVisitTime(orderModel.getOutlet().getVisitDateTime());
 
 
         disposable.add(webservice.saveOrder(masterModel,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(this::orderSavedSuccess,this::onError));
-       scheduleMerchandiseJob(getApplication(),outletId, PreferenceUtil.getInstance(getApplication()).getToken());
-
+        scheduleMerchandiseJob(getApplication(),outletId, PreferenceUtil.getInstance(getApplication()).getToken());
 
     }
 
@@ -140,7 +135,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
     private void orderSavedSuccess(OrderResponseModel order) {
         isSaving.postValue(false);
         if(order!=null)
-        orderSaved.postValue(order.isSuccess());
+            orderSaved.postValue(order.isSuccess());
     }
 
     private void onOrderLoadSuccess(OrderModel order){

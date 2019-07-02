@@ -1,6 +1,8 @@
 package com.optimus.eds.ui.cash_memo;
 
 import android.app.Application;
+import android.util.Log;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -15,9 +17,15 @@ import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.MaybeObserver;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class CashMemoViewModel extends AndroidViewModel {
@@ -50,8 +58,6 @@ public class CashMemoViewModel extends AndroidViewModel {
             }
 
            // orderModel.setFreeGoods(freeGoods);
-           // for(OrderDetail orderDetail:freeGoods)
-           //     orderModel.getOrderDetailAndCPriceBreakdowns().add(new OrderDetailAndPriceBreakdown(orderDetail));
             return orderModel;
         })
                 .subscribeOn(Schedulers.io())
@@ -79,6 +85,51 @@ public class CashMemoViewModel extends AndroidViewModel {
             }
         });
         return orderLiveData;
+    }
+
+    public void updateOrder(List<OrderDetailAndPriceBreakdown> orderDetailAndPriceBreakdowns){
+        getOrderDetailObservable(orderDetailAndPriceBreakdowns)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<OrderDetail>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(OrderDetail orderDetail) {
+                        repository.updateOrderItem(orderDetail);
+                        Log.e("CashMemoViewModel", "onNext: " + orderDetail.getProductName() );
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("CashMemoViewModel", "onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.e("CashMemoViewModel", "All users emitted!");
+                    }
+                });
+    }
+
+
+    private Observable<OrderDetail> getOrderDetailObservable(List<OrderDetailAndPriceBreakdown> orderDetailAndPriceBreakdowns) {
+
+        return Observable
+                .create((ObservableOnSubscribe<OrderDetail>) emitter -> {
+                    for (OrderDetailAndPriceBreakdown orderDetailAndPriceBreakdown : orderDetailAndPriceBreakdowns) {
+                        if (!emitter.isDisposed()) {
+                            emitter.onNext(orderDetailAndPriceBreakdown.getOrderDetail());
+                        }
+                    }
+
+                    if (!emitter.isDisposed()) {
+                        emitter.onComplete();
+                    }
+                }).subscribeOn(Schedulers.io());
     }
 
 

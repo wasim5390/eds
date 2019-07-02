@@ -5,6 +5,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.location.Location;
 import android.os.PersistableBundle;
 
 import androidx.core.content.ContextCompat;
@@ -19,7 +20,9 @@ import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.source.JobIdManager;
 import com.optimus.eds.source.MasterDataUploadService;
 import com.optimus.eds.source.MerchandiseUploadService;
+import com.optimus.eds.ui.AlertDialogManager;
 
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -29,10 +32,15 @@ public class OutletDetailViewModel extends AndroidViewModel {
     private LiveData<Outlet> outletLiveData;
     private MutableLiveData<Integer> statusLiveData;
 
+    public LiveData<Location> getOutletNearbyPos() {
+        return outletNearbyPos;
+    }
+
+    private MutableLiveData<Location> outletNearbyPos;
     private MutableLiveData<Boolean> uploadStatus;
 
     private int outletStatus=1;
-
+    private Outlet outlet;
 
 
     public OutletDetailViewModel(@NonNull Application application) {
@@ -40,6 +48,7 @@ public class OutletDetailViewModel extends AndroidViewModel {
         repository = new OutletDetailRepository(application);
         statusLiveData = new MutableLiveData();
         uploadStatus = new MutableLiveData<>();
+        outletNearbyPos = new MutableLiveData<>();
 
     }
 
@@ -48,13 +57,19 @@ public class OutletDetailViewModel extends AndroidViewModel {
         return repository.getOutletById(outletId);
     }
 
+    public void setOutlet(Outlet outlet){
+        this.outlet = outlet;
+    }
 
 
     // schedule
-    public void scheduleMasterJob(Context context, Long outletId, String token) {
+    public void scheduleMasterJob(Context context, Long outletId,Location location, Long visitDateTime,String token) {
         PersistableBundle extras = new PersistableBundle();
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outletId);
         extras.putInt(Constant.EXTRA_PARAM_OUTLET_STATUS_ID,outletStatus);
+        extras.putLong(Constant.EXTRA_PARAM_OUTLET_VISIT_TIME,visitDateTime);
+        extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LAT,location.getLatitude());
+        extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LNG,location.getLongitude());
         extras.putString(Constant.TOKEN, "Bearer "+token);
         ComponentName serviceComponent = new ComponentName(context, MasterDataUploadService.class);
         JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue()), serviceComponent);
@@ -75,8 +90,20 @@ public class OutletDetailViewModel extends AndroidViewModel {
         return statusLiveData;
     }
 
-    public void onNextClick() {
-        uploadStatus.postValue(statusLiveData.getValue()==1?false:true);
+    public void onNextClick(Location currentLocation) {
+        outlet.setVisitDateTime(Calendar.getInstance().getTimeInMillis());
+
+        Location outletLocation = new Location("Outlet Location");
+        outletLocation.setLatitude(outlet.getLatitude());
+        outletLocation.setLongitude(outlet.getLongitude());
+        double distance = currentLocation.distanceTo(outletLocation);
+
+        if(distance>25)
+            outletNearbyPos.postValue(outletLocation);
+        else {
+            repository.updateOutlet(outlet);
+            uploadStatus.postValue(statusLiveData.getValue() == 1 ? false : true);
+        }
     }
 
     public LiveData<Boolean> getUploadStatus() {

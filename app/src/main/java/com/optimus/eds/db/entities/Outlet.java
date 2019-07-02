@@ -52,6 +52,17 @@ public class Outlet implements Serializable {
     private Integer mVisitStatus;
 
 
+    public Long getVisitDateTime() {
+        return visitDateTime;
+    }
+
+    public void setVisitDateTime(Long visitDateTime) {
+        this.visitDateTime = visitDateTime;
+    }
+
+    private Long visitDateTime;
+
+
     @Ignore
     private Double mTotalAmount;
 

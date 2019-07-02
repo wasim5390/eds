@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.android.material.card.MaterialCardView;
+import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.OrderDetail;
 
@@ -64,8 +65,8 @@ public class CashMemoFreeItemView extends MaterialCardView {
     public void setCartItem(OrderDetail item, int freeQuantityTypeId,FreeItemSelector listener) {
         this.order = item;
         this.mListener = listener;
-        btnAdd.setVisibility(freeQuantityTypeId==2?VISIBLE:GONE);
-        btnRemove.setVisibility(freeQuantityTypeId==2?VISIBLE:GONE);
+        btnAdd.setVisibility(freeQuantityTypeId== Constant.SECONDARY ?VISIBLE:GONE);
+        btnRemove.setVisibility(freeQuantityTypeId==Constant.SECONDARY?VISIBLE:GONE);
         if (item != null) {
             Double totalPrice = order.getCartonTotalPrice()+order.getUnitTotalPrice();
             String free = "";

@@ -1,6 +1,8 @@
 package com.optimus.eds.ui.cash_memo;
 
 import android.app.Application;
+import android.os.AsyncTask;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -8,8 +10,12 @@ import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
+import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.model.OrderModel;
 
+import java.util.List;
+
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
 
 public class CashMemoRepository {
@@ -38,5 +44,8 @@ public class CashMemoRepository {
         return orderDao.getOrderWithItems(outletId);
     }
 
+    public void updateOrderItem(OrderDetail orderDetail){
+        AsyncTask.execute(() -> orderDao.updateOrderItem(orderDetail));
+    }
 
 }

@@ -1,6 +1,8 @@
 package com.optimus.eds.ui.route.outlet.detail;
 
 import android.app.Application;
+import android.os.AsyncTask;
+
 import androidx.lifecycle.LiveData;
 
 import com.optimus.eds.db.AppDatabase;
@@ -33,6 +35,10 @@ public class OutletDetailRepository {
 
     public LiveData<Outlet> getOutletById(Long outletId){
         return routeDao.findOutletById(outletId);
+    }
+
+    public void updateOutlet(Outlet outlet){
+        AsyncTask.execute(() -> routeDao.updateOutlet(outlet));
     }
 
     public Single<List<Route>> getAllRoutes(){

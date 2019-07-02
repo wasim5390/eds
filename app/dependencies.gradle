@@ -7,6 +7,7 @@ dependencies {
     implementation deps.support_lib.support_annotations
     implementation deps.support_lib.recyclerview
     implementation deps.support_lib.cardview
+    implementation deps.google_location_services
     implementation deps.constraint_layout
     implementation "com.github.gcacace:signature-pad:1.2.1"
     implementation deps.imagecropper

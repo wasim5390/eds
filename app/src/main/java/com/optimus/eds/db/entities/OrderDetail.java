@@ -128,12 +128,12 @@ public class OrderDetail {
     public List<UnitPriceBreakDown> unitPriceBreakDown;
 
 
-    @SerializedName("cartonFreeGoods")
     @TypeConverters(OrderDetailConverter.class)
+    @SerializedName("cartonFreeGoods")
     public List<OrderDetail> cartonFreeGoods;
 
-    @SerializedName("unitFreeGoods")
     @TypeConverters(OrderDetailConverter.class)
+    @SerializedName("unitFreeGoods")
     public List<OrderDetail> unitFreeGoods;
 
 

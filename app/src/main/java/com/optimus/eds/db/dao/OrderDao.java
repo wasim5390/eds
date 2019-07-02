@@ -44,11 +44,17 @@ public interface OrderDao {
     @Insert(onConflict = REPLACE)
     void insertOrderItems(List<OrderDetail> orderItems);
 
+    @Insert(onConflict = REPLACE)
+    void insertOrderItem(OrderDetail orderItem);
+
     @Update
     void updateOrder(Order order);
 
     @Update
     void updateOrderItems(List<OrderDetail> orderItems);
+
+    @Update
+    void updateOrderItem(OrderDetail orderItem);
 
     @Insert(onConflict = REPLACE)
     void insertCartonPriceBreakDown(List<CartonPriceBreakDown> priceBreakDowns);

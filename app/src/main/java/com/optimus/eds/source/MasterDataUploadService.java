@@ -32,11 +32,16 @@ public class MasterDataUploadService extends JobService implements Constant {
             final Long outletId = bundle.getLong(EXTRA_PARAM_OUTLET_ID);
             final Integer statusId = bundle.getInt(EXTRA_PARAM_OUTLET_STATUS_ID);
             final String reason = bundle.getString(EXTRA_PARAM_OUTLET_REASON_N_ORDER,"");
+            final Double latitude = bundle.getDouble(EXTRA_PARAM_PRESELLER_LAT,0);
+            final Double longitude = bundle.getDouble(EXTRA_PARAM_PRESELLER_LNG,0);
+            final Long visitTime = bundle.getLong(EXTRA_PARAM_OUTLET_VISIT_TIME);
             token = bundle.getString(TOKEN);
             MasterModel masterModel = new MasterModel();
             masterModel.setOutletId(outletId);
             masterModel.setOutletStatus(statusId);
             masterModel.setReason(reason);
+            masterModel.setOutletVisitTime(visitTime>0?visitTime:null);
+            masterModel.setLocation(latitude,longitude);
             uploadMasterData(masterModel);
         }
         return true;

@@ -42,7 +42,12 @@ public interface Constant {
     String EXTRA_PARAM_OUTLET_ID = "param_outlet_id" ;
     String EXTRA_PARAM_OUTLET_STATUS_ID = "param_outlet_status_id" ;
     String EXTRA_PARAM_OUTLET_REASON_N_ORDER = "param_outlet_reason_no_order" ;
+    String EXTRA_PARAM_OUTLET_VISIT_TIME = "param_outlet_visit_date_time" ;
+    String EXTRA_PARAM_PRESELLER_LAT = "param_preseller_lat" ;
+    String EXTRA_PARAM_PRESELLER_LNG = "param_preseller_lng" ;
     String TOKEN = "token";
+    int PRIMARY = 1;
+    int SECONDARY=2;
 
     interface IntentExtras {
         String ACTION_CAMERA = "action-camera";

@@ -107,7 +107,9 @@ public class CashMemoActivity extends BaseActivity {
 
 
     private void updateCart(List<OrderDetailAndPriceBreakdown> products) {
-        cartAdapter.populateCartItems(products);
+        cartAdapter.populateCartItems(products, productsWithFreeItem -> {
+            viewModel.updateOrder(productsWithFreeItem);
+        });
     }
 
     @OnClick(R.id.btnNext)

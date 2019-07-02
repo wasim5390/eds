@@ -1,6 +1,7 @@
 package com.optimus.eds.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Merchandise;
 
@@ -13,6 +14,16 @@ public class MasterModel extends BaseResponse {
 
     @Expose
     private String reason;
+
+    @Expose
+    public Long outletVisitTime;
+
+
+    @Expose
+    public Double latitude;
+
+    @Expose
+    public Double longitude;
 
     @Expose
     private CustomerInput customerInput;
@@ -55,9 +66,33 @@ public class MasterModel extends BaseResponse {
         this.customerInput = customerInput;
     }
 
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Long getOutletVisitTime() {
+        return outletVisitTime;
+    }
+
+    public void setOutletVisitTime(Long outletVisitTime) {
+        this.outletVisitTime = outletVisitTime;
+    }
+
+
+    public Double getLongitude() {
+        return longitude;
+    }
 
 
 
+    public void setLocation(Double latitude,Double longitude){
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
 
 }

@@ -2,6 +2,7 @@ package com.optimus.eds.ui.cash_memo;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,15 +22,21 @@ public class CashMemoAdapter extends
 
     private Context mContext;
     private List<OrderDetailAndPriceBreakdown> products;
+    private  FreeItemListener mListener;
 
     public CashMemoAdapter(Context context) {
         this.mContext = context;
         this.products = new ArrayList<>();
     }
 
-    public void populateCartItems(List<OrderDetailAndPriceBreakdown> products) {
+    public void populateCartItems(List<OrderDetailAndPriceBreakdown> products,FreeItemListener listener) {
+        this.mListener = listener;
         this.products = products;
         notifyDataSetChanged();
+    }
+
+    public List<OrderDetailAndPriceBreakdown> getCartItems(){
+        return products;
     }
 
     @NonNull
@@ -50,30 +57,79 @@ public class CashMemoAdapter extends
         ((CashMemoItemView)viewHolder.itemView).setCartItem(product, new CashMemoFreeItemView.FreeItemSelector() {
             @Override
             public void onFreeItemAdd(OrderDetail freeItem) {
-                int pos = product.getCartonFreeGoods().indexOf(freeItem);
-                Integer selectedCartonQty = freeItem.getSelectedCartonFreeGoodQuantity()==null?0:freeItem.getSelectedCartonFreeGoodQuantity();
-                Integer selectedUnitQty = freeItem.getSelectedUnitFreeGoodQuantity()==null?0:freeItem.getSelectedUnitFreeGoodQuantity();
-                if(product.getCartonFreeGoodQuantity()>selectedCartonQty){
-                    selectedCartonQty++;
-                    freeItem.setSelectedCartonFreeGoodQuantity(selectedCartonQty);
-                    notifyDataSetChanged();
-                    Toast.makeText(mContext, String.valueOf(selectedCartonQty), Toast.LENGTH_SHORT).show();
-                }
+                if(freeItem.getCartonQuantity()>0)
+                    addCartonFreeItems(product,freeItem);
+                else if(freeItem.getUnitQuantity()>0)
+                    addUnitFreeItems(product,freeItem);
             }
 
             @Override
             public void onFreeItemRemove(OrderDetail freeItem) {
-                int pos = product.getCartonFreeGoods().indexOf(freeItem);
-                Integer selectedCartonQty = freeItem.getSelectedCartonFreeGoodQuantity()==null?0:freeItem.getSelectedCartonFreeGoodQuantity();
-                Integer selectedUnitQty = freeItem.getSelectedUnitFreeGoodQuantity()==null?0:freeItem.getSelectedUnitFreeGoodQuantity();
-                if(selectedCartonQty>0){
-                    selectedCartonQty--;
-                    freeItem.setSelectedCartonFreeGoodQuantity(selectedCartonQty);
-                    notifyDataSetChanged();
-                    Toast.makeText(mContext, String.valueOf(selectedCartonQty), Toast.LENGTH_SHORT).show();
-                }
+                if(freeItem.getCartonQuantity()>0)
+                    removeCartonFreeItems(product,freeItem);
+                else if(freeItem.getUnitQuantity()>0)
+                    removeUnitFreeItems(product,freeItem);
             }
         });
+    }
+
+
+    private void removeCartonFreeItems(OrderDetail product,OrderDetail freeItem){
+
+        Integer superSelectedCartonQty = product.getSelectedCartonFreeGoodQuantity()==null?0:product.getSelectedCartonFreeGoodQuantity();
+        Integer selectedCartonQty = freeItem.getSelectedCartonFreeGoodQuantity()==null?0:freeItem.getSelectedCartonFreeGoodQuantity();
+
+        if(selectedCartonQty>0){
+            selectedCartonQty--;
+            freeItem.setSelectedCartonFreeGoodQuantity(selectedCartonQty);
+            product.setSelectedCartonFreeGoodQuantity(--superSelectedCartonQty);
+            onDataUpdated();
+            Toast.makeText(mContext, String.valueOf(selectedCartonQty), Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void removeUnitFreeItems(OrderDetail product,OrderDetail freeItem){
+
+        Integer superSelectedUnitQty = product.getSelectedUnitFreeGoodQuantity()==null?0:product.getSelectedUnitFreeGoodQuantity();
+        Integer selectedUnitQty = freeItem.getSelectedUnitFreeGoodQuantity()==null?0:freeItem.getSelectedUnitFreeGoodQuantity();
+
+        if(selectedUnitQty>0){
+            selectedUnitQty--;
+            freeItem.setSelectedUnitFreeGoodQuantity(selectedUnitQty);
+            product.setSelectedUnitFreeGoodQuantity(--superSelectedUnitQty);
+            onDataUpdated();
+            Toast.makeText(mContext, String.valueOf(selectedUnitQty), Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void addCartonFreeItems(OrderDetail product,OrderDetail freeItem){
+
+        Integer selectedCartonQty = product.getSelectedCartonFreeGoodQuantity()==null?0:product.getSelectedCartonFreeGoodQuantity();
+
+        if(product.getCartonFreeGoodQuantity()>selectedCartonQty){
+            selectedCartonQty++;
+            freeItem.setSelectedCartonFreeGoodQuantity(selectedCartonQty);
+            product.setSelectedCartonFreeGoodQuantity(selectedCartonQty);
+            onDataUpdated();
+            Toast.makeText(mContext, String.valueOf(selectedCartonQty), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void addUnitFreeItems(OrderDetail product,OrderDetail freeItem){
+
+
+        Integer selectedUnitQty = product.getSelectedUnitFreeGoodQuantity()==null?0:product.getSelectedUnitFreeGoodQuantity();
+
+        if(product.getUnitFreeGoodQuantity()>selectedUnitQty){
+            selectedUnitQty++;
+            freeItem.setSelectedUnitFreeGoodQuantity(selectedUnitQty);
+            product.setSelectedUnitFreeGoodQuantity(selectedUnitQty);
+            onDataUpdated();
+            Toast.makeText(mContext, String.valueOf(selectedUnitQty), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void onDataUpdated(){
+        mListener.onFreeItemsSelected(products);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -89,5 +145,9 @@ public class CashMemoAdapter extends
             this.view = itemView;
         }
 
+    }
+
+    public interface FreeItemListener{
+        void onFreeItemsSelected(List<OrderDetailAndPriceBreakdown> products);
     }
 }
