@@ -33,6 +33,7 @@ public class PackageSection extends StatelessSection {
         this.list = pkg.getProducts();
 
 
+
     }
 
     public List<Product> getList() {
@@ -164,4 +165,6 @@ public class PackageSection extends StatelessSection {
 
         }
     }
+
+
 }

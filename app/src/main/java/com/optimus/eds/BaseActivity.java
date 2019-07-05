@@ -26,7 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
     public abstract void created(Bundle savedInstanceState);
 
     private ProgressFragmentDialog pd;
-    private AppDatabase db;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,9 +64,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
         return super.onOptionsItemSelected(item);
     }
 
-    protected AppDatabase getDb(){
-        return AppDatabase.getDatabase(getApplication());
-    }
 
     /**
      * Showing Alert Dialog with Settings option
@@ -106,6 +103,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
         startActivityForResult(intent, 101);
     }
 
+    // navigating user to app settings
+    public void openLocationSettings() {
+        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
+    }
+
     /**** show progress *******************/
 
     public void showProgress() {
@@ -113,6 +118,16 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
         if (pd==null) {
             pd = ProgressFragmentDialog.newInstance();
         }
+        pd.show(getSupportFragmentManager(), "TAG");
+
+    }
+
+    public void showProgress(boolean cancelable) {
+
+        if (pd==null) {
+            pd = ProgressFragmentDialog.newInstance();
+        }
+        pd.setCancelable(cancelable);
         pd.show(getSupportFragmentManager(), "TAG");
 
     }

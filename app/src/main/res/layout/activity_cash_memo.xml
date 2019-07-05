@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:visibility="invisible"
+                android:visibility="visible"
                 android:layout_weight="12"
 
                 >
@@ -100,17 +100,17 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_medium"
                     android:textColor="@color/white"
-                    android:text="@string/discount"
+                    android:text="Free Qty:"
 
 
                     />
                 <TextView
-                    android:id="@+id/tvDiscountedAmount"
+                    android:id="@+id/tvFreeQty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_medium"
                     android:textColor="@color/white"
-                    android:text="15,300.0"
+                    android:text="0.0"
 
                     android:layout_marginStart="5dp"
 

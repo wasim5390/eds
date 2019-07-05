@@ -1,6 +1,8 @@
 package com.optimus.eds.ui.merchandize;
 
 import androidx.lifecycle.ViewModelProviders;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,15 +55,16 @@ public class OutletMerchandizeActivity extends BaseActivity {
     private MerchandiseAdapter merchandiseAdapter;
     private Long outletId;
     private static final int REQUEST_CODE_IMAGE = 0x0005;
+    private static final int REQUEST_CODE=0x1100;
 
     MerchandiseViewModel viewModel;
     int type=0;
     ImageDialog dialogFragment;
 
-    public static void start(Context context,Long outletId) {
+    public static void start(Context context,Long outletId, int requestCode) {
         Intent starter = new Intent(context, OutletMerchandizeActivity.class);
         starter.putExtra("OutletId",outletId);
-        context.startActivity(starter);
+        ((Activity)context).startActivityForResult(starter,requestCode);
     }
 
     @Override
@@ -71,6 +74,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
 
     @Override
     public void created(Bundle savedInstanceState) {
+
         ButterKnife.bind(this);
         setToolbar(getString(R.string.merchandizing));
         initMerchandiseAdapter();
@@ -91,7 +95,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
 
         viewModel.isSaved().observe(this, aBoolean -> {
             if(aBoolean){
-                OrderBookingActivity.start(OutletMerchandizeActivity.this,outletId);
+                OrderBookingActivity.start(OutletMerchandizeActivity.this,outletId,REQUEST_CODE);
             }
         });
         viewModel.isInProgress().observe(this, this::setProgress);
@@ -201,6 +205,10 @@ public class OutletMerchandizeActivity extends BaseActivity {
                         compress(imagePath,type);
                     }
                     break;
+                case REQUEST_CODE:
+                    setResult(RESULT_OK,data);
+                    finish();
+                    break;
             }
         }
     }
@@ -215,7 +223,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
                         file ->{
                             if(Util.moveFile(file,actualImage.getParentFile()))
                                 viewModel.saveImages(actualImage.getPath(),type);
-                            }, throwable -> {
+                        }, throwable -> {
 
                             throwable.printStackTrace();
                             Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();

@@ -13,6 +13,7 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
+import com.optimus.eds.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,14 +50,20 @@ public class CashMemoViewModel extends AndroidViewModel {
 
         repository.findOrder(outletId).map(orderModel -> {
             List<OrderDetail> freeGoods = new ArrayList<>();
+            float freeQty =0f;
             for(OrderDetailAndPriceBreakdown orderWithDetails:orderModel.getOrderDetailAndCPriceBreakdowns()){
+                Integer unitFreeQty = orderWithDetails.getOrderDetail().getUnitFreeGoodQuantity();
+                Integer cartonFreeQty = orderWithDetails.getOrderDetail().getCartonFreeGoodQuantity();
 
-                freeGoods.addAll(orderWithDetails.getOrderDetail().getCartonFreeGoods());
-                freeGoods.addAll(orderWithDetails.getOrderDetail().getUnitFreeGoods());
+                String freeQtyStr = Util.convertToDecimalQuantity(cartonFreeQty==null?0:cartonFreeQty,unitFreeQty==null?0:unitFreeQty);
+               freeQty += Float.valueOf(freeQtyStr);
+                //freeGoods.addAll(orderWithDetails.getOrderDetail().getCartonFreeGoods());
+               // freeGoods.addAll(orderWithDetails.getOrderDetail().getUnitFreeGoods());
                 orderWithDetails.getOrderDetail().setCartonPriceBreakDown(orderWithDetails.getCartonPriceBreakDownList());
                 orderWithDetails.getOrderDetail().setUnitPriceBreakDown(orderWithDetails.getUnitPriceBreakDownList());
-            }
 
+            }
+            orderModel.setFreeAvailableQty(freeQty);
            // orderModel.setFreeGoods(freeGoods);
             return orderModel;
         })

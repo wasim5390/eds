@@ -22,26 +22,21 @@ import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class LocationService extends Service  {
+    public static final String ACTION = "LOCATION_ACTION";
+    public static final String LOCATION = "LOCATION_DATA";
     private static final String TAG = LocationService.class.getName();
     private static final String DISTANCE = "DISTANCE";
-    public static final String ACTION = "LOCATION_ACTION";
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS =  10*1000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS/2;
-    public static final String LOCATION = "LOCATION_DATA";
     private static final float ACCURACY_THRESHOLD=100;
 
 
     protected LocationRequest locationRequest;
-
-    private FusedLocationProviderClient fusedLocationProviderClient;
-
-    private LocationCallback mLocationCallback;
-
     protected Location oldLocation;
-
     protected Location newLocation;
-
     protected Location currentLocation;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationCallback mLocationCallback;
     private String timeCurrentLocation;
 
     private float distance;
@@ -66,7 +61,7 @@ public class LocationService extends Service  {
                 updateUI();
             }
         };
-       // distance = PreferenceManager.getDefaultSharedPreferences(this).getFloat(DISTANCE, 0);
+        // distance = PreferenceManager.getDefaultSharedPreferences(this).getFloat(DISTANCE, 0);
     }
 
     @Override
@@ -79,7 +74,17 @@ public class LocationService extends Service  {
 
     protected void startLocationUpdates() {
         try {
+
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(task -> {
+
+                if(currentLocation!=null) {
+                    currentLocation=   task;
+                    sendLocationBroadcast();
+                }
+            });
+
             fusedLocationProviderClient.requestLocationUpdates( locationRequest, mLocationCallback, Looper.myLooper());
+
 
         } catch (SecurityException ex) {
 
@@ -102,7 +107,7 @@ public class LocationService extends Service  {
 
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        locationRequest.setSmallestDisplacement(3f); // 3 meters
+        locationRequest.setSmallestDisplacement(2f); // 2 meters
     }
 
     private void updateUI() {
@@ -125,7 +130,7 @@ public class LocationService extends Service  {
 
             Log.d(TAG, "Location Data:\n" + locationData.toString());
 
-            sendLocationBroadcast(locationData.toString());
+            sendLocationBroadcast();
 
         } else {
 
@@ -133,7 +138,7 @@ public class LocationService extends Service  {
         }
     }
 
-    private void sendLocationBroadcast(String locationData) {
+    private void sendLocationBroadcast() {
 
         Intent locationIntent = new Intent();
         locationIntent.setAction(ACTION);

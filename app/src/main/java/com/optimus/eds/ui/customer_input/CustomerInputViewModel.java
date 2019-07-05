@@ -105,6 +105,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
         CustomerInput customerInput = new CustomerInput(outletId,order.getLocalOrderId(),deliveryDate,mobileNumber,remarks,base64Sign);
         customerInputRepository.saveCustomerInput(customerInput);
         MasterModel masterModel = new MasterModel();
+        masterModel.setLocation(orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng());
         masterModel.setOutletId(order.getOutletId());
         masterModel.setOrderModel(responseModel);
         masterModel.setCustomerInput(customerInput);

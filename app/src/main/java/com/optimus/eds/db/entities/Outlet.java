@@ -35,9 +35,13 @@ public class Outlet implements Serializable {
     @SerializedName("address")
     private String mAddress;
     @SerializedName("latitude")
-    private Float mLatitude;
+    private Double mLatitude;
     @SerializedName("longitude")
-    private Float mLongitude;
+    private Double mLongitude;
+
+    private Double visitTimeLat;
+    private Double visitTimeLng;
+
     @SerializedName("lastSaleDate")
     private Long mLastSaleDate;
     @SerializedName("lastSaleQuantity")
@@ -101,7 +105,7 @@ public class Outlet implements Serializable {
         this.mLastSaleQuantity = mLastSaleQuantity;
     }
 
-    public void setLatitude(Float mLatitude) {
+    public void setLatitude(Double mLatitude) {
         this.mLatitude = mLatitude;
     }
 
@@ -109,7 +113,7 @@ public class Outlet implements Serializable {
         this.mLocation = mLocation;
     }
 
-    public void setLongitude(Float mLongitude) {
+    public void setLongitude(Double mLongitude) {
         this.mLongitude = mLongitude;
     }
 
@@ -171,7 +175,7 @@ public class Outlet implements Serializable {
     }
 
 
-    public Float getLatitude() {
+    public Double getLatitude() {
         return mLatitude;
     }
 
@@ -179,7 +183,7 @@ public class Outlet implements Serializable {
         return mLocation;
     }
 
-    public Float getLongitude() {
+    public Double getLongitude() {
         return mLongitude;
     }
 
@@ -213,6 +217,22 @@ public class Outlet implements Serializable {
 
     public Integer getVisitStatus() {
         return mVisitStatus;
+    }
+
+    public Double getVisitTimeLat() {
+        return visitTimeLat;
+    }
+
+    public void setVisitTimeLat(Double visitTimeLat) {
+        this.visitTimeLat = visitTimeLat;
+    }
+
+    public Double getVisitTimeLng() {
+        return visitTimeLng;
+    }
+
+    public void setVisitTimeLng(Double visitTimeLng) {
+        this.visitTimeLng = visitTimeLng;
     }
 
     @Override

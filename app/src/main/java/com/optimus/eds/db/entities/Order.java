@@ -40,9 +40,9 @@ public class Order {
     public int visitDayId;
 
     @SerializedName("latitude")
-    public double latitude;
+    public Double latitude;
     @SerializedName("longitude")
-    public double longitude;
+    public Double longitude;
 
     @SerializedName("subtotal")
     public Double subTotal;
@@ -115,16 +115,16 @@ public class Order {
     public void setVisitDayId(int visitDayId) {
         this.visitDayId = visitDayId;
     }
-    public double getLatitude() {
-        return latitude;
+    public Double getLatitude() {
+        return latitude==null?0:latitude;
     }
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public Double getLongitude() {
+        return longitude==null?0:longitude;
     }
 
     public void setLongitude(double longitude) {

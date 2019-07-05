@@ -58,6 +58,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
 
 
     private static final String TAG = OutletDetailActivity.class.getName();
+    private static final int REQUEST_CODE = 0x1001;
 
     private Long outletId;
     @BindView(R.id.tvName)
@@ -80,9 +81,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
     Button btnOk;
 
     OutletDetailViewModel viewModel;
-    private Outlet outlet;
-
-    private BroadcastReceiver locationBroadcastReceiver;
+    private String reasonForNoSale="";
     private boolean isGPS=false;
     private Location currentLocation = new Location("CurrentLocation");
 
@@ -103,43 +102,45 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         ButterKnife.bind(this);
         outletId =  getIntent().getLongExtra("OutletId",0);
         viewModel = ViewModelProviders.of(this).get(OutletDetailViewModel.class);
-
+        showProgress(true);
         setToolbar(getString(R.string.outlet_summary));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item);
         adapter.addAll(getResources().getStringArray(R.array.pop_array));
         popSpinner.setAdapter(adapter);
         popSpinner.setOnItemSelectedListener(this);
-        viewModel.findOutlet(outletId).observe(this, outlet -> onOutletLoaded(outlet));
+        viewModel.findOutlet(outletId).observe(this, outlet -> updateUI(outlet));
         viewModel.getStatusLiveData().observe(this,integer -> updateBtn(true));
         viewModel.getOutletNearbyPos().observe(this,outletLocation -> {
             AlertDialogManager.getInstance().showLocationMissMatchAlertDialog(OutletDetailActivity.this,currentLocation,outletLocation);
         });
         viewModel.getUploadStatus().observe(this,aBoolean -> {
             if(aBoolean){
-                viewModel.scheduleMasterJob(this,outletId,currentLocation, Calendar.getInstance().getTimeInMillis(), PreferenceUtil.getInstance(getApplication()).getToken());
+                viewModel.scheduleMasterJob(this,outletId,currentLocation, Calendar.getInstance().getTimeInMillis(),reasonForNoSale, PreferenceUtil.getInstance(getApplication()).getToken());
                 finish(); // finish activity after sending status
             }else{
-                OutletMerchandizeActivity.start(this,outletId);
+                OutletMerchandizeActivity.start(this,outletId,REQUEST_CODE);
+
             }
         });
 
-        locationBroadcastReceiver = new BroadcastReceiver(){
-            @Override
-            public void onReceive(Context context, Intent intent) {
 
-                if (null != intent && intent.getAction().equals(ACTION)) {
-                    updateBtn(true);
-
-                    Location locationData = intent.getParcelableExtra(LOCATION);
-                    currentLocation  = locationData;
-
-                }
-            }
-        };
         enableLocationServices();
 
     }
+    BroadcastReceiver locationBroadcastReceiver = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
+            if (null != intent && intent.getAction().equals(ACTION)) {
+
+                hideProgress();
+
+                Location locationData = intent.getParcelableExtra(LOCATION);
+                currentLocation  = locationData;
+
+            }
+        }
+    };
     public void enableLocationServices() {
         new GpsUtils(this, LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY))
                 .turnGPSOn(isGPSEnable -> {
@@ -164,7 +165,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         super.onStart();
         Log.d(TAG, "onStart fired ..............");
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(locationBroadcastReceiver, new IntentFilter(ACTION));
+
 
         Dexter.withActivity(this)
                 .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -177,7 +178,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
                         }
                         else{
                             if(report.isAnyPermissionPermanentlyDenied())
-                                openSettings();
+                                openLocationSettings();
                         }
                     }
 
@@ -186,6 +187,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
                         token.continuePermissionRequest();
                     }
                 }).check();
+        LocalBroadcastManager.getInstance(this).registerReceiver(locationBroadcastReceiver, new IntentFilter(ACTION));
 
     }
 
@@ -213,8 +215,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
 
 
 
-    private void onOutletLoaded(Outlet outlet) {
-        this.outlet = outlet;
+    private void updateUI(Outlet outlet) {
         setTitle(outlet.getOutletName());
         outletAddress.setText(outlet.getAddress());
         outletLastSale.setText(outlet.getLastSaleString());
@@ -243,7 +244,6 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
 
     @OnClick(R.id.btnOk)
     public void onOkClick(){
-
             viewModel.onNextClick(currentLocation);
     }
 
@@ -251,10 +251,18 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == GPS_REQUEST) {
-                isGPS = true; // flag maintain before get location
-                startLocationService();
+            switch (requestCode){
+                case GPS_REQUEST:
+                    isGPS = true; // flag maintain before get location
+                    startLocationService();
+                    break;
+                case REQUEST_CODE:
+                    boolean noOrderFromOrderBooking = data.getBooleanExtra(EXTRA_PARAM_NO_ORDER_FROM_BOOKING,false);
+                    reasonForNoSale = data.getStringExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER);
+                    viewModel.postOrderWithNoOrder(noOrderFromOrderBooking);
+                    break;
             }
+
         }
     }
 }

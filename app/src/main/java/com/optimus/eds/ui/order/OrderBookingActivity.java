@@ -1,8 +1,11 @@
 package com.optimus.eds.ui.order;
 
 import androidx.lifecycle.ViewModelProviders;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.appcompat.widget.AppCompatSpinner;
@@ -11,10 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
+import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Product;
@@ -48,10 +53,10 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
     private OrderBookingViewModel viewModel;
     private ProductGroup group;
 
-    public static void start(Context context, Long outletId) {
+    public static void start(Context context, Long outletId,int requestCode) {
         Intent starter = new Intent(context, OrderBookingActivity.class);
         starter.putExtra("OutletId",outletId);
-        context.startActivity(starter);
+        ((Activity)context).startActivityForResult(starter,requestCode);
     }
 
     @Override
@@ -129,7 +134,8 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
         for(PackageModel pkg:packages){
             sectionAdapter.addSection(pkg.getPackageName(),new PackageSection(pkg));
         }
-        rvProducts.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvProducts.setLayoutManager(linearLayoutManager);
         rvProducts.setAdapter(sectionAdapter);
     }
 
@@ -151,6 +157,14 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
 
     @Override
     public void onNoSaleReasonEntered(String reason) {
-        Toast.makeText(this, reason, Toast.LENGTH_SHORT).show();
+        Intent intent = getIntent();
+        intent.putExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER,reason);
+        intent.putExtra(Constant.EXTRA_PARAM_NO_ORDER_FROM_BOOKING,true);
+        setResult(RESULT_OK,intent);
+        finish();
     }
+
+
+
+
 }

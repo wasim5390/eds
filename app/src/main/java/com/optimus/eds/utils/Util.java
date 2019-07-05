@@ -175,6 +175,12 @@ public class Util {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
+    /**
+     * This function is being used in Order Booking where edittext must be empty in case of no carton/units
+     * @param carton
+     * @param units
+     * @return
+     */
     public static String convertToDecimalQuantity(Long carton, Long units)
     {
         if(carton==null)
@@ -189,6 +195,27 @@ public class Util {
             finalVal = String.valueOf(carton);
         }else if(units>0)
             finalVal = ".".concat(String.valueOf(units));
+
+
+        return finalVal;
+    }
+
+    public static String convertToDecimalQuantity(Integer carton, Integer units)
+    {
+        if(carton==null)
+            carton=0;
+        if(units==null)
+            units=0;
+
+        String finalVal="";
+        if(carton>0 && units>0)
+            finalVal= String.valueOf(carton).concat("."+String.valueOf(units));
+        else if(carton>0){
+            finalVal = String.valueOf(carton);
+        }else if(units>0)
+            finalVal = ".".concat(String.valueOf(units));
+        else
+            finalVal = "0.0";
 
         return finalVal;
     }

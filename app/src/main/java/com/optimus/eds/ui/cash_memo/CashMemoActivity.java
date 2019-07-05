@@ -38,8 +38,8 @@ public class CashMemoActivity extends BaseActivity {
     @BindView(R.id.tvGrandTotal)
     TextView tvGrandTotal;
 
-    @BindView(R.id.tvDiscountedAmount)
-    TextView tvDiscountedAmount;
+    @BindView(R.id.tvFreeQty)
+    TextView tvFreeQty;
 
     @BindView(R.id.tvQty)
     TextView tvQty;
@@ -93,6 +93,8 @@ public class CashMemoActivity extends BaseActivity {
             units+=uQty!=null?uQty:0;
         }
         tvQty.setText(String.valueOf(carton)+"."+String.valueOf(units));
+        tvFreeQty.setText(String.valueOf(order.getFreeAvailableQty()));
+
     }
 
     private void initAdapter(){
@@ -107,6 +109,7 @@ public class CashMemoActivity extends BaseActivity {
 
 
     private void updateCart(List<OrderDetailAndPriceBreakdown> products) {
+
         cartAdapter.populateCartItems(products, productsWithFreeItem -> {
             viewModel.updateOrder(productsWithFreeItem);
         });

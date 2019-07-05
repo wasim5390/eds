@@ -22,7 +22,6 @@ import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 import com.optimus.eds.utils.NetworkManager;
-import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
 

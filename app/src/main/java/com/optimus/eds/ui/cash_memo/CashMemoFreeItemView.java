@@ -69,8 +69,12 @@ public class CashMemoFreeItemView extends MaterialCardView {
         btnRemove.setVisibility(freeQuantityTypeId==Constant.SECONDARY?VISIBLE:GONE);
         if (item != null) {
             Double totalPrice = order.getCartonTotalPrice()+order.getUnitTotalPrice();
+            Integer selectedFreeCarton = item.getSelectedCartonFreeGoodQuantity()==null?0:item.getSelectedCartonFreeGoodQuantity();
+            Integer selectedFreeUnits = item.getSelectedUnitFreeGoodQuantity()==null?0:item.getSelectedUnitFreeGoodQuantity();
+
             String free = "";
-            free = totalPrice>0?"":" &#127379;";
+            if(freeQuantityTypeId== Constant.PRIMARY||selectedFreeCarton>0 || selectedFreeUnits>0)
+            free = "  &#10004;";
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 productName.setText(Html.fromHtml(item.getProductName().concat(free),Html.FROM_HTML_MODE_LEGACY));
             }else{

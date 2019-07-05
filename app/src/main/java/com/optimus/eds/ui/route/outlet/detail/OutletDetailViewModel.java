@@ -29,7 +29,7 @@ import java.util.List;
 public class OutletDetailViewModel extends AndroidViewModel {
 
     private OutletDetailRepository repository;
-    private LiveData<Outlet> outletLiveData;
+
     private MutableLiveData<Integer> statusLiveData;
 
     public LiveData<Location> getOutletNearbyPos() {
@@ -63,13 +63,14 @@ public class OutletDetailViewModel extends AndroidViewModel {
 
 
     // schedule
-    public void scheduleMasterJob(Context context, Long outletId,Location location, Long visitDateTime,String token) {
+    public void scheduleMasterJob(Context context, Long outletId,Location location, Long visitDateTime,String reason,String token) {
         PersistableBundle extras = new PersistableBundle();
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outletId);
         extras.putInt(Constant.EXTRA_PARAM_OUTLET_STATUS_ID,outletStatus);
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_VISIT_TIME,visitDateTime);
         extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LAT,location.getLatitude());
         extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LNG,location.getLongitude());
+        extras.putString(Constant.EXTRA_PARAM_OUTLET_REASON_N_ORDER,reason);
         extras.putString(Constant.TOKEN, "Bearer "+token);
         ComponentName serviceComponent = new ComponentName(context, MasterDataUploadService.class);
         JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue()), serviceComponent);
@@ -92,7 +93,6 @@ public class OutletDetailViewModel extends AndroidViewModel {
 
     public void onNextClick(Location currentLocation) {
         outlet.setVisitDateTime(Calendar.getInstance().getTimeInMillis());
-
         Location outletLocation = new Location("Outlet Location");
         outletLocation.setLatitude(outlet.getLatitude());
         outletLocation.setLongitude(outlet.getLongitude());
@@ -101,8 +101,17 @@ public class OutletDetailViewModel extends AndroidViewModel {
         if(distance>25)
             outletNearbyPos.postValue(outletLocation);
         else {
+            outlet.setVisitTimeLat(currentLocation.getLatitude());
+            outlet.setVisitTimeLng(currentLocation.getLongitude());
             repository.updateOutlet(outlet);
             uploadStatus.postValue(statusLiveData.getValue() == 1 ? false : true);
+        }
+    }
+
+    public void postOrderWithNoOrder(boolean noOrderFromBooking){
+        if(noOrderFromBooking) {
+            outletStatus = 5;
+            uploadStatus.postValue(true);
         }
     }
 
