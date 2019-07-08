@@ -45,23 +45,23 @@ public class Product implements Serializable {
     @SerializedName("cartonCode")
     public String cartonCode;
     @SerializedName("unitQuantity")
-    public Long unitQuantity;
+    public Integer unitQuantity;
     @SerializedName("cartonQuantity")
-    public Long cartonQuantity;
+    public Integer cartonQuantity;
     @SerializedName("unitSizeForDisplay")
     public String unitSizeForDisplay;
     @SerializedName("cartonSizeForDisplay")
     public String cartonSizeForDisplay;
     @SerializedName("unitStockInHand")
-    public Long unitStockInHand;
+    public Integer unitStockInHand;
     @SerializedName("cartonStockInHand")
-    public Long cartonStockInHand;
+    public Integer cartonStockInHand;
 
 
     @Ignore
-    public Long qtyCarton,qtyUnit;
+    public Integer qtyCarton,qtyUnit;
     @Ignore
-    public Long avlStockUnit,avlStockCarton;
+    public Integer avlStockUnit,avlStockCarton;
 
 
     public Product(Long id, Long pkgId, String name) {
@@ -70,38 +70,38 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    public Long getQtyUnit() {
+    public Integer getQtyUnit() {
         return qtyUnit==null||qtyUnit==0?null:qtyUnit;
     }
 
-    public Long getQtyCarton() {
+    public Integer getQtyCarton() {
         return qtyCarton==null||qtyCarton==0?null:qtyCarton;
     }
 
-    public void setQty(Long carton, Long unit) {
+    public void setQty(Integer carton, Integer unit) {
         this.qtyCarton = carton;
         this.qtyUnit = unit;
     }
 
-    public void setAvlStock(Long carton,Long unit) {
+    public void setAvlStock(Integer carton,Integer unit) {
         this.avlStockCarton = carton;
         this.avlStockUnit = unit;
     }
 
-    public void setUnit(Long unit) {
+    public void setUnit(Integer unit) {
         this.qtyUnit = unit;
     }
 
-    public void setCarton(Long carton) {
+    public void setCarton(Integer carton) {
         this.qtyCarton = carton;
     }
 
 
-    public Long getAvlStockUnit() {
+    public Integer getAvlStockUnit() {
         return avlStockUnit;
     }
 
-    public Long getAvlStockCarton() {
+    public Integer getAvlStockCarton() {
         return avlStockCarton;
     }
 
@@ -160,11 +160,11 @@ public class Product implements Serializable {
         return cartonCode;
     }
 
-    public Long getUnitQuantity() {
+    public Integer getUnitQuantity() {
         return unitQuantity;
     }
 
-    public Long getCartonQuantity() {
+    public Integer getCartonQuantity() {
         return cartonQuantity;
     }
 
@@ -176,11 +176,11 @@ public class Product implements Serializable {
         return cartonSizeForDisplay;
     }
 
-    public Long getUnitStockInHand() {
+    public Integer getUnitStockInHand() {
         return unitStockInHand;
     }
 
-    public Long getCartonStockInHand() {
+    public Integer getCartonStockInHand() {
         return cartonStockInHand;
     }
 

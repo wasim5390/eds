@@ -3,6 +3,7 @@ package com.optimus.eds.ui.cash_memo;
 import android.content.Context;
 import com.google.android.material.card.MaterialCardView;
 
+import android.graphics.Typeface;
 import android.os.Build;
 import android.text.Html;
 import android.util.AttributeSet;
@@ -12,6 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.OrderDetail;
 
@@ -19,9 +21,11 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import androidx.core.content.res.ResourcesCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.optimus.eds.Constant.PRIMARY;
 import static com.optimus.eds.utils.Util.formatCurrency;
 
 public class CashMemoItemView extends MaterialCardView {
@@ -72,16 +76,28 @@ public class CashMemoItemView extends MaterialCardView {
         if (item != null) {
             Double totalPrice = order.getCartonTotalPrice()+order.getUnitTotalPrice();
             String free = "";
-            free = totalPrice>0?"":" &#127379;";
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                productName.setText(Html.fromHtml(item.getProductName().concat(free),Html.FROM_HTML_MODE_LEGACY));
-            }else{
-                productName.setText(Html.fromHtml(item.getProductName().concat(free)));
-            }
+            Integer freeCarton = item.getCartonFreeGoodQuantity()==null?0:item.getCartonFreeGoodQuantity();
+            Integer freeUnits = item.getUnitFreeGoodQuantity()==null?0:item.getUnitFreeGoodQuantity();
+
+            if(item.getCartonFreeQuantityTypeId()==PRIMARY) {
+                free = " ALL";
+            }else if(freeCarton>0 || freeUnits>0)
+                free = String.valueOf(freeCarton+" / "+freeUnits);
+            else
+                free = "None";
+
+            productName.setText(item.getProductName());
             productQty.setText(order.getQuantity());
             total.setText(formatCurrency(totalPrice));
 
             rateContainer.addView(addPricingView(item));
+
+            TextView textView = new TextView(getContext());
+            Typeface typeface = ResourcesCompat.getFont(getContext(),R.font.roboto_bold);
+            textView.setTypeface(typeface);
+            textView.setText("Free Items: "+free);
+            textView.setPadding(10,10,10,0);
+            freeItemsContainer.addView(textView);
             for(OrderDetail freeItems:item.getCartonFreeGoods()){
                 freeItemsContainer.addView(addFreeItemsView(freeItems,1));
             }

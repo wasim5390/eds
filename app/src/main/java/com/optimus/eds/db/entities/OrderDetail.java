@@ -68,14 +68,14 @@ public class OrderDetail {
     @SerializedName("productName")
     public String mProductName;
     @SerializedName("cartonQuantity")
-    public Long mCartonQuantity;
+    public Integer mCartonQuantity;
     @SerializedName("unitQuantity")
-    public Long mUnitQuantity;
+    public Integer mUnitQuantity;
 
     @SerializedName("avlUnitQuantity")
-    public Long avlUnitQuantity;
+    public Integer avlUnitQuantity;
     @SerializedName("avlCartonQuantity")
-    public Long avlCartonQuantity;
+    public Integer avlCartonQuantity;
 
     @SerializedName("cartonCode")
     public String mCartonCode;
@@ -138,7 +138,7 @@ public class OrderDetail {
 
 
 
-    public OrderDetail(@NonNull Long mOrderId,@NonNull Long mProductId, Long mCartonQuantity, Long mUnitQuantity) {
+    public OrderDetail(@NonNull Long mOrderId,@NonNull Long mProductId, Integer mCartonQuantity, Integer mUnitQuantity) {
         this.mLocalOrderId = mOrderId;
         this.mProductId = mProductId;
         this.mCartonQuantity = mCartonQuantity;
@@ -169,28 +169,28 @@ public class OrderDetail {
         this.mProductId = mProductId;
     }
 
-    public Long getCartonQuantity() {
+    public Integer getCartonQuantity() {
         return mCartonQuantity;
     }
 
-    public void setCartonQuantity(Long mCartonQuantity) {
+    public void setCartonQuantity(Integer mCartonQuantity) {
         this.mCartonQuantity = mCartonQuantity;
     }
 
-    public Long getUnitQuantity() {
+    public Integer getUnitQuantity() {
         return mUnitQuantity;
     }
 
-    public void setUnitQuantity(Long mUnitQuantity) {
+    public void setUnitQuantity(Integer mUnitQuantity) {
         this.mUnitQuantity = mUnitQuantity;
     }
 
 
-    public Long getAvlUnitQuantity() {
+    public Integer getAvlUnitQuantity() {
         return avlUnitQuantity;
     }
 
-    public Long getAvlCartonQuantity() {
+    public Integer getAvlCartonQuantity() {
         return avlCartonQuantity;
     }
 
@@ -345,14 +345,14 @@ public class OrderDetail {
     }
 
 
-    public void setAvlQty(Long avlCartonQuantity,Long avlUnitQuantity){
+    public void setAvlQty(Integer avlCartonQuantity,Integer avlUnitQuantity){
         this.avlCartonQuantity=avlCartonQuantity;
         this.avlUnitQuantity = avlUnitQuantity;
     }
 
     public String getQuantity(){
-        Long cQty = getCartonQuantity();
-        Long uQty = getUnitQuantity();
+        Integer cQty = getCartonQuantity();
+        Integer uQty = getUnitQuantity();
         return (cQty==null?0:cQty)+"/"+(uQty==null?0:uQty);
     }
 

@@ -54,9 +54,10 @@ public class LocationService extends Service  {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location lastLocation = locationResult.getLastLocation();
-                if(lastLocation==null || lastLocation.getAccuracy()>ACCURACY_THRESHOLD)
-                    return;
-                currentLocation = locationResult.getLastLocation();
+               // if(lastLocation==null || lastLocation.getAccuracy()>ACCURACY_THRESHOLD)
+                 if(lastLocation==null)
+                return;
+                currentLocation = lastLocation;
                 timeCurrentLocation = DateFormat.getTimeInstance().format(new Date());
                 updateUI();
             }

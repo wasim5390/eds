@@ -58,11 +58,11 @@ public class PackageSection extends StatelessSection {
 
         itemHolder.tvItemName.setText(product.getName());
 
-        itemHolder.whStock.setText(String.valueOf(Util.convertToDecimalQuantity(product.getCartonStockInHand(),product.getUnitStockInHand())));
+        itemHolder.whStock.setText(String.valueOf(Util.convertToNullableDecimalQuantity(product.getCartonStockInHand(),product.getUnitStockInHand())));
 
-        itemHolder.etAvlStock.setText(String.valueOf(Util.convertToDecimalQuantity(product.getAvlStockCarton(),product.getAvlStockUnit())));
+        itemHolder.etAvlStock.setText(String.valueOf(Util.convertToNullableDecimalQuantity(product.getAvlStockCarton(),product.getAvlStockUnit())));
 
-        itemHolder.etOrderQty.setText(String.valueOf(Util.convertToDecimalQuantity(product.getQtyCarton(),product.getQtyUnit())));
+        itemHolder.etOrderQty.setText(String.valueOf(Util.convertToNullableDecimalQuantity(product.getQtyCarton(),product.getQtyUnit())));
 
         itemHolder.etAvlStock.addTextChangedListener(new TextWatcher() {
             @Override
@@ -78,7 +78,7 @@ public class PackageSection extends StatelessSection {
                 }
                 double qty = Double.parseDouble(s.toString());
                 if(qty>0){
-                    Long[] cu = Util.convertToLongQuantity(s.toString());
+                    Integer[] cu = Util.convertToLongQuantity(s.toString());
                     product.setAvlStock(cu[0],cu[1]);
                 }
             }
@@ -103,7 +103,7 @@ public class PackageSection extends StatelessSection {
                 }
                 double qty = Double.parseDouble(s.toString());
                 if(qty>0){
-                    Long[] cu = Util.convertToLongQuantity(s.toString());
+                    Integer[] cu = Util.convertToLongQuantity(s.toString());
                     product.setQty(cu[0],cu[1]);
                 }
             }

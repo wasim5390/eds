@@ -84,7 +84,6 @@ public class CashMemoAdapter extends
             freeItem.setSelectedCartonFreeGoodQuantity(selectedCartonQty);
             product.setSelectedCartonFreeGoodQuantity(--superSelectedCartonQty);
             onDataUpdated();
-            Toast.makeText(mContext, String.valueOf(selectedCartonQty), Toast.LENGTH_SHORT).show();
         }
     }
     private void removeUnitFreeItems(OrderDetail product,OrderDetail freeItem){
@@ -97,7 +96,7 @@ public class CashMemoAdapter extends
             freeItem.setSelectedUnitFreeGoodQuantity(selectedUnitQty);
             product.setSelectedUnitFreeGoodQuantity(--superSelectedUnitQty);
             onDataUpdated();
-            Toast.makeText(mContext, String.valueOf(selectedUnitQty), Toast.LENGTH_SHORT).show();
+
         }
     }
     private void addCartonFreeItems(OrderDetail product,OrderDetail freeItem){
@@ -109,7 +108,6 @@ public class CashMemoAdapter extends
             freeItem.setSelectedCartonFreeGoodQuantity(selectedCartonQty);
             product.setSelectedCartonFreeGoodQuantity(selectedCartonQty);
             onDataUpdated();
-            Toast.makeText(mContext, String.valueOf(selectedCartonQty), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -123,7 +121,6 @@ public class CashMemoAdapter extends
             freeItem.setSelectedUnitFreeGoodQuantity(selectedUnitQty);
             product.setSelectedUnitFreeGoodQuantity(selectedUnitQty);
             onDataUpdated();
-            Toast.makeText(mContext, String.valueOf(selectedUnitQty), Toast.LENGTH_SHORT).show();
         }
     }
 

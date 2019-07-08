@@ -181,12 +181,12 @@ public class Util {
      * @param units
      * @return
      */
-    public static String convertToDecimalQuantity(Long carton, Long units)
+    public static String convertToNullableDecimalQuantity(Integer carton, Integer units)
     {
         if(carton==null)
-            carton=0L;
+            carton=0;
         if(units==null)
-            units=0L;
+            units=0;
 
         String finalVal="";
         if(carton>0 && units>0)
@@ -221,22 +221,22 @@ public class Util {
     }
 
 
-    public static Long[] convertToLongQuantity(String qty)
+    public static Integer[] convertToLongQuantity(String qty)
     {
         if(qty.startsWith("."))
             qty = "0".concat(qty);
-        Long decimal;
-        Long fractional ;
+        Integer decimal;
+        Integer fractional ;
 
         boolean isWhole = Util.isInt(Double.parseDouble(qty));
         if(isWhole) {
-            decimal = Long.parseLong(qty.split("\\.")[0]);
-            fractional=0L;
+            decimal = Integer.parseInt(qty.split("\\.")[0]);
+            fractional=0;
         }else {
-            decimal = Long.parseLong(qty.split("\\.")[0]);
-            fractional = Long.parseLong(qty.split("\\.")[1]);
+            decimal = Integer.parseInt(qty.split("\\.")[0]);
+            fractional = Integer.parseInt(qty.split("\\.")[1]);
         }
-        return new Long[]{decimal,fractional};
+        return new Integer[]{decimal,fractional};
     }
 
     public static boolean isInt(double d)

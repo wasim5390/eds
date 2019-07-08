@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.optimus.eds.ui.cash_memo.CashMemoFreeItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -24,7 +25,7 @@
                 android:layout_marginStart="5dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tvProductName"
-                app:layout_constraintBottom_toBottomOf="@+id/productTotal"
+                app:layout_constraintBottom_toBottomOf="@+id/productQty"
                 >
                 <View
                     android:layout_width="8dp"
@@ -69,7 +70,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="@id/tvProductName"
                 app:layout_constraintTop_toBottomOf="@id/tvProductName"
-                android:text="Available Free Qty:"
+                android:text="Selected Free Qty:"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/grey"
                 android:textSize="14sp"
@@ -90,44 +91,20 @@
                 android:layout_marginEnd="5dp"
 
                 />
+
             <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@id/tvProductName"
-                app:layout_constraintTop_toBottomOf="@id/productQty"
-                app:layout_constraintEnd_toEndOf="@+id/tvProductQty"
                 android:id="@+id/rate_container"
-                >
+                android:layout_width="0dp"
+                android:layout_height="9dp"
+                app:layout_constraintEnd_toEndOf="@+id/tvProductQty"
+                app:layout_constraintStart_toStartOf="@id/tvProductName"
+                app:layout_constraintTop_toBottomOf="@id/productQty">
 
             </FrameLayout>
 
 
-            <TextView
-                android:id="@+id/productTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@id/tvProductName"
-                app:layout_constraintTop_toBottomOf="@id/rate_container"
-                android:text="@string/total"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="@color/grey"
-                android:textSize="14sp"
-                android:layout_marginTop="10dp"
 
-                />
-            <TextView
-                android:id="@+id/tvProductTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="@+id/rate_container"
-                app:layout_constraintTop_toTopOf="@id/productTotal"
-                app:layout_constraintBottom_toBottomOf="@+id/productTotal"
-                android:text="1005.00"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="@color/grey"
-                android:textSize="14sp"
 
-                />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnAdd"

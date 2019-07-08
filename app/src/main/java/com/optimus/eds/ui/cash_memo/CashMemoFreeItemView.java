@@ -29,8 +29,7 @@ public class CashMemoFreeItemView extends MaterialCardView {
     @BindView(R.id.tvProductQty)
     TextView productQty;
 
-    @BindView(R.id.tvProductTotal)
-    TextView total;
+
     @BindView(R.id.btnAdd)
     AppCompatButton btnAdd;
     @BindView(R.id.btnRemove)
@@ -72,16 +71,23 @@ public class CashMemoFreeItemView extends MaterialCardView {
             Integer selectedFreeCarton = item.getSelectedCartonFreeGoodQuantity()==null?0:item.getSelectedCartonFreeGoodQuantity();
             Integer selectedFreeUnits = item.getSelectedUnitFreeGoodQuantity()==null?0:item.getSelectedUnitFreeGoodQuantity();
 
+            // In case of Primary use carton/unit qty as free qty
+            // else use from item.getCartonFreeGoodQuantity()/item.getUnitFreeGoodQuantity()
+
+            Integer freeCarton = item.getCartonQuantity()==null?0:item.getCartonQuantity();
+            Integer freeUnits = item.getUnitQuantity()==null?0:item.getUnitQuantity();
+
             String free = "";
-            if(freeQuantityTypeId== Constant.PRIMARY||selectedFreeCarton>0 || selectedFreeUnits>0)
-            free = "  &#10004;";
+            if(freeQuantityTypeId== Constant.PRIMARY)
+                free = String.valueOf(freeCarton+" / "+freeUnits);
+            else if(selectedFreeCarton>0 || selectedFreeUnits>0)
+                free = String.valueOf(selectedFreeCarton+" / "+selectedFreeUnits);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                productName.setText(Html.fromHtml(item.getProductName().concat(free),Html.FROM_HTML_MODE_LEGACY));
+                productName.setText(Html.fromHtml(item.getProductName(),Html.FROM_HTML_MODE_LEGACY));
             }else{
-                productName.setText(Html.fromHtml(item.getProductName().concat(free)));
+                productName.setText(Html.fromHtml(item.getProductName()));
             }
-            productQty.setText(order.getQuantity());
-            total.setText(formatCurrency(totalPrice));
+            productQty.setText(free);
 
             rateContainer.addView(addPricingView(item));
 

@@ -29,6 +29,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.optimus.eds.Constant.PRIMARY;
+
 public class CashMemoViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<OrderDetail>> savedProducts;
@@ -55,42 +57,56 @@ public class CashMemoViewModel extends AndroidViewModel {
                 Integer unitFreeQty = orderWithDetails.getOrderDetail().getUnitFreeGoodQuantity();
                 Integer cartonFreeQty = orderWithDetails.getOrderDetail().getCartonFreeGoodQuantity();
 
+                if(orderWithDetails.getOrderDetail().getCartonFreeQuantityTypeId()==PRIMARY
+                        ||orderWithDetails.getOrderDetail().getUnitFreeQuantityTypeId()==PRIMARY
+                ){
+                    cartonFreeQty=0;unitFreeQty=0;
+                    for(OrderDetail freeItem :orderWithDetails.getOrderDetail().getCartonFreeGoods()){
+                        cartonFreeQty += freeItem.getCartonQuantity();
+                    }
+
+                    for(OrderDetail freeItem :orderWithDetails.getOrderDetail().getUnitFreeGoods()){
+                        unitFreeQty += freeItem.getUnitQuantity();
+                    }
+                }
+
                 String freeQtyStr = Util.convertToDecimalQuantity(cartonFreeQty==null?0:cartonFreeQty,unitFreeQty==null?0:unitFreeQty);
-               freeQty += Float.valueOf(freeQtyStr);
+                freeQty += Float.valueOf(freeQtyStr);
+
                 //freeGoods.addAll(orderWithDetails.getOrderDetail().getCartonFreeGoods());
-               // freeGoods.addAll(orderWithDetails.getOrderDetail().getUnitFreeGoods());
+                // freeGoods.addAll(orderWithDetails.getOrderDetail().getUnitFreeGoods());
                 orderWithDetails.getOrderDetail().setCartonPriceBreakDown(orderWithDetails.getCartonPriceBreakDownList());
                 orderWithDetails.getOrderDetail().setUnitPriceBreakDown(orderWithDetails.getUnitPriceBreakDownList());
 
             }
             orderModel.setFreeAvailableQty(freeQty);
-           // orderModel.setFreeGoods(freeGoods);
+            // orderModel.setFreeGoods(freeGoods);
             return orderModel;
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new MaybeObserver<OrderModel>() {
-            @Override
-            public void onSubscribe(Disposable d) {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-            }
+                    }
 
-            @Override
-            public void onSuccess(OrderModel order) {
+                    @Override
+                    public void onSuccess(OrderModel order) {
 
-            orderLiveData.postValue(order);
-            }
+                        orderLiveData.postValue(order);
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-            e.printStackTrace();
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
 
-            @Override
-            public void onComplete() {
+                    @Override
+                    public void onComplete() {
 
-            }
-        });
+                    }
+                });
         return orderLiveData;
     }
 

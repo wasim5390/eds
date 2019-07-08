@@ -23,13 +23,13 @@ public class OrderManager {
      * @param orderedCartons
      * @return
      */
-    public OrderQuantity calculateOrderQty(Long productUnitsPerCarton, Long orderedUnits, Long orderedCartons){
+    public OrderQuantity calculateOrderQty(Integer productUnitsPerCarton, Integer orderedUnits, Integer orderedCartons){
 
         OrderQuantity orderQuantity = new OrderQuantity(orderedUnits,orderedCartons);
         if(orderedUnits!=null && productUnitsPerCarton!=null && orderedUnits>productUnitsPerCarton  && productUnitsPerCarton>0) {
-            if(orderedCartons==null) orderedCartons = 0l;
-            long quotient = orderedUnits / productUnitsPerCarton;
-            long remainder = orderedUnits % productUnitsPerCarton;
+            if(orderedCartons==null) orderedCartons = 0;
+            Integer quotient = orderedUnits / productUnitsPerCarton;
+            Integer remainder = orderedUnits % productUnitsPerCarton;
             orderQuantity.setCarton(quotient+orderedCartons);
             orderQuantity.setUnits(remainder);
         }
@@ -41,28 +41,28 @@ public class OrderManager {
 
     public class OrderQuantity{
 
-        public OrderQuantity(Long units, Long carton) {
+        public OrderQuantity(Integer units, Integer carton) {
             this.units = units;
             this.carton = carton;
         }
 
-        public Long getUnits() {
+        public Integer getUnits() {
             return units;
         }
 
-        public Long getCarton() {
+        public Integer getCarton() {
             return carton;
         }
 
-        public void setUnits(Long units) {
+        public void setUnits(Integer units) {
             this.units = units;
         }
 
-        public void setCarton(Long carton) {
+        public void setCarton(Integer carton) {
             this.carton = carton;
         }
 
-       private Long units;
-       private Long carton;
+       private Integer units;
+       private Integer carton;
     }
 }

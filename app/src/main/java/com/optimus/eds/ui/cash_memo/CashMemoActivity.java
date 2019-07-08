@@ -87,8 +87,8 @@ public class CashMemoActivity extends BaseActivity {
         Long carton=0l,units=0l;
         for(OrderDetailAndPriceBreakdown detailAndPriceBreakdown:order.getOrderDetailAndCPriceBreakdowns())
         {
-            Long cQty = detailAndPriceBreakdown.getOrderDetail().getCartonQuantity();
-            Long uQty = detailAndPriceBreakdown.getOrderDetail().getUnitQuantity();
+            Integer cQty = detailAndPriceBreakdown.getOrderDetail().getCartonQuantity();
+            Integer uQty = detailAndPriceBreakdown.getOrderDetail().getUnitQuantity();
             carton+= cQty!=null?cQty:0;
             units+=uQty!=null?uQty:0;
         }
