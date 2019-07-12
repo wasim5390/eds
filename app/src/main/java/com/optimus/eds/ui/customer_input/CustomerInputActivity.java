@@ -1,5 +1,6 @@
 package com.optimus.eds.ui.customer_input;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -49,10 +50,10 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
     private CustomerInputViewModel viewModel;
 
 
-    public static void start(Context context, Long outletId) {
+    public static void start(Context context, Long outletId,int resCode) {
         Intent starter = new Intent(context, CustomerInputActivity.class);
         starter.putExtra("OutletId",outletId);
-        context.startActivity(starter);
+        ((Activity)context).startActivityForResult(starter,resCode);
     }
 
     @Override
@@ -78,8 +79,11 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
         viewModel.findOrder(outletId);
         viewModel.order().observe(this, this::onOrderLoaded);
         viewModel.orderSaved().observe(this,aBoolean -> {
-            if (aBoolean)
-            CustomerComplaintsActivity.start(this);
+            if (aBoolean) {
+                setResult(RESULT_OK);
+                finish();
+                //CustomerComplaintsActivity.start(this);
+            }
         });
         viewModel.isSaving().observe(this,this::setProgress);
         viewModel.showMessage().observe(this,this::showMsg);

@@ -24,6 +24,8 @@ import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.source.API;
+import com.optimus.eds.source.JobIdManager;
+import com.optimus.eds.source.ProductUpdateService;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.source.MerchandiseUploadService;
 import com.optimus.eds.ui.merchandize.MerchandiseRepository;
@@ -116,6 +118,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(this::orderSavedSuccess,this::onError));
         scheduleMerchandiseJob(getApplication(),outletId, PreferenceUtil.getInstance(getApplication()).getToken());
+        updateStock(getApplication(),outletId);
 
     }
 
@@ -132,6 +135,16 @@ public class CustomerInputViewModel extends AndroidViewModel {
         jobScheduler.schedule(builder.build());
     }
 
+    public void updateStock(Context context,Long outletId) {
+        PersistableBundle extras = new PersistableBundle();
+        extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outletId);
+        ComponentName serviceComponent = new ComponentName(context, ProductUpdateService.class);
+        JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_UPDATE_STOCK,outletId.intValue()), serviceComponent);
+        builder.setOverrideDeadline(0);
+        builder.setExtras(extras);
+        JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
+        jobScheduler.schedule(builder.build());
+    }
 
     private void orderSavedSuccess(OrderResponseModel order) {
         isSaving.postValue(false);

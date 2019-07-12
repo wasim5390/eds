@@ -52,6 +52,7 @@ public class Product implements Serializable {
     public String unitSizeForDisplay;
     @SerializedName("cartonSizeForDisplay")
     public String cartonSizeForDisplay;
+
     @SerializedName("unitStockInHand")
     public Integer unitStockInHand;
     @SerializedName("cartonStockInHand")
@@ -187,6 +188,14 @@ public class Product implements Serializable {
 
     public boolean isProductSelected(){
         return (getQtyCarton()!=null || getQtyUnit()!=null &&( getQtyUnit()>0 || getQtyCarton()>0));
+    }
+
+    public void setUnitStockInHand(Integer unitStockInHand) {
+        this.unitStockInHand = unitStockInHand;
+    }
+
+    public void setCartonStockInHand(Integer cartonStockInHand) {
+        this.cartonStockInHand = cartonStockInHand;
     }
 
     @Override

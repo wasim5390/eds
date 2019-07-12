@@ -290,7 +290,7 @@ public class OrderDetail {
         this.cartonTotalPrice = cartonTotalPrice;
     }
     public Integer getUnitFreeQuantityTypeId() {
-        return unitFreeQuantityTypeId;
+        return unitFreeQuantityTypeId==null?-1:unitFreeQuantityTypeId;
     }
 
     public void setUnitFreeQuantityTypeId(Integer unitFreeQuantityTypeId) {
@@ -298,7 +298,7 @@ public class OrderDetail {
     }
 
     public Integer getCartonFreeQuantityTypeId() {
-        return cartonFreeQuantityTypeId;
+        return cartonFreeQuantityTypeId==null?-1:cartonFreeQuantityTypeId;
     }
 
     public void setCartonFreeQuantityTypeId(Integer cartonFreeQuantityTypeId) {

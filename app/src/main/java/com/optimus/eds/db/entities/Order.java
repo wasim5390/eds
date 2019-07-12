@@ -13,8 +13,7 @@ import com.google.gson.annotations.SerializedName;
 @ForeignKey(
         entity = Outlet.class,
         parentColumns = "mOutletId",
-        childColumns = "c_outletId",
-        onDelete = ForeignKey.CASCADE), indices = {@Index(value = "c_outletId")})
+        childColumns = "c_outletId"), indices = {@Index(value = "c_outletId")})
 
 public class Order {
 

@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
+
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +27,8 @@ import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailActivity;
+import com.optimus.eds.utils.PreferenceUtil;
+import com.optimus.eds.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +40,7 @@ import butterknife.ButterKnife;
 public class OutletListActivity extends BaseActivity implements OutletListAdapter.Callback{
 
 
+    private static final int RES_CODE_DETAILS = 0x101;
     @BindView(R.id.rvOutlets)
     RecyclerView recyclerView;
     @BindView(R.id.route_spinner)
@@ -124,7 +129,12 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
 
     @Override
     public void onOutletClick(Outlet outlet) {
-        OutletDetailActivity.start(this,outlet.getOutletId(),route.getRouteId());
+        //boolean lastSyncedToday = DateUtils.isToday(PreferenceUtil.getInstance(this).getSyncDate());
+        boolean lastDayEndedIsToday = DateUtils.isToday(PreferenceUtil.getInstance(this).getEndDay());
+        if( !lastDayEndedIsToday)
+        OutletDetailActivity.start(this,outlet.getOutletId(),route.getRouteId(),RES_CODE_DETAILS);
+        else
+            Toast.makeText(this, getString(R.string.day_already_ended), Toast.LENGTH_SHORT).show();
     }
 
 

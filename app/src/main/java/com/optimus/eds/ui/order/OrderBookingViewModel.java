@@ -1,6 +1,8 @@
 package com.optimus.eds.ui.order;
 
 import android.app.Application;
+import android.util.Log;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
@@ -18,6 +20,7 @@ import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.model.PackageModel;
+import com.optimus.eds.model.PackageProductResponseModel;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
@@ -43,6 +46,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
+import retrofit2.Response;
 
 
 public class OrderBookingViewModel extends AndroidViewModel {
@@ -51,7 +55,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
     private final OrderBookingRepository repository;
     private final OutletDetailRepository outletDetailRepository;
     private final MutableLiveData<List<PackageModel>> mutablePkgList;
-    private LiveData<List<ProductGroup>> productGroupList;
+    private MutableLiveData<List<ProductGroup>> productGroupList;
     private final MutableLiveData<Boolean> isSaving;
     private final MutableLiveData<String> msg;
     private final MutableLiveData<Boolean> orderSaved;
@@ -62,6 +66,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
     private Long outletId;
     private OrderModel order =null;
     private final API webservice;
+    private  final static String TAG=OrderBookingViewModel.class.getName();
 
 
     public OrderBookingViewModel(@NonNull Application application) {
@@ -308,6 +313,8 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
         return productList;
     }
+
+
 
     private void composeOrderForServer() {
         NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {

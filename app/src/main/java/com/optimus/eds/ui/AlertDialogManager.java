@@ -96,12 +96,35 @@ public class AlertDialogManager {
         builderSingle.show();
     }
 
+    /**
+     * Provide current reason for no order
+     * @param context
+     */
+    public void showVerificationAlertDialog(Context context,String title,String message,VerificationListener mListener) {
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+        builderSingle.setTitle(title);
+        builderSingle.setMessage(message);
+        builderSingle.setPositiveButton("Yes", (dialog1, which1) ->{
+                mListener.onVerified(true);
+                dialog1.dismiss();
+        });
+        builderSingle.setNegativeButton("No",(dialog, which) -> {
+            mListener.onVerified(false);
+            dialog.dismiss();
+        });
+        builderSingle.show();
+    }
+
     public interface ListAlertItemClickListener{
         void onAlertItemClick(CustomObject object);
     }
 
     public interface NoSaleReasonListener{
         void onNoSaleReasonEntered(String reason);
+    }
+
+    public interface VerificationListener{
+        void onVerified(boolean verified);
     }
 
 }

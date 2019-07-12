@@ -1,5 +1,6 @@
 package com.optimus.eds.ui.order;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Activity;
@@ -39,6 +40,7 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 
 public class OrderBookingActivity extends BaseActivity implements AlertDialogManager.NoSaleReasonListener {
 
+    private static final int RES_CODE = 0x101;
     @BindView(R.id.rvProducts)
     RecyclerView rvProducts;
 
@@ -89,7 +91,7 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
             else
                 hideProgress();
         });
-        viewModel.orderSaved().observe(this, aBoolean -> { if(aBoolean) CashMemoActivity.start(OrderBookingActivity.this,outletId);
+        viewModel.orderSaved().observe(this, aBoolean -> { if(aBoolean) CashMemoActivity.start(OrderBookingActivity.this,outletId,RES_CODE);
         });
 
         viewModel.noOrderTaken().observe(this,aBoolean -> {
@@ -160,11 +162,21 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
         Intent intent = getIntent();
         intent.putExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER,reason);
         intent.putExtra(Constant.EXTRA_PARAM_NO_ORDER_FROM_BOOKING,true);
-        setResult(RESULT_OK,intent);
+        setResult(RESULT_CANCELED,intent);
         finish();
     }
 
 
-
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode==RESULT_OK){
+            switch (resultCode){
+                case RES_CODE:
+                    setResult(RESULT_OK);
+                    finish();
+                    break;
+            }
+        }
+    }
 }

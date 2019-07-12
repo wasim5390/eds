@@ -1,6 +1,7 @@
 package com.optimus.eds.ui.route.outlet.detail;
 
 
+import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,17 +81,18 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
     AppCompatSpinner popSpinner;
     @BindView(R.id.btnOk)
     Button btnOk;
-
+    @BindView(R.id.progress)
+    ContentLoadingProgressBar progressBar;
     OutletDetailViewModel viewModel;
     private String reasonForNoSale="";
     private boolean isGPS=false;
     private Location currentLocation = new Location("CurrentLocation");
 
-    public static void start(Context context, Long outletId,Long routeId) {
+    public static void start(Context context, Long outletId,Long routeId,int code) {
         Intent starter = new Intent(context, OutletDetailActivity.class);
         starter.putExtra("OutletId",outletId);
         starter.putExtra("RouteId",routeId);
-        context.startActivity(starter);
+        ((Activity)context).startActivityForResult(starter,code);
     }
 
     @Override
@@ -102,7 +105,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         ButterKnife.bind(this);
         outletId =  getIntent().getLongExtra("OutletId",0);
         viewModel = ViewModelProviders.of(this).get(OutletDetailViewModel.class);
-        showProgress(true);
+        showProgress();
         setToolbar(getString(R.string.outlet_summary));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item);
         adapter.addAll(getResources().getStringArray(R.array.pop_array));
@@ -123,6 +126,12 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
             }
         });
 
+        viewModel.loadProducts().observe(this, loaded -> {
+            if (!loaded) showProgress();
+            else hideProgress();
+        });
+
+
 
         enableLocationServices();
 
@@ -133,7 +142,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
 
             if (null != intent && intent.getAction().equals(ACTION)) {
 
-                hideProgress();
+               // hideProgress();
 
                 Location locationData = intent.getParcelableExtra(LOCATION);
                 currentLocation  = locationData;
@@ -257,12 +266,29 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
                     startLocationService();
                     break;
                 case REQUEST_CODE:
-                    boolean noOrderFromOrderBooking = data.getBooleanExtra(EXTRA_PARAM_NO_ORDER_FROM_BOOKING,false);
-                    reasonForNoSale = data.getStringExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER);
-                    viewModel.postOrderWithNoOrder(noOrderFromOrderBooking);
+                    setResult(RESULT_OK);
+                    finish();
                     break;
             }
 
+        } if(requestCode == CANCELLED){
+            switch (requestCode){
+                case REQUEST_CODE:
+                boolean noOrderFromOrderBooking = data.getBooleanExtra(EXTRA_PARAM_NO_ORDER_FROM_BOOKING,false);
+                reasonForNoSale = data.getStringExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER);
+                viewModel.postOrderWithNoOrder(noOrderFromOrderBooking);
+                break;
+            }
         }
+    }
+
+    @Override
+    public void showProgress() {
+        progressBar.show();
+    }
+
+    @Override
+    public void hideProgress() {
+        progressBar.hide();
     }
 }

@@ -19,7 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.optimus.eds.utils.Util.formatCurrency;
+
 
 public class CashMemoFreeItemView extends MaterialCardView {
 
@@ -82,11 +82,8 @@ public class CashMemoFreeItemView extends MaterialCardView {
                 free = String.valueOf(freeCarton+" / "+freeUnits);
             else if(selectedFreeCarton>0 || selectedFreeUnits>0)
                 free = String.valueOf(selectedFreeCarton+" / "+selectedFreeUnits);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                productName.setText(Html.fromHtml(item.getProductName(),Html.FROM_HTML_MODE_LEGACY));
-            }else{
-                productName.setText(Html.fromHtml(item.getProductName()));
-            }
+
+                productName.setText(item.getProductName());
             productQty.setText(free);
 
             rateContainer.addView(addPricingView(item));

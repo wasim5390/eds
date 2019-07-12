@@ -1,6 +1,8 @@
 package com.optimus.eds.ui.home;
 
 import android.app.Application;
+import android.text.format.DateUtils;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -46,13 +48,25 @@ public class HomeViewModel extends AndroidViewModel {
             isLoading.postValue(aBoolean);
         });
 
+    }
 
+    public LiveData<Boolean> onStartDay(){
+        return repository.startDay();
+    }
+
+    public void download(){
+        isLoading.postValue(true);
+        repository.fetchTodayData(false);
     }
 
     public void startDay(){
         PreferenceUtil.getInstance(getApplication()).clearAllPreferences();
         repository.getToken();
-        //repository.fetchTodayData();
+    }
+
+    public void dayEnd(){
+        isLoading.postValue(true);
+        repository.updateWorkStatus(false);
     }
 
 
@@ -75,7 +89,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public LiveData<String> getErrorMsg() {
-        return errorMsg;
+        return repository.getError();
     }
 
 
@@ -87,5 +101,19 @@ public class HomeViewModel extends AndroidViewModel {
 
 
 
+    public LiveData<Boolean> syncedToday(){
+        MutableLiveData<Boolean> when = new MutableLiveData<>();
+        Long syncDate = PreferenceUtil.getInstance(getApplication()).getSyncDate();
+        when.postValue(DateUtils.isToday(syncDate));
+        return when;
 
+    }
+
+    public LiveData<Boolean> dayEnded(){
+        MutableLiveData<Boolean> when = new MutableLiveData<>();
+        Long syncDate = PreferenceUtil.getInstance(getApplication()).getEndDay();
+        when.postValue(DateUtils.isToday(syncDate));
+        return when;
+
+    }
 }

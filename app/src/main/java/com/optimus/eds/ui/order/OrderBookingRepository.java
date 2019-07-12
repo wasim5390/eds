@@ -4,6 +4,8 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
+import android.util.Log;
+
 import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
@@ -17,13 +19,16 @@ import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.db.entities.UnitPriceBreakDown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.PackageModel;
+import com.optimus.eds.model.PackageProductResponseModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
+import retrofit2.Response;
 
 public class OrderBookingRepository {
     private final String TAG=OrderBookingRepository.class.getSimpleName();
@@ -91,7 +96,7 @@ public class OrderBookingRepository {
 
 
 
-    protected LiveData<List<ProductGroup>> findAllGroups(){
+    protected MutableLiveData<List<ProductGroup>> findAllGroups(){
         AsyncTask.execute(() -> allGroups.postValue(productsDao.findAllProductGroups()));
         return allGroups;
     }
@@ -112,6 +117,13 @@ public class OrderBookingRepository {
 
     }
 
+    public Single<Product> findProductById(Long productId){
+        return productsDao.findProductById(productId);
+    }
+
+    public Completable updateProduct(Product product){
+        return Completable.fromAction(()->productsDao.updateProduct(product));
+    }
 
     protected List<PackageModel> packageModel(List<Package> packages, List<Product> _products) {
         List<PackageModel> packageModels = new ArrayList<>(packages.size());

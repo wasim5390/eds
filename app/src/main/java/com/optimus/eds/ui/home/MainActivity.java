@@ -13,8 +13,12 @@ import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
+import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.customer_complaints.CustomerComplaintsActivity;
 import com.optimus.eds.ui.route.outlet.OutletListActivity;
+import com.optimus.eds.utils.PreferenceUtil;
+
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,11 +47,33 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        //  viewModel.onScreenCreated();
-          viewModel.isLoading().observe(this, this::setProgress);
+        viewModel.isLoading().observe(this, this::setProgress);
 
         viewModel.getErrorMsg().observe(this, this::showError);
+        viewModel.onStartDay().observe(this, aBoolean -> {
+            if(aBoolean) {
+                findViewById(R.id.btnStartDay).setClickable(false);
+                findViewById(R.id.btnStartDay).setAlpha(0.5f);
+                PreferenceUtil.getInstance(this).saveSyncDate(Calendar.getInstance().getTimeInMillis());
+            }else{
+                findViewById(R.id.btnEndDay).setClickable(false);
+                findViewById(R.id.btnEndDay).setAlpha(0.5f);
+                PreferenceUtil.getInstance(this).saveEndDate(Calendar.getInstance().getTimeInMillis());
+            }
+        });
+        viewModel.syncedToday().observe(this, aBoolean -> {
+            if(aBoolean){
+                findViewById(R.id.btnStartDay).setClickable(false);
+                findViewById(R.id.btnStartDay).setAlpha(0.5f);
+            }
+        });
 
+        viewModel.dayEnded().observe(this, aBoolean -> {
+            if(aBoolean){
+                findViewById(R.id.btnEndDay).setClickable(false);
+                findViewById(R.id.btnEndDay).setAlpha(0.5f);
+            }
+        });
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
 
         drawerLayout.addDrawerListener(drawerToggle);
@@ -81,11 +107,28 @@ public class MainActivity extends BaseActivity {
             case R.id.btnStartDay:
                 viewModel.startDay();
                 break;
+            case R.id.btnDownload:
+                AlertDialogManager.getInstance().showVerificationAlertDialog(this,getString(R.string.update_routes_title),
+                        getString(R.string.update_routes_msg)
+                        ,verified -> {
+                            if(verified)
+                                viewModel.download();
+                        });
+
+                break;
             case R.id.btnPlannedCall:
                 OutletListActivity.start(this);
                 break;
             case R.id.btnReports:
                 CustomerComplaintsActivity.start(this);
+                break;
+            case R.id.btnEndDay:
+                AlertDialogManager.getInstance().showVerificationAlertDialog(this,getString(R.string.day_closing_title),
+                        getString(R.string.end_day_msg)
+                        ,verified -> {
+                            if(verified)
+                                viewModel.dayEnd();
+                        });
                 break;
         }
     }

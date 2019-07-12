@@ -8,7 +8,7 @@ import androidx.annotation.IntDef;
 public class JobIdManager {
 
     public static final int JOB_TYPE_MASTER_UPLOAD = 1;
-    public static final int JOB_TYPE_CHANNEL_METADATA = 2;
+    public static final int JOB_TYPE_UPDATE_STOCK = 2;
     public static final int JOB_TYPE_CHANNEL_DELETION = 3;
     public static final int JOB_TYPE_CHANNEL_LOGGER = 4;
 
@@ -17,7 +17,7 @@ public class JobIdManager {
 
     @IntDef(value = {
             JOB_TYPE_MASTER_UPLOAD,
-            JOB_TYPE_CHANNEL_METADATA,
+            JOB_TYPE_UPDATE_STOCK,
             JOB_TYPE_CHANNEL_DELETION,
             JOB_TYPE_CHANNEL_LOGGER,
             JOB_TYPE_USER_PREFS,

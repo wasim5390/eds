@@ -79,8 +79,10 @@ public class CashMemoItemView extends MaterialCardView {
             Integer freeCarton = item.getCartonFreeGoodQuantity()==null?0:item.getCartonFreeGoodQuantity();
             Integer freeUnits = item.getUnitFreeGoodQuantity()==null?0:item.getUnitFreeGoodQuantity();
 
-            if(item.getCartonFreeQuantityTypeId()==PRIMARY) {
-                free = " ALL";
+            if(item.getCartonFreeQuantityTypeId()==PRIMARY
+                    || item.getUnitFreeQuantityTypeId()==PRIMARY )
+            {
+              free="All";
             }else if(freeCarton>0 || freeUnits>0)
                 free = String.valueOf(freeCarton+" / "+freeUnits);
             else
@@ -97,6 +99,7 @@ public class CashMemoItemView extends MaterialCardView {
             textView.setTypeface(typeface);
             textView.setText("Free Items: "+free);
             textView.setPadding(10,10,10,0);
+            if(item.getCartonFreeGoods().size()>0||item.getUnitFreeGoods().size()>0)
             freeItemsContainer.addView(textView);
             for(OrderDetail freeItems:item.getCartonFreeGoods()){
                 freeItemsContainer.addView(addFreeItemsView(freeItems,1));

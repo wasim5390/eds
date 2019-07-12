@@ -37,7 +37,7 @@ public interface ProductsDao {
     Single<List<Product>> findAllProductsByGroupId(Long groupId);
 
     @Query("SELECT * FROM Product WHERE pk_pid=:id")
-    LiveData<Product> findProductById(Long id);
+    Single<Product> findProductById(Long id);
 
     @Query("SELECT * FROM ProductGroup WHERE productGroupId=:id")
     LiveData<ProductGroup> findGroupById(Long id);

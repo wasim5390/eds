@@ -39,6 +39,7 @@ public class OutletDetailViewModel extends AndroidViewModel {
     private MutableLiveData<Location> outletNearbyPos;
     private MutableLiveData<Boolean> uploadStatus;
 
+
     private int outletStatus=1;
     private Outlet outlet;
 
@@ -118,4 +119,9 @@ public class OutletDetailViewModel extends AndroidViewModel {
     public LiveData<Boolean> getUploadStatus() {
         return uploadStatus;
     }
+
+    public LiveData<Boolean> loadProducts(){
+        return repository.loadProductsFromServer();
+    }
+
 }

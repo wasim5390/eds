@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.optimus.eds.ui.home.User;
 
+import java.util.Calendar;
+
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -19,6 +21,8 @@ public class PreferenceUtil {
     public static final String KEY_EMAIL = "email";
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_TOKEN = "token";
+    public static final String KEY_SYNC_DATE = "sync_date";
+    public static final String KEY_END_DATE = "end_date";
     public static final String KEY_USER = "user";
 
     private static final String PREFERENCE_NAME = "send_signal_preference";
@@ -60,6 +64,13 @@ public class PreferenceUtil {
         return sPref.getString(KEY_TOKEN, "");
     }
 
+    public Long getSyncDate() {
+        return sPref.getLong(KEY_SYNC_DATE, 0);
+    }
+
+    public Long getEndDay() {
+        return sPref.getLong(KEY_END_DATE, 0);
+    }
 
     public String getAppMode() {
         return sPref.getString(KEY_APP_MODE, defaultAppMode);
@@ -80,6 +91,18 @@ public class PreferenceUtil {
     public void saveToken(String token) {
         SharedPreferences.Editor editor = sPref.edit();
         editor.putString(KEY_TOKEN, token);
+        editor.apply();
+    }
+
+    public void saveSyncDate(Long date) {
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putLong(KEY_SYNC_DATE, date);
+        editor.apply();
+    }
+
+    public void saveEndDate(Long date) {
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putLong(KEY_END_DATE, date);
         editor.apply();
     }
 

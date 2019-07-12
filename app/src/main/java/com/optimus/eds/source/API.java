@@ -15,12 +15,14 @@ import com.optimus.eds.model.RouteOutletResponseModel;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -57,9 +59,16 @@ public interface API {
     @POST("api/route/PostOutletVisit")
     Single<BaseResponse> postMerchandise(@Body MerchandiseModel merchandise,@Header("Authorization") String auth);
 
+    @FormUrlEncoded
+    @POST("api/AppOpertion/LogStartEnd")
+    Single<BaseResponse> updateStartEndStatus(@FieldMap Map<String, Long> params);
+
+
     @GET("routes")
     Call<List<Route>> getRoutes(@Query("id") String userId);
 
     @GET("outlets")
     Call<List<Outlet>> getOutlets(@Query("id") String routeId);
+
+
 }

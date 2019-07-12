@@ -1,6 +1,9 @@
 package com.optimus.eds.ui.cash_memo;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +29,7 @@ import static com.optimus.eds.utils.Util.formatCurrency;
 public class CashMemoActivity extends BaseActivity {
 
 
+    private static final int RES_CODE = 0x101;
     private Long outletId;
 
 
@@ -45,10 +49,10 @@ public class CashMemoActivity extends BaseActivity {
     TextView tvQty;
     private CashMemoAdapter cartAdapter;
     private CashMemoViewModel viewModel;
-    public static void start(Context context, Long outletId) {
+    public static void start(Context context, Long outletId,int resCode) {
         Intent starter = new Intent(context, CashMemoActivity.class);
         starter.putExtra("OutletId",outletId);
-        context.startActivity(starter);
+        ((Activity)context).startActivityForResult(starter,resCode);
     }
 
 
@@ -115,9 +119,22 @@ public class CashMemoActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK){
+            switch (requestCode){
+                case RES_CODE:
+                    setResult(RESULT_OK);
+                    finish();
+                    break;
+            }
+        }
+    }
+
     @OnClick(R.id.btnNext)
     public void navigateToCustomerInput(){
-        CustomerInputActivity.start(this,outletId);
+        CustomerInputActivity.start(this,outletId,RES_CODE);
     }
 
     @OnClick(R.id.btnAddPackages)

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.Patterns;
 
@@ -104,6 +105,13 @@ public class Util {
         return timeInMilliseconds;
     }
 
+    public static boolean isDateToday(Long dateInMilli){
+
+
+       return DateUtils.isToday(dateInMilli);
+
+    }
+
     /**
      * get uri from file path
      * @param path
@@ -159,10 +167,10 @@ public class Util {
     }
 
     public static String compressBitmap(Bitmap bitmap){
-            ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bOut);
-            String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.NO_WRAP);
-            return encoded;
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bOut);
+        String encoded = Base64.encodeToString(bOut.toByteArray(), Base64.NO_WRAP);
+        return encoded;
     }
 
     public static int dpToPx(int dp)
@@ -272,10 +280,7 @@ public class Util {
         }
     }
 
-    public static boolean isConnected() throws InterruptedException, IOException {
-        final String command = "ping -i 5 -c 1 http://optimuseds.com";
-        return Runtime.getRuntime().exec(command).waitFor() == 0;
-    }
+
 
     public static String formatCurrency(Double price){
         if(price==null)

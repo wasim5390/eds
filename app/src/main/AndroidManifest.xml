@@ -87,6 +87,10 @@
             android:name=".source.MasterDataUploadService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             />
+        <service
+            android:name=".source.ProductUpdateService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            />
         <service android:name=".location_services.LocationService" android:exported="true" android:enabled="true"/>
     </application>
 </manifest>
