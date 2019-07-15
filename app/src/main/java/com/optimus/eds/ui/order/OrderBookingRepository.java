@@ -90,6 +90,10 @@ public class OrderBookingRepository {
         return orderDao.getOrderWithItems(outletId);
     }
 
+    public Maybe<Order> findOrderById(Long mobileOrderId){
+        return orderDao.findOrderById(mobileOrderId);
+    }
+
     public Completable updateOrder(Order order){
         return Completable.fromAction(()->orderDao.updateOrder(order));
     }

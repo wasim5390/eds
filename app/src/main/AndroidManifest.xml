@@ -87,6 +87,11 @@
             android:name=".source.MasterDataUploadService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             />
+
+        <service
+            android:name=".source.UploadOrdersService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            />
         <service
             android:name=".source.ProductUpdateService"
             android:permission="android.permission.BIND_JOB_SERVICE"

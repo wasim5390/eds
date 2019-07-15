@@ -2,6 +2,11 @@ package com.optimus.eds.ui.customer_input;
 
 import android.app.Application;
 import androidx.lifecycle.LiveData;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
+
 import android.os.AsyncTask;
 
 import com.optimus.eds.db.AppDatabase;
@@ -24,8 +29,13 @@ public class CustomerInputRepository {
         return outletDetailRepository.getOutletById(outletId);
     }
 
-    public void saveCustomerInput(CustomerInput customerInput){
-        AsyncTask.execute(() -> customerDao.insertCustomerInput(customerInput));
+    public Completable saveCustomerInput(CustomerInput customerInput){
+       return Completable.fromAction(() -> customerDao.insertCustomerInput(customerInput));
+
+    }
+
+    public Maybe<CustomerInput> getCustomerInput(Long outletId){
+       return customerDao.findCustomerInput(outletId);
     }
 
 }

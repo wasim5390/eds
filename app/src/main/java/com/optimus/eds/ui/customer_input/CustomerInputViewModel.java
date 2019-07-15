@@ -5,6 +5,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.location.Location;
 import android.os.PersistableBundle;
 
 import androidx.core.content.ContextCompat;
@@ -19,15 +20,18 @@ import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.JobIdManager;
+import com.optimus.eds.source.MasterDataUploadService;
 import com.optimus.eds.source.ProductUpdateService;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.source.MerchandiseUploadService;
+import com.optimus.eds.source.UploadOrdersService;
 import com.optimus.eds.ui.merchandize.MerchandiseRepository;
 import com.optimus.eds.ui.order.OrderBookingRepository;
 import com.optimus.eds.utils.PreferenceUtil;
@@ -36,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.CompletableObserver;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -50,24 +55,20 @@ public class CustomerInputViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> orderSaved;
     private final OrderBookingRepository orderRepository;
     private CustomerInputRepository customerInputRepository;
-    private MerchandiseRepository merchandiseRepository;
     private final CompositeDisposable disposable;
     private Long outletId;
     private MutableLiveData<OrderModel> orderModelLiveData;
 
-    private final API webservice;
 
     public CustomerInputViewModel(@NonNull Application application) {
         super(application);
         disposable = new CompositeDisposable();
-        webservice = RetrofitHelper.getInstance().getApi();
         isSaving = new MutableLiveData<>();
         msg = new MutableLiveData<>();
         orderModelLiveData = new MutableLiveData<>();
         orderSaved = new MutableLiveData<>();
         customerInputRepository = new CustomerInputRepository(application);
         orderRepository = OrderBookingRepository.singleInstance(application);
-        merchandiseRepository = new MerchandiseRepository(application);
     }
 
 
@@ -100,26 +101,55 @@ public class CustomerInputViewModel extends AndroidViewModel {
         isSaving.postValue(true);
         OrderModel orderModel = orderModelLiveData.getValue();
         Order order = orderModel.getOrder();
-        Gson gson  = new Gson();
+      /*  Gson gson  = new Gson();
         String json = gson.toJson(order);
         OrderResponseModel responseModel = gson.fromJson(json,OrderResponseModel.class);
-        responseModel.setOrderDetails(orderModel.getOrderDetails());
+        responseModel.setOrderDetails(orderModel.getOrderDetails());*/
         CustomerInput customerInput = new CustomerInput(outletId,order.getLocalOrderId(),deliveryDate,mobileNumber,remarks,base64Sign);
-        customerInputRepository.saveCustomerInput(customerInput);
-        MasterModel masterModel = new MasterModel();
+
+   /*     MasterModel masterModel = new MasterModel();
         masterModel.setLocation(orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng());
         masterModel.setOutletId(order.getOutletId());
         masterModel.setOrderModel(responseModel);
         masterModel.setCustomerInput(customerInput);
-        masterModel.setOutletVisitTime(orderModel.getOutlet().getVisitDateTime());
-
-
-        disposable.add(webservice.saveOrder(masterModel,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken())
+        masterModel.setOutletVisitTime(orderModel.getOutlet().getVisitDateTime());*/
+        customerInputRepository.saveCustomerInput(customerInput)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(this::orderSavedSuccess,this::onError));
-        scheduleMerchandiseJob(getApplication(),outletId, PreferenceUtil.getInstance(getApplication()).getToken());
-        updateStock(getApplication(),outletId);
+                .subscribe(() -> {
+                    scheduleMasterJob(getApplication(),outletId,1,orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng(),
+                            deliveryDate,"","Bearer "+PreferenceUtil.getInstance(getApplication()).getToken());
 
+                    scheduleMerchandiseJob(getApplication(),outletId, PreferenceUtil.getInstance(getApplication()).getToken());
+
+                    updateStock(getApplication(),outletId);
+                });
+
+  /*disposable.add(webservice.saveOrder(masterModel,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(this::orderSavedSuccess,this::onError));*/
+
+    }
+
+
+
+    // schedule
+    public void scheduleMasterJob(Context context, Long outletId,Integer outletStatus, Double latitude,Double longitude,Long visitDateTime, String reason, String token) {
+        PersistableBundle extras = new PersistableBundle();
+        extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outletId);
+        extras.putInt(Constant.EXTRA_PARAM_OUTLET_STATUS_ID,outletStatus);
+        extras.putLong(Constant.EXTRA_PARAM_OUTLET_VISIT_TIME,visitDateTime);
+        extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LAT,latitude);
+        extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LNG,longitude);
+        extras.putString(Constant.EXTRA_PARAM_OUTLET_REASON_N_ORDER,reason);
+        extras.putString(Constant.TOKEN, "Bearer "+token);
+        ComponentName serviceComponent = new ComponentName(context, UploadOrdersService.class);
+        JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue()), serviceComponent);
+        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
+        builder.setExtras(extras);
+        builder.setPersisted(true);
+        JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
+        jobScheduler.schedule(builder.build());
     }
 
     // schedule
@@ -146,7 +176,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
         jobScheduler.schedule(builder.build());
     }
 
-    private void orderSavedSuccess(OrderResponseModel order) {
+    public void orderSavedSuccess(BaseResponse order) {
         isSaving.postValue(false);
         if(order!=null)
             orderSaved.postValue(order.isSuccess());

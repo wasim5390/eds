@@ -26,8 +26,8 @@ public interface OrderDao {
     @Query("SELECT * FROM `Order` WHERE oid=:id")
     Order findOrderByOrderId(Long id);
 
-    @Query("SELECT * FROM `Order` WHERE c_outletId=:id")
-    Single<Order> findOrderByOutletId(Long id);
+    @Query("SELECT * FROM `Order` WHERE pk_oid=:id")
+    Maybe<Order> findOrderById(Long id);
 
     @Query("SELECT * FROM OrderDetail where fk_oid=:orderId")
     Single<List<OrderDetail>> findOrderItemsByOrderId(Long orderId);

@@ -27,7 +27,7 @@ public class OrderResponseModel extends BaseResponse{
     @Expose
     private Long orderId;
     @Expose
-    private Long orderStatusId;
+    private Integer orderStatusId;
     @Expose
     private String orderStatusText;
     @Expose
@@ -44,6 +44,12 @@ public class OrderResponseModel extends BaseResponse{
     @Expose
     private Long visitDayId;
 
+    @Expose
+    private Integer outletStatus;
+
+    public Integer getOutletStatus() {
+        return outletStatus;
+    }
     public String getCode() {
         return code;
     }
@@ -116,11 +122,11 @@ public class OrderResponseModel extends BaseResponse{
         this.orderId = orderId;
     }
 
-    public Long getOrderStatusId() {
+    public Integer getOrderStatusId() {
         return orderStatusId;
     }
 
-    public void setOrderStatusId(Long orderStatusId) {
+    public void setOrderStatusId(Integer orderStatusId) {
         this.orderStatusId = orderStatusId;
     }
 

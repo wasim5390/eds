@@ -7,6 +7,7 @@ import androidx.room.Update;
 
 import com.optimus.eds.db.entities.CustomerInput;
 
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
 
 import static androidx.room.OnConflictStrategy.REPLACE;
@@ -14,8 +15,8 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface CustomerDao {
 
-    @Query("SELECT * FROM CustomerInput WHERE orderId=:orderId")
-    Maybe<CustomerInput> findCustomerInput(Long orderId);
+    @Query("SELECT * FROM CustomerInput WHERE outletId=:outletId")
+    Maybe<CustomerInput> findCustomerInput(Long outletId);
 
     @Insert(onConflict = REPLACE)
     void insertCustomerInput(CustomerInput customerInput);

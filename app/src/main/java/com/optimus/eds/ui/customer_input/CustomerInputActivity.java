@@ -3,8 +3,11 @@ package com.optimus.eds.ui.customer_input;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -13,14 +16,20 @@ import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.optimus.eds.BaseActivity;
+import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.model.BaseResponse;
+import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.model.OrderModel;
+import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.ui.customer_complaints.CustomerComplaintsActivity;
 import com.optimus.eds.utils.Util;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -87,6 +96,8 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
         });
         viewModel.isSaving().observe(this,this::setProgress);
         viewModel.showMessage().observe(this,this::showMsg);
+        LocalBroadcastManager.getInstance(this).registerReceiver(orderUploadSuccessReceiver,new IntentFilter(Constant.ACTION_ORDER_UPLOAD));
+
     }
 
 
@@ -162,4 +173,27 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
     public void onClear() {
         signature = null;
     }
+
+
+
+    @Override
+    protected void onDestroy() {
+        if (orderUploadSuccessReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(orderUploadSuccessReceiver);
+            orderUploadSuccessReceiver = null;
+        }
+        super.onDestroy();
+    }
+
+
+    private BroadcastReceiver orderUploadSuccessReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction()==Constant.ACTION_ORDER_UPLOAD){
+                MasterModel response = (MasterModel) intent.getSerializableExtra("Response");
+                viewModel.orderSavedSuccess(response);
+                Toast.makeText(context, response.isSuccess()?"Order Uploaded Successfully!":response.getResponseMsg(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 }

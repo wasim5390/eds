@@ -49,6 +49,7 @@ public interface Constant {
     String TOKEN = "token";
     int PRIMARY = 1;
     int SECONDARY=2;
+    String ACTION_ORDER_UPLOAD = "upload_order_data";
 
     interface IntentExtras {
         String ACTION_CAMERA = "action-camera";

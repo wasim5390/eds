@@ -53,7 +53,7 @@ public interface API {
 
     @Headers({ "Content-Type: application/json;charset=UTF-8"})
     @POST("api/order/PostOrder")
-    Single<OrderResponseModel> saveOrder(@Body MasterModel order,@Header("Authorization") String auth);
+    Single<MasterModel> saveOrder(@Body MasterModel order,@Header("Authorization") String auth);
 
     @Headers({ "Content-Type: application/json;charset=UTF-8"})
     @POST("api/route/PostOutletVisit")
