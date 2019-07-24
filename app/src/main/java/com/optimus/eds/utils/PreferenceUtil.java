@@ -18,7 +18,7 @@ public class PreferenceUtil {
 
 
     public static final String KEY_IS_SIGN_IN = "is_sign_in";
-    public static final String KEY_EMAIL = "email";
+    public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_TOKEN = "token";
     public static final String KEY_SYNC_DATE = "sync_date";
@@ -53,7 +53,7 @@ public class PreferenceUtil {
     }
 
     public String getUsername() {
-        return sPref.getString(KEY_EMAIL, "");
+        return sPref.getString(KEY_USERNAME, "");
     }
 
     public String getPassword() {
@@ -76,9 +76,9 @@ public class PreferenceUtil {
         return sPref.getString(KEY_APP_MODE, defaultAppMode);
     }
 
-    public void saveEmail(String email) {
+    public void saveUserName(String username) {
         SharedPreferences.Editor editor = sPref.edit();
-        editor.putString(KEY_EMAIL, email);
+        editor.putString(KEY_USERNAME, username);
         editor.apply();
     }
 
@@ -91,6 +91,14 @@ public class PreferenceUtil {
     public void saveToken(String token) {
         SharedPreferences.Editor editor = sPref.edit();
         editor.putString(KEY_TOKEN, token);
+        editor.apply();
+    }
+
+    public void clearCredentials() {
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.remove(KEY_TOKEN);
+        editor.remove(KEY_USERNAME);
+        editor.remove(KEY_PASSWORD);
         editor.apply();
     }
 

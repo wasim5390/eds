@@ -12,13 +12,14 @@ import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.model.OrderModel;
+import com.optimus.eds.ui.order.OrderBookingRepository;
 
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 
-public class CashMemoRepository {
+public class CashMemoRepository extends OrderBookingRepository {
     private ProductsDao productDao;
     private OrderDao orderDao;
     private RouteDao routeDao;
@@ -32,18 +33,13 @@ public class CashMemoRepository {
     private MutableLiveData<Boolean> isSaving;
 
     public CashMemoRepository(Application application) {
-        AppDatabase appDatabase = AppDatabase.getDatabase(application);
+        super(application);
         productDao = appDatabase.productsDao();
         routeDao= appDatabase.routeDao();
         orderDao = appDatabase.orderDao();
         isSaving = new MutableLiveData<>();
 
     }
-
-    protected Maybe<OrderModel> findOrder(Long outletId){
-        return orderDao.getOrderWithItems(outletId);
-    }
-
     public void updateOrderItem(OrderDetail orderDetail){
         AsyncTask.execute(() -> orderDao.updateOrderItem(orderDetail));
     }

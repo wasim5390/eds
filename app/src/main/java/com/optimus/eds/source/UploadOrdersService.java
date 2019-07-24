@@ -29,19 +29,12 @@ import java.util.Objects;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import io.reactivex.Maybe;
-import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 
 import static com.optimus.eds.Constant.EXTRA_PARAM_OUTLET_ID;
-import static com.optimus.eds.Constant.EXTRA_PARAM_OUTLET_REASON_N_ORDER;
-import static com.optimus.eds.Constant.EXTRA_PARAM_OUTLET_STATUS_ID;
-import static com.optimus.eds.Constant.EXTRA_PARAM_OUTLET_VISIT_TIME;
-import static com.optimus.eds.Constant.EXTRA_PARAM_PRESELLER_LAT;
-import static com.optimus.eds.Constant.EXTRA_PARAM_PRESELLER_LNG;
 import static com.optimus.eds.Constant.TOKEN;
 
 public class UploadOrdersService extends JobService {
@@ -68,20 +61,8 @@ public class UploadOrdersService extends JobService {
             PersistableBundle bundle = params.getExtras();
             jobId = params.getJobId();
             final Long outletId = bundle.getLong(EXTRA_PARAM_OUTLET_ID);
-            final Integer statusId = bundle.getInt(EXTRA_PARAM_OUTLET_STATUS_ID);
-            final String reason = bundle.getString(EXTRA_PARAM_OUTLET_REASON_N_ORDER,"");
-            final Double latitude = bundle.getDouble(EXTRA_PARAM_PRESELLER_LAT,0);
-            final Double longitude = bundle.getDouble(EXTRA_PARAM_PRESELLER_LNG,0);
-            final Long visitTime = bundle.getLong(EXTRA_PARAM_OUTLET_VISIT_TIME);
             token = bundle.getString(TOKEN);
-
-            masterModel.setOutletId(outletId);
-            masterModel.setOutletStatus(statusId);
-            masterModel.setReason(reason);
-            masterModel.setOutletVisitTime(visitTime>0?visitTime:null);
-            masterModel.setLocation(latitude,longitude);
             findOrder(outletId);
-           // uploadMasterData(masterModel);
         }
         return true;
     }
@@ -110,20 +91,21 @@ public class UploadOrdersService extends JobService {
         Maybe<MasterModel> masterModelSingle = Maybe.zip(orderSingle,customerInputSingle,
                 (orderModel, customerInput) -> {
 
-            Order order = orderModel.getOrder();
-            Gson gson  = new Gson();
-            String json = gson.toJson(order);
-            OrderResponseModel responseModel = gson.fromJson(json,OrderResponseModel.class);
-            responseModel.setOrderDetails(orderModel.getOrderDetails());
+                    Order order = orderModel.getOrder();
+                    Gson gson  = new Gson();
+                    String json = gson.toJson(order);
+                    OrderResponseModel responseModel = gson.fromJson(json,OrderResponseModel.class);
+                    responseModel.setOrderDetails(orderModel.getOrderDetails());
 
 
-            masterModel.setCustomerInput(customerInput);
-            masterModel.setOrderModel(responseModel);
-           /* model.setLocation(orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng());
-            model.setOutletId(order.getOutletId());
-            model.setOutletVisitTime(orderModel.getOutlet().getVisitDateTime());*/
-            return masterModel;
-        }) ;
+                    masterModel.setCustomerInput(customerInput);
+                    masterModel.setOrderModel(responseModel);
+                    masterModel.setLocation(orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng());
+                    masterModel.setOutletId(order.getOutletId());
+                    masterModel.setOutletStatus(1); // 1 for continue order
+                    masterModel.setOutletVisitTime(orderModel.getOutlet().getVisitDateTime()>0?orderModel.getOutlet().getVisitDateTime():null);
+                    return masterModel;
+                }) ;
 
         masterModelSingle.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(this::uploadMasterData,this::error);
 
@@ -147,13 +129,15 @@ public class UploadOrdersService extends JobService {
 
 
         if(orderResponseModel !=null && orderResponseModel.getOrderModel()!=null)
-        OrderBookingRepository.singleInstance(getApplication())
-                .findOrderById(orderResponseModel.getOrderModel().getMobileOrderId()).map(order -> {
-                    order.setOrderStatus(orderResponseModel.getOrderModel().getOrderStatusId());
-                    return order;
-        }).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(order -> {
-            OrderBookingRepository.singleInstance(getApplication()).updateOrder(order);
-        });
+            OrderBookingRepository.singleInstance(getApplication())
+                    .findOrderById(orderResponseModel.getOrderModel().getMobileOrderId()).map(order -> {
+                order.setOrderStatus(orderResponseModel.getOrderModel().getOrderStatusId());
+                return order;
+                    }).flatMapCompletable(order -> OrderBookingRepository.singleInstance(getApplication())
+                    .updateOrder(order)).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> {
+                        Log.i("UploadOrdersService", "Order Status Updated");
+                    },this::error);
         Intent intent = new Intent();
         intent.setAction(Constant.ACTION_ORDER_UPLOAD);
         intent.putExtra("Response", orderResponseModel);

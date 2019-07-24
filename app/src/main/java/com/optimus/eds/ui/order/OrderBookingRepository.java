@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import retrofit2.Response;
@@ -36,7 +37,7 @@ public class OrderBookingRepository {
     private OrderDao orderDao;
     private ProductsDao productsDao;
     private MutableLiveData<List<ProductGroup>> allGroups;
-
+    public AppDatabase appDatabase;
 
     public static OrderBookingRepository singleInstance(Application application){
         if(repository==null)
@@ -46,7 +47,7 @@ public class OrderBookingRepository {
 
     public OrderBookingRepository(Application application) {
 
-        AppDatabase appDatabase = AppDatabase.getDatabase(application);
+         appDatabase = AppDatabase.getDatabase(application);
         productsDao = appDatabase.productsDao();
         orderDao = appDatabase.orderDao();
         allGroups = new MutableLiveData<>();
@@ -92,6 +93,14 @@ public class OrderBookingRepository {
 
     public Maybe<Order> findOrderById(Long mobileOrderId){
         return orderDao.findOrderById(mobileOrderId);
+    }
+
+    public Flowable<List<OrderModel>> findPendingOrder(){
+        return orderDao.getPendingOrders(2);
+    }
+
+    public Single<List<OrderModel>> findPendingOrders(){
+       return orderDao.getPendingOrdersToUpload(2);
     }
 
     public Completable updateOrder(Order order){

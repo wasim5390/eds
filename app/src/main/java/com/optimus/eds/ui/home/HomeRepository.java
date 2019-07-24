@@ -76,7 +76,10 @@ public class HomeRepository {
 
     public void getToken(){
         isLoading.setValue(true);
-        webService.getToken("password","imran","imranshabrati").observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribeWith(new DisposableSingleObserver<TokenResponse>() {
+        String username = preferenceUtil.getUsername();
+        String password = preferenceUtil.getPassword();
+       // webService.getToken("password","imran","imranshabrati");
+        webService.getToken("password",username,password).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribeWith(new DisposableSingleObserver<TokenResponse>() {
             @Override
             public void onSuccess(TokenResponse tokenResponse) {
                 preferenceUtil.saveToken(tokenResponse.getAccessToken());
@@ -186,7 +189,7 @@ public class HomeRepository {
         });
     }
 
-    public LiveData<Boolean> mLoading() {
+    public MutableLiveData<Boolean> mLoading() {
         return isLoading;
     }
 
@@ -194,7 +197,7 @@ public class HomeRepository {
         return onDayStartLiveData;
     }
 
-    public LiveData<String> getError() {
+    public MutableLiveData<String> getError() {
         return msg;
     }
 }

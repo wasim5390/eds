@@ -118,7 +118,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .subscribe(() -> {
                     scheduleMasterJob(getApplication(),outletId,1,orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng(),
-                            deliveryDate,"","Bearer "+PreferenceUtil.getInstance(getApplication()).getToken());
+                            deliveryDate,"",PreferenceUtil.getInstance(getApplication()).getToken());
 
                     scheduleMerchandiseJob(getApplication(),outletId, PreferenceUtil.getInstance(getApplication()).getToken());
 
@@ -158,7 +158,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outletId);
         extras.putString(Constant.TOKEN, "Bearer "+token);
         ComponentName serviceComponent = new ComponentName(context, MerchandiseUploadService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(outletId.intValue(), serviceComponent);
+        JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MERCHANDISE_UPLOAD,outletId.intValue()), serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
         builder.setExtras(extras);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);

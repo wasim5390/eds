@@ -14,6 +14,7 @@ import com.optimus.eds.model.OrderModel;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 
@@ -37,6 +38,13 @@ public interface OrderDao {
     @Transaction
     Maybe<OrderModel> getOrderWithItems(long outletId);
 
+    @Query("SELECT * FROM `Order` where orderStatus=:orderStatus")
+    @Transaction
+    Flowable<List<OrderModel>> getPendingOrders(int orderStatus);
+
+    @Query("SELECT * FROM `Order` where orderStatus=:orderStatus")
+    @Transaction
+    Single<List<OrderModel>> getPendingOrdersToUpload(int orderStatus);
 
     @Insert(onConflict = REPLACE)
     void insertOrder(Order order);

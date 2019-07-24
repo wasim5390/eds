@@ -65,6 +65,7 @@ public class RetrofitHelper implements Constant {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
+            PreferenceUtil preferenceUtil = PreferenceUtil.getInstance(EdsApplication.getContext());
             //String token = Util.getAuthorizationHeader(EdsApplication.getInstance());
 /*
             if (token!=null) {
@@ -79,9 +80,9 @@ public class RetrofitHelper implements Constant {
             }
 
             response = chain.proceed(request);
-            if (response.code()== 401) {
+            if (response.code()== 401 && !preferenceUtil.getUsername().isEmpty()) {
                 API tokenApi =  getRetrofit().create(API.class);
-                retrofit2.Response<TokenResponse> tokenResponse= tokenApi.refreshToken("password","imran","imranshabrati").execute();
+                retrofit2.Response<TokenResponse> tokenResponse= tokenApi.refreshToken("password",preferenceUtil.getUsername(),preferenceUtil.getPassword()).execute();
                 if(tokenResponse.isSuccessful()){
                     TokenResponse tokenResponseObj=tokenResponse.body();
 

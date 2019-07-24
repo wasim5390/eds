@@ -1,6 +1,10 @@
 package com.optimus.eds.ui.home;
 
 import androidx.lifecycle.ViewModelProviders;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.navigation.NavigationView;
@@ -36,6 +40,10 @@ public class MainActivity extends BaseActivity {
     private ActionBarDrawerToggle drawerToggle;
     private HomeViewModel viewModel;
 
+    public static void start(Context context) {
+        Intent starter = new Intent(context, MainActivity.class);
+        context.startActivity(starter);
+    }
 
     @Override
     public int getID() {
@@ -45,7 +53,6 @@ public class MainActivity extends BaseActivity {
     @Override
     public void created(Bundle savedInstanceState) {
         ButterKnife.bind(this);
-
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         viewModel.isLoading().observe(this, this::setProgress);
 
@@ -90,7 +97,14 @@ public class MainActivity extends BaseActivity {
                     Toast.makeText(MainActivity.this, "My Account", Toast.LENGTH_SHORT).show();
 
                 case R.id.exit:
-                    Toast.makeText(MainActivity.this, "Logout", Toast.LENGTH_SHORT).show();
+                    AlertDialogManager.getInstance().showVerificationAlertDialog(this,
+                            getString(R.string.logout), getString(R.string.are_you_sure_to_logout), verified -> {
+                        if(verified)
+                        {
+                            PreferenceUtil.getInstance(this).clearCredentials();
+                            finish();
+                        }
+                    });
                 default:
                     return true;
             }
@@ -121,6 +135,9 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.btnReports:
                 CustomerComplaintsActivity.start(this);
+                break;
+            case R.id.btnUpload:
+                viewModel.pushOrdersToServer();
                 break;
             case R.id.btnEndDay:
                 AlertDialogManager.getInstance().showVerificationAlertDialog(this,getString(R.string.day_closing_title),
