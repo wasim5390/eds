@@ -10,14 +10,15 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
+import com.optimus.eds.ui.order.OrderBookingRepository;
 
 import java.util.List;
 
-public class OutletListRepository  {
+public class OutletListRepository  extends OrderBookingRepository {
 
     public List<Outlet> outletList;
     private RouteDao routeDao;
-    private API api;
+
     static OutletListRepository repository;
 
     public static OutletListRepository getInstance(Application application){
@@ -27,8 +28,8 @@ public class OutletListRepository  {
     }
 
     public OutletListRepository(Application application){
+        super(application);
         routeDao = AppDatabase.getDatabase(application).routeDao();
-        api= RetrofitHelper.getInstance().getApi();
     }
 
 
@@ -39,6 +40,8 @@ public class OutletListRepository  {
     public LiveData<List<Route>> getRoutes(){
         return routeDao.findAllRoutes();
     }
+
+
 
 
 

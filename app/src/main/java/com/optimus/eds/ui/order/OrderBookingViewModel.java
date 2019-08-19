@@ -191,7 +191,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
 
     private void updateOrder(OrderModel order) {
-        if(order==null) return;
+        if(order==null || order.getOrderDetails()==null) return;
         setOrder(order);
         Completable orderUpdateCompletable= repository.updateOrder(order.getOrder());
         Completable removeOrderItems = repository.deleteOrderItems(order.getOrder().getLocalOrderId());
@@ -329,7 +329,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
                     Order mOrder = new Order(order.getOrder().getOutletId());
                     mOrder.setRouteId(order.getOutlet().getRouteId());
                     mOrder.setVisitDayId(order.getOutlet().getVisitDay());
-                    mOrder.setOrderStatus(2);
+                    mOrder.setOrderStatus(2); //created
                     mOrder.setLocalOrderId(order.getOrder().getLocalOrderId());
                     mOrder.setLatitude(order.getOutlet().getLatitude());
                     mOrder.setLongitude(order.getOutlet().getLongitude());

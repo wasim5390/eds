@@ -102,7 +102,7 @@ public class HomeRepository {
             try {
                 Response<RouteOutletResponseModel> response = webService.loadTodayRouteOutlets().execute();
                 if(response.isSuccessful()){
-                    routeDao.deleteAllOutlets();
+                    //routeDao.deleteAllOutlets();
                     routeDao.deleteAllRoutes();
                     routeDao.deleteAllAssets();
                     if(onDayStart) {

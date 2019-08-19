@@ -26,11 +26,15 @@ import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
+import com.optimus.eds.ui.cash_memo.CashMemoActivity;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailActivity;
 import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -129,12 +133,23 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
 
     @Override
     public void onOutletClick(Outlet outlet) {
-        //boolean lastSyncedToday = DateUtils.isToday(PreferenceUtil.getInstance(this).getSyncDate());
-        boolean lastDayEndedIsToday = DateUtils.isToday(PreferenceUtil.getInstance(this).getEndDay());
-        if( !lastDayEndedIsToday)
-        OutletDetailActivity.start(this,outlet.getOutletId(),route.getRouteId(),RES_CODE_DETAILS);
-        else
-            Toast.makeText(this, getString(R.string.day_already_ended), Toast.LENGTH_SHORT).show();
+        Long lastEndDay=PreferenceUtil.getInstance(this).getEndDay();
+        boolean lastDayEndedIsToday = DateUtils.isToday(lastEndDay);
+
+        if(Util.isPastDate(lastEndDay)||lastDayEndedIsToday)
+        {
+            showMessage(getString(R.string.day_already_ended));
+            return;
+        }
+
+        viewModel.orderTaken(outlet.getOutletId()).observe(this,aBoolean -> {
+           if(aBoolean){
+               CashMemoActivity.start(this,outlet.getOutletId(),RES_CODE_DETAILS);
+           }else
+               OutletDetailActivity.start(this,outlet.getOutletId(),route.getRouteId(),RES_CODE_DETAILS);
+        });
+
+
     }
 
 

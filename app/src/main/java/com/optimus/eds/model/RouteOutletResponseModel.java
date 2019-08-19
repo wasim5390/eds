@@ -14,7 +14,6 @@ public class RouteOutletResponseModel extends BaseResponse{
     List<Route> routeList;
     @SerializedName("outlets")
     List<Outlet> outletList;
-
     @SerializedName("assets")
     List<Asset> assetList;
 

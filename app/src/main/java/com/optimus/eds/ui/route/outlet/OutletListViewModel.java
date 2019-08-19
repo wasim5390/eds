@@ -10,8 +10,11 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class OutletListViewModel extends AndroidViewModel {
@@ -52,13 +55,25 @@ public class OutletListViewModel extends AndroidViewModel {
 
 
     public void loadOutletsFromDb(Long routeId){
-      repository.getOutlets(routeId).observeForever(outlets -> outletList.setValue(outlets));
-
+        repository.getOutlets(routeId).observeForever(outlets -> outletList.setValue(outlets));
     }
 
+    public LiveData<Boolean> orderTaken(Long outletId){
+        MutableLiveData<Boolean> orderAlreadyTaken = new MutableLiveData<>();
+        repository.findOrder(outletId).toSingle().observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread()).subscribe(orderModel -> {
+
+            orderAlreadyTaken.postValue(orderModel.getOrder().getOrderStatus()==1?true:false);
+        },throwable -> {
+            if(throwable instanceof NoSuchElementException)
+                orderAlreadyTaken.postValue(false);
+            else onError(throwable);
+        });
+        return orderAlreadyTaken;
+    }
     private void onRoutesFetched(List<Route> routes) {
-         routeList.setValue(routes);
-         isLoading.setValue(false);
+        routeList.setValue(routes);
+        isLoading.setValue(false);
     }
 
     private void onOutletsFetched(List<Outlet> outlets) {

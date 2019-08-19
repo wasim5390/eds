@@ -36,9 +36,12 @@ import com.optimus.eds.source.UploadOrdersService;
 import com.optimus.eds.ui.order.OrderBookingRepository;
 import com.optimus.eds.ui.order.OrderManager;
 import com.optimus.eds.utils.PreferenceUtil;
+import com.optimus.eds.utils.Util;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -78,7 +81,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public void startDay(){
-        PreferenceUtil.getInstance(getApplication()).clearAllPreferences();
+       // PreferenceUtil.getInstance(getApplication()).clearAllPreferences();
         repository.getToken();
     }
 
@@ -163,7 +166,6 @@ public class HomeViewModel extends AndroidViewModel {
         Long syncDate = PreferenceUtil.getInstance(getApplication()).getSyncDate();
         when.postValue(DateUtils.isToday(syncDate));
         return when;
-
     }
 
     public LiveData<Boolean> dayEnded(){

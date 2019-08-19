@@ -107,9 +107,24 @@ public class Util {
 
     public static boolean isDateToday(Long dateInMilli){
 
-
        return DateUtils.isToday(dateInMilli);
 
+    }
+
+    public static boolean isPastDate(Long dateInMilli){
+        boolean isDatePassed=false;
+        String dateString = formatDate(DATE_FORMAT_2,dateInMilli);
+        try {
+            if (new SimpleDateFormat("MM/yyyy").parse(dateString).before(new Date())) {
+                isDatePassed=true;
+            }
+        } catch (ParseException e) {
+            isDatePassed=false;
+            e.printStackTrace();
+        }catch (Exception e){
+            isDatePassed=false;
+        }
+        return isDatePassed;
     }
 
     /**

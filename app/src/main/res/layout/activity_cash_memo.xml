@@ -177,7 +177,7 @@
         android:paddingEnd="5dp"
         >
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnAddPackages"
+            android:id="@+id/btnEditOrder"
             android:layout_width="0dp"
             android:layout_height="55dp"
             android:layout_margin="1dp"

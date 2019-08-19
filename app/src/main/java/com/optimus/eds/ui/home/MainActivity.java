@@ -2,7 +2,6 @@ package com.optimus.eds.ui.home;
 
 import androidx.lifecycle.ViewModelProviders;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -56,7 +55,7 @@ public class MainActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         viewModel.isLoading().observe(this, this::setProgress);
 
-        viewModel.getErrorMsg().observe(this, this::showError);
+        viewModel.getErrorMsg().observe(this, this::showMessage);
         viewModel.onStartDay().observe(this, aBoolean -> {
             if(aBoolean) {
                 findViewById(R.id.btnStartDay).setClickable(false);
@@ -95,7 +94,7 @@ public class MainActivity extends BaseActivity {
             switch (id) {
                 case R.id.account:
                     Toast.makeText(MainActivity.this, "My Account", Toast.LENGTH_SHORT).show();
-
+                    break;
                 case R.id.exit:
                     AlertDialogManager.getInstance().showVerificationAlertDialog(this,
                             getString(R.string.logout), getString(R.string.are_you_sure_to_logout), verified -> {
@@ -109,7 +108,7 @@ public class MainActivity extends BaseActivity {
                     return true;
             }
 
-
+return false;
         });
 
 
@@ -167,7 +166,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void showError(String message) {
+    private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }

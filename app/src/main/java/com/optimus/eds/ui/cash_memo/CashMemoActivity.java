@@ -1,6 +1,7 @@
 package com.optimus.eds.ui.cash_memo;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Activity;
@@ -9,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.View;
 import android.widget.TextView;
 
 import com.optimus.eds.BaseActivity;
@@ -17,6 +20,7 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.ui.customer_input.CustomerInputActivity;
+import com.optimus.eds.ui.route.outlet.OutletListActivity;
 
 import java.util.List;
 
@@ -47,8 +51,14 @@ public class CashMemoActivity extends BaseActivity {
 
     @BindView(R.id.tvQty)
     TextView tvQty;
+
+    @BindView(R.id.btnNext)
+    AppCompatButton btnNext;
+    @BindView(R.id.btnEditOrder)
+    AppCompatButton btnEditOrder;
     private CashMemoAdapter cartAdapter;
     private CashMemoViewModel viewModel;
+    private boolean cashMemoEditable;
     public static void start(Context context, Long outletId,int resCode) {
         Intent starter = new Intent(context, CashMemoActivity.class);
         starter.putExtra("OutletId",outletId);
@@ -72,12 +82,20 @@ public class CashMemoActivity extends BaseActivity {
 
     }
 
+    private void configUi(){
+        if(!cashMemoEditable){
+            btnNext.setVisibility(View.GONE);
+            btnEditOrder.setText("Outlets");
+        }
+    }
+
     private void setObserver(){
         viewModel.loadOutlet(outletId).observe(this, this::onOutletLoaded);
         viewModel.getOrder(outletId).observe(this, orderModel -> {
-
+            cashMemoEditable= orderModel.getOrder().getOrderStatus() != 1;
             updateCart(orderModel.getOrderDetailAndCPriceBreakdowns());
             updatePricesOnUi(orderModel);
+            configUi();
 
         });
     }
@@ -137,7 +155,7 @@ public class CashMemoActivity extends BaseActivity {
         CustomerInputActivity.start(this,outletId,RES_CODE);
     }
 
-    @OnClick(R.id.btnAddPackages)
+    @OnClick(R.id.btnEditOrder)
     public void upNavigate(){
         onBackPressed();
     }
