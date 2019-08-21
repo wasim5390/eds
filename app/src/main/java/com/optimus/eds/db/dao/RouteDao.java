@@ -13,6 +13,7 @@ import com.optimus.eds.db.entities.Route;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 import static androidx.room.OnConflictStrategy.REPLACE;
@@ -34,7 +35,7 @@ public interface RouteDao extends MerchandiseDao{
     LiveData<List<Outlet>> findAllOutlets();
 
     @Query("SELECT * FROM Outlet WHERE mRouteId=:routeId")
-    LiveData<List<Outlet>> findAllOutletsForRoute(Long routeId);
+    Maybe<List<Outlet>> findAllOutletsForRoute(Long routeId);
 
     @Query("SELECT * FROM Outlet WHERE mOutletId=:id")
     LiveData<Outlet> findOutletById(Long id);

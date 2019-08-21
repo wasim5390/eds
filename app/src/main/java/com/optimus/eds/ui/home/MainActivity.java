@@ -16,12 +16,15 @@ import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
+import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.customer_complaints.CustomerComplaintsActivity;
+import com.optimus.eds.ui.login.LoginActivity;
 import com.optimus.eds.ui.route.outlet.OutletListActivity;
 import com.optimus.eds.utils.PreferenceUtil;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,10 +37,8 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.nav)
     NavigationView nav;
 
-    TextView navProfileName;
-
     private ActionBarDrawerToggle drawerToggle;
-    private HomeViewModel viewModel;
+    HomeViewModel viewModel;
 
     public static void start(Context context) {
         Intent starter = new Intent(context, MainActivity.class);
@@ -54,20 +55,23 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         viewModel.isLoading().observe(this, this::setProgress);
-
         viewModel.getErrorMsg().observe(this, this::showMessage);
         viewModel.onStartDay().observe(this, aBoolean -> {
             if(aBoolean) {
                 findViewById(R.id.btnStartDay).setClickable(false);
                 findViewById(R.id.btnStartDay).setAlpha(0.5f);
-                PreferenceUtil.getInstance(this).saveSyncDate(Calendar.getInstance().getTimeInMillis());
+                WorkStatus status = new WorkStatus(Calendar.getInstance().getTimeInMillis(),null,1);
+                PreferenceUtil.getInstance(this).saveWorkSyncData(status);
             }else{
                 findViewById(R.id.btnEndDay).setClickable(false);
                 findViewById(R.id.btnEndDay).setAlpha(0.5f);
-                PreferenceUtil.getInstance(this).saveEndDate(Calendar.getInstance().getTimeInMillis());
+                WorkStatus status = new WorkStatus(PreferenceUtil.getInstance(this).getWorkSyncData().getSyncDate(),Calendar.getInstance().getTimeInMillis(),2);
+                PreferenceUtil.getInstance(this).saveWorkSyncData(status);
+                //PreferenceUtil.getInstance(this).saveEndDate(Calendar.getInstance().getTimeInMillis());
             }
         });
-        viewModel.syncedToday().observe(this, aBoolean -> {
+
+        viewModel.dayStarted().observe(this, aBoolean -> {
             if(aBoolean){
                 findViewById(R.id.btnStartDay).setClickable(false);
                 findViewById(R.id.btnStartDay).setAlpha(0.5f);
@@ -84,31 +88,33 @@ public class MainActivity extends BaseActivity {
 
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        TextView navProfileName = nav.getHeaderView(0).getRootView().findViewById(R.id.profileName);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        navProfileName = nav.getHeaderView(0).getRootView().findViewById(R.id.profileName);
-
-        navProfileName.setText("Wasim Sidhu");
+        navProfileName.setText(PreferenceUtil.getInstance(this).getUsername());
         nav.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             switch (id) {
                 case R.id.account:
-                    Toast.makeText(MainActivity.this, "My Account", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.profile_will_avl_soon), Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.exit:
                     AlertDialogManager.getInstance().showVerificationAlertDialog(this,
                             getString(R.string.logout), getString(R.string.are_you_sure_to_logout), verified -> {
-                        if(verified)
-                        {
-                            PreferenceUtil.getInstance(this).clearCredentials();
-                            finish();
-                        }
-                    });
+                                if(verified)
+                                {
+                                    PreferenceUtil.getInstance(this).clearCredentials();
+                                    finishAffinity();
+                                    LoginActivity.start(this);
+
+                                }
+                            });
+                    break;
                 default:
                     return true;
             }
 
-return false;
+            return false;
         });
 
 
@@ -118,7 +124,10 @@ return false;
     public void onMainMenuClick(View view) {
         switch (view.getId()) {
             case R.id.btnStartDay:
-                viewModel.startDay();
+                if(PreferenceUtil.getInstance(this).getWorkSyncData().isDayStarted())
+                    showMessage(getString(R.string.already_started_day));
+                else
+                    viewModel.startDay();
                 break;
             case R.id.btnDownload:
                 AlertDialogManager.getInstance().showVerificationAlertDialog(this,getString(R.string.update_routes_title),

@@ -26,6 +26,7 @@ import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
+import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.ui.cash_memo.CashMemoActivity;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailActivity;
 import com.optimus.eds.utils.PreferenceUtil;
@@ -133,15 +134,12 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
 
     @Override
     public void onOutletClick(Outlet outlet) {
-        Long lastEndDay=PreferenceUtil.getInstance(this).getEndDay();
-        boolean lastDayEndedIsToday = DateUtils.isToday(lastEndDay);
-
-        if(Util.isPastDate(lastEndDay)||lastDayEndedIsToday)
+        WorkStatus status = PreferenceUtil.getInstance(this).getWorkSyncData();
+        if(status.getDayStarted()==2)
         {
             showMessage(getString(R.string.day_already_ended));
             return;
         }
-
         viewModel.orderTaken(outlet.getOutletId()).observe(this,aBoolean -> {
            if(aBoolean){
                CashMemoActivity.start(this,outlet.getOutletId(),RES_CODE_DETAILS);

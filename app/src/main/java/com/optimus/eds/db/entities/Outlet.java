@@ -38,7 +38,6 @@ public class Outlet implements Serializable {
     private Double mLatitude;
     @SerializedName("longitude")
     private Double mLongitude;
-
     private Double visitTimeLat;
     private Double visitTimeLng;
 
@@ -65,7 +64,6 @@ public class Outlet implements Serializable {
     }
 
     private Long visitDateTime;
-
 
     @Ignore
     private Double mTotalAmount;

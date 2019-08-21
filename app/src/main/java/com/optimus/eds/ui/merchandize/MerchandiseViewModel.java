@@ -88,7 +88,7 @@ public class MerchandiseViewModel extends AndroidViewModel {
 
     public void insertMerchandiseIntoDB(Long outletId,String remarks){
 
-        if(listImages.size()>=3) {
+        if(listImages.size()>=2) {
             inProgress.postValue(true);
             saveMerchandise(outletId, remarks,imagesLiveDate.getValue());
         }else {
@@ -104,7 +104,7 @@ public class MerchandiseViewModel extends AndroidViewModel {
                     listImages.addAll(merchandise.getMerchandiseImages());
                     imagesCount=listImages.size();
                     mutableLiveData.postValue(merchandise);
-                    if(imagesCount>2)
+                    if(imagesCount>1)
                     setEnableNextButton(1);
         });
         return mutableLiveData;
@@ -192,5 +192,9 @@ public class MerchandiseViewModel extends AndroidViewModel {
     }
     public MutableLiveData<List<String>> getPlanogaram() {
         return mPlanogram;
+    }
+
+    public LiveData<List<Asset>> getAssets(){
+        return mAssets;
     }
 }

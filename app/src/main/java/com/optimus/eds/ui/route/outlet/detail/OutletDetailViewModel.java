@@ -99,7 +99,7 @@ public class OutletDetailViewModel extends AndroidViewModel {
         outletLocation.setLongitude(outlet.getLongitude());
         double distance = currentLocation.distanceTo(outletLocation);
 
-        if(distance>25)
+        if(distance>30)
             outletNearbyPos.postValue(outletLocation);
         else {
             outlet.setVisitTimeLat(currentLocation.getLatitude());

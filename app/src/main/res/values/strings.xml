@@ -102,6 +102,8 @@
     <string name="error_field_required">This field is required</string>
     <string name="are_you_sure_to_logout">Are you sure you want to Logout?</string>
     <string name="logout">Logout</string>
+    <string name="already_started_day">Already started your day</string>
+    <string name="profile_will_avl_soon">Profile will be available soon!</string>
 
 
 </resources>

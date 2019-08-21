@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.ui.home.User;
 
 import java.util.Calendar;
@@ -64,13 +65,15 @@ public class PreferenceUtil {
         return sPref.getString(KEY_TOKEN, "");
     }
 
-    public Long getSyncDate() {
-        return sPref.getLong(KEY_SYNC_DATE, 0);
+    public WorkStatus getWorkSyncData() {
+        String workStatus = sPref.getString(KEY_SYNC_DATE,"");
+        if(workStatus.isEmpty())
+            return new WorkStatus(null,null,0);
+        Gson gson = new Gson();
+       WorkStatus status =  gson.fromJson(workStatus,WorkStatus.class);
+        return status;
     }
 
-    public Long getEndDay() {
-        return sPref.getLong(KEY_END_DATE, 0);
-    }
 
     public String getAppMode() {
         return sPref.getString(KEY_APP_MODE, defaultAppMode);
@@ -102,9 +105,11 @@ public class PreferenceUtil {
         editor.apply();
     }
 
-    public void saveSyncDate(Long date) {
+    public void saveWorkSyncData(WorkStatus status) {
+        Gson gson = new Gson();
+        String statusString = gson.toJson(status);
         SharedPreferences.Editor editor = sPref.edit();
-        editor.putLong(KEY_SYNC_DATE, date);
+        editor.putString(KEY_SYNC_DATE, statusString);
         editor.apply();
     }
 

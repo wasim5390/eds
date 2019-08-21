@@ -38,10 +38,10 @@ public class HomeRepository {
 
     private final String TAG=HomeRepository.class.getSimpleName();
     private static HomeRepository repository;
-    private PreferenceUtil preferenceUtil;
-    private OrderDao orderDao;
+    private final PreferenceUtil preferenceUtil;
+    private final OrderDao orderDao;
     private CustomerDao customerDao;
-    MerchandiseDao merchandiseDao;
+    private MerchandiseDao merchandiseDao;
     private ProductsDao productsDao;
     private RouteDao routeDao;
 
@@ -58,7 +58,7 @@ public class HomeRepository {
         return repository;
     }
 
-    public HomeRepository(Application application,API api,Executor executor) {
+    private HomeRepository(Application application, API api, Executor executor) {
         AppDatabase appDatabase = AppDatabase.getDatabase(application);
         preferenceUtil = PreferenceUtil.getInstance(application);
         productsDao = appDatabase.productsDao();
@@ -74,30 +74,37 @@ public class HomeRepository {
 
     }
 
+    /**
+     * Get User Token from server
+     */
     public void getToken(){
         isLoading.setValue(true);
         String username = preferenceUtil.getUsername();
         String password = preferenceUtil.getPassword();
-       // webService.getToken("password","imran","imranshabrati");
-        webService.getToken("password",username,password).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribeWith(new DisposableSingleObserver<TokenResponse>() {
-            @Override
-            public void onSuccess(TokenResponse tokenResponse) {
-                preferenceUtil.saveToken(tokenResponse.getAccessToken());
-                fetchTodayData(true);
-            }
+        // webService.getToken("password","imran","imranshabrati");
+        webService.getToken("password",username,password)
+                .observeOn(Schedulers.io()).subscribeOn(Schedulers.io())
+                .subscribeWith(new DisposableSingleObserver<TokenResponse>() {
+                    @Override
+                    public void onSuccess(TokenResponse tokenResponse) {
+                        preferenceUtil.saveToken(tokenResponse.getAccessToken());
+                        fetchTodayData(true);
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                isLoading.postValue(false);
-                msg.postValue(e.getMessage());
-            }
-        });
+                    @Override
+                    public void onError(Throwable e) {
+                        isLoading.postValue(false);
+                        msg.postValue(e.getMessage());
+                    }
+                });
 
     }
 
+    /**
+     * Fetch current day Routes/Outlets
+     * @param onDayStart {True for onDayStart, False for Download click}
+     */
     public void fetchTodayData(boolean onDayStart){
-        //@TODO this needs to be done
-        // boolean ifDataAlreadyExist = dao.hasRefreshedData();
         executor.execute(() -> {
             try {
                 Response<RouteOutletResponseModel> response = webService.loadTodayRouteOutlets().execute();
@@ -127,8 +134,6 @@ public class HomeRepository {
         });
 
         executor.execute(() -> {
-            //@TODO this needs to be done
-            // boolean ifDataAlreadyExist = dao.hasRefreshedData();
             try {
                 Response<PackageProductResponseModel> response = webService.loadTodayPackageProduct().execute();
                 if(response.isSuccessful()){
@@ -146,7 +151,7 @@ public class HomeRepository {
 
                 }
                 else{
-                msg.postValue(response.errorBody().string());
+                    msg.postValue(response.errorBody().string());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -162,6 +167,10 @@ public class HomeRepository {
 
     }
 
+    /**
+     * Save Work status on server {Day started/ Day end}
+     * @param isStart {True for dayStart, False for dayEnd}
+     */
     public void updateWorkStatus(boolean isStart){
         HashMap<String, Long> map = new HashMap<>();
         map.put(isStart?"startDay":"endDay", Calendar.getInstance().getTimeInMillis());
@@ -184,7 +193,7 @@ public class HomeRepository {
             @Override
             public void onError(Throwable e) {
                 isLoading.postValue(false);
-            msg.postValue(e.getMessage());
+                msg.postValue(e.getMessage());
             }
         });
     }

@@ -244,11 +244,12 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
 
     @OnClick(R.id.btnPromotions)
     public void onPromotionsClick(){
-        List<CustomObject> objects = new ArrayList<>();
+       /* List<CustomObject> objects = new ArrayList<>();
         objects.add(new CustomObject(125L,"16 Free-345 ml with jumbo case"));
         AlertDialogManager.getInstance().showListAlertDialog(this, object -> {
             Toast.makeText(this, object.getText(), Toast.LENGTH_SHORT).show();
-        }, objects);
+        }, objects);*/
+
     }
 
     @OnClick(R.id.btnOk)

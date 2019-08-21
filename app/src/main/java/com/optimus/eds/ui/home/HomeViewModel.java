@@ -15,59 +15,57 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.annotation.NonNull;
 import io.reactivex.Flowable;
-import io.reactivex.Maybe;
+
 import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 import com.optimus.eds.Constant;
-import com.optimus.eds.db.entities.Order;
-import com.optimus.eds.db.entities.OrderDetail;
-import com.optimus.eds.db.entities.Outlet;
-
-import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
+import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.JobIdManager;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.source.UploadOrdersService;
 import com.optimus.eds.ui.order.OrderBookingRepository;
-import com.optimus.eds.ui.order.OrderManager;
 import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 
 public class HomeViewModel extends AndroidViewModel {
 
-    private HomeRepository repository;
-
-
-
+    private final String TAG = HomeViewModel.class.getSimpleName();
+    private final HomeRepository repository;
+    private final CompositeDisposable disposable;
+    private PreferenceUtil preferenceUtil;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
-        int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+     /*   int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
                 NUMBER_OF_CORES*2,
                 NUMBER_OF_CORES*2,
                 60L,
-                TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+                TimeUnit.SECONDS, new LinkedBlockingQueue<>());*/
         ExecutorService executors = Executors.newSingleThreadExecutor();
         repository = HomeRepository.singleInstance(application,RetrofitHelper.getInstance().getApi(),executors);
+        disposable = new CompositeDisposable();
+        preferenceUtil = PreferenceUtil.getInstance(application);
 
+        WorkStatus status  = preferenceUtil.getWorkSyncData();
+
+        // Starting new Day if previous is ended
+        if(status.getDayStarted()==2 && status.getSyncDate()!=null
+                && Util.isPastDate(status.getSyncDate())){
+            status.setDayStarted(0);
+            status.setSyncDate(null);status.setEndDate(null);
+            preferenceUtil.saveWorkSyncData(status);
+        }
 
     }
 
@@ -81,7 +79,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public void startDay(){
-       // PreferenceUtil.getInstance(getApplication()).clearAllPreferences();
+        // PreferenceUtil.getInstance(getApplication()).clearAllPreferences();
         repository.getToken();
     }
 
@@ -91,34 +89,40 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
 
-    private List<Outlet> visitedOutlets(List<Outlet> allOutlets) {
-        List<Outlet> visitedOutlets = new ArrayList<>(allOutlets.size());
-        for (Outlet outlet : allOutlets) {
-            if(outlet.getVisitStatus()==1)
-                visitedOutlets.add(outlet);
-        }
-        return visitedOutlets;
-    }
+// --Commented out by Inspection START (8/21/2019 12:04 PM):
+//    private List<Outlet> visitedOutlets(List<Outlet> allOutlets) {
+//        List<Outlet> visitedOutlets = new ArrayList<>(allOutlets.size());
+//        for (Outlet outlet : allOutlets) {
+//            if(outlet.getVisitStatus()==1)
+//                visitedOutlets.add(outlet);
+//        }
+//        return visitedOutlets;
+//    }
+// --Commented out by Inspection STOP (8/21/2019 12:04 PM)
 
     public void pushOrdersToServer(){
 
-       List<OrderModel> count =  OrderBookingRepository.singleInstance(getApplication()).findPendingOrder().blockingFirst();
-       if(count.size()<1) {
-           getErrorMsg().postValue("Already Uploaded");
-           return;
-       }
-        findPendingOrders()
+        List<OrderModel> count =  OrderBookingRepository.singleInstance(getApplication()).findPendingOrder().blockingFirst();
+        if(count.size()<1) {
+            getErrorMsg().postValue("Already Uploaded");
+            return;
+        }
+        disposable.add(findPendingOrders()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .subscribe(orderModel -> {
-                    Log.i("HomeViewModel","OnNext");
+                    Log.i(TAG,"OnNext");
                     scheduleMasterJob(getApplication(),orderModel.getOrder().getOutletId(),"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken());
-                },this::onError,() -> {
-                    Log.i("HomeViewModel","OnComplete");
-                });
+                },this::onError,() -> Log.i(TAG,"OnComplete")));
 
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposable.clear();
+        disposable.dispose();
+    }
 
     private Observable<OrderModel> findPendingOrders() {
         return OrderBookingRepository.singleInstance(getApplication()).findPendingOrder()
@@ -126,7 +130,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     // schedule
-    public void scheduleMasterJob(Context context, Long outletId,String token) {
+    private void scheduleMasterJob(Context context, Long outletId, String token) {
         PersistableBundle extras = new PersistableBundle();
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outletId);
         extras.putString(Constant.TOKEN, token);
@@ -136,12 +140,7 @@ public class HomeViewModel extends AndroidViewModel {
         builder.setExtras(extras);
         builder.setPersisted(true);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
-        jobScheduler.schedule(builder.build());
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
+        Objects.requireNonNull(jobScheduler).schedule(builder.build());
     }
 
     public MutableLiveData<Boolean> isLoading() {
@@ -160,19 +159,18 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
 
-
-    public LiveData<Boolean> syncedToday(){
+    public LiveData<Boolean> dayStarted(){
         MutableLiveData<Boolean> when = new MutableLiveData<>();
-        Long syncDate = PreferenceUtil.getInstance(getApplication()).getSyncDate();
-        when.postValue(DateUtils.isToday(syncDate));
+        WorkStatus syncDate = PreferenceUtil.getInstance(getApplication()).getWorkSyncData();
+        when.postValue(syncDate.getDayStarted()!=0);
         return when;
     }
 
     public LiveData<Boolean> dayEnded(){
         MutableLiveData<Boolean> when = new MutableLiveData<>();
-        Long syncDate = PreferenceUtil.getInstance(getApplication()).getEndDay();
-        when.postValue(DateUtils.isToday(syncDate));
+        WorkStatus syncDate = PreferenceUtil.getInstance(getApplication()).getWorkSyncData();
+        when.postValue(syncDate.getDayStarted()==2);
+        //when.postValue(DateUtils.isToday(syncDate));
         return when;
-
     }
 }

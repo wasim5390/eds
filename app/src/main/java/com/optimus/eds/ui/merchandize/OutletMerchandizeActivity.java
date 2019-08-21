@@ -1,5 +1,6 @@
 package com.optimus.eds.ui.merchandize;
 
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Activity;
@@ -87,6 +88,14 @@ public class OutletMerchandizeActivity extends BaseActivity {
             updateMerchandiseList(merchandise.getMerchandiseImages());
 
         });
+        viewModel.getAssets().observe(this,assets -> {
+            if(assets.isEmpty()){
+                findViewById(R.id.btnAssetVerification).setClickable(false);
+                findViewById(R.id.btnAssetVerification).setAlpha(0.5f);
+                ((AppCompatButton)findViewById(R.id.btnAssetVerification)).setText("No Assets");
+            }
+
+        });
 
         viewModel.getMerchandiseImages().observe(this, merchandiseItems -> {
             updateMerchandiseList(merchandiseItems);
@@ -110,11 +119,12 @@ public class OutletMerchandizeActivity extends BaseActivity {
         });
 
         viewModel.lessImages().observe(this, aBoolean ->{
-            Toast.makeText(OutletMerchandizeActivity.this,"At least 3 images required",Toast.LENGTH_LONG).show();
+            Toast.makeText(OutletMerchandizeActivity.this,"At least 2 images required",Toast.LENGTH_LONG).show();
         });
     }
     private void onOutletLoaded(Outlet outlet) {
         tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
+
 
     }
     public void removeImage(MerchandiseImage item){

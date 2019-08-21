@@ -2,6 +2,7 @@ package com.optimus.eds.ui.route.outlet;
 
 import android.app.Application;
 import androidx.lifecycle.LiveData;
+import io.reactivex.Maybe;
 
 import com.optimus.eds.db.AppDatabase;
 
@@ -34,7 +35,7 @@ public class OutletListRepository  extends OrderBookingRepository {
 
 
 
-    public LiveData<List<Outlet>> getOutlets(Long routeId){
+    public Maybe<List<Outlet>> getOutlets(Long routeId){
         return routeDao.findAllOutletsForRoute(routeId);
     }
     public LiveData<List<Route>> getRoutes(){
