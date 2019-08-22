@@ -32,6 +32,8 @@ public class Outlet implements Serializable {
     private Integer mVisitFrequency;
     @SerializedName("visitDay")
     private Integer mVisitDay;
+    @SerializedName("planned")
+    private Integer planned;
     @SerializedName("address")
     private String mAddress;
     @SerializedName("latitude")
@@ -232,7 +234,13 @@ public class Outlet implements Serializable {
     public void setVisitTimeLng(Double visitTimeLng) {
         this.visitTimeLng = visitTimeLng;
     }
+    public Integer getPlanned() {
+        return planned;
+    }
 
+    public void setPlanned(Integer planned) {
+        this.planned = planned;
+    }
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Outlet && ((Outlet) obj).getOutletId() == getOutletId();

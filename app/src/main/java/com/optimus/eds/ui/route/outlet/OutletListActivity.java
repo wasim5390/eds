@@ -135,9 +135,9 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
     @Override
     public void onOutletClick(Outlet outlet) {
         WorkStatus status = PreferenceUtil.getInstance(this).getWorkSyncData();
-        if(status.getDayStarted()==2)
+        if(status.getDayStarted()!=1)
         {
-            showMessage(getString(R.string.day_already_ended));
+            showMessage(status.getDayStarted()==2 ? getString(R.string.day_already_ended):getString(R.string.have_not_started_day));
             return;
         }
         viewModel.orderTaken(outlet.getOutletId()).observe(this,aBoolean -> {

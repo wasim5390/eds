@@ -16,28 +16,25 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.Outlet;
-import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.source.JobIdManager;
 import com.optimus.eds.source.MasterDataUploadService;
-import com.optimus.eds.source.MerchandiseUploadService;
-import com.optimus.eds.ui.AlertDialogManager;
 
 import java.util.Calendar;
-import java.util.List;
+import java.util.Objects;
 
 
 public class OutletDetailViewModel extends AndroidViewModel {
 
-    private OutletDetailRepository repository;
+    private final OutletDetailRepository repository;
 
-    private MutableLiveData<Integer> statusLiveData;
+    private final MutableLiveData<Integer> statusLiveData;
 
     public LiveData<Location> getOutletNearbyPos() {
         return outletNearbyPos;
     }
 
-    private MutableLiveData<Location> outletNearbyPos;
-    private MutableLiveData<Boolean> uploadStatus;
+    private final MutableLiveData<Location> outletNearbyPos;
+    private final MutableLiveData<Boolean> uploadStatus;
 
 
     private int outletStatus=1;
@@ -47,7 +44,7 @@ public class OutletDetailViewModel extends AndroidViewModel {
     public OutletDetailViewModel(@NonNull Application application) {
         super(application);
         repository = new OutletDetailRepository(application);
-        statusLiveData = new MutableLiveData();
+        statusLiveData = new MutableLiveData<>();
         uploadStatus = new MutableLiveData<>();
         outletNearbyPos = new MutableLiveData<>();
 
@@ -79,7 +76,7 @@ public class OutletDetailViewModel extends AndroidViewModel {
         builder.setExtras(extras);
         builder.setPersisted(true);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
-        jobScheduler.schedule(builder.build());
+        Objects.requireNonNull(jobScheduler).schedule(builder.build());
     }
 
 
@@ -105,13 +102,14 @@ public class OutletDetailViewModel extends AndroidViewModel {
             outlet.setVisitTimeLat(currentLocation.getLatitude());
             outlet.setVisitTimeLng(currentLocation.getLongitude());
             repository.updateOutlet(outlet);
-            uploadStatus.postValue(statusLiveData.getValue() == 1 ? false : true);
+            if(statusLiveData.getValue()!=null)
+            uploadStatus.postValue(statusLiveData.getValue() != 1);
         }
     }
 
     public void postOrderWithNoOrder(boolean noOrderFromBooking){
         if(noOrderFromBooking) {
-            outletStatus = 5;
+            outletStatus = 5; // 5 means no order from booking view
             uploadStatus.postValue(true);
         }
     }

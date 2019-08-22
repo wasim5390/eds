@@ -6,9 +6,7 @@ public class WorkStatus {
     private Long endDate;
     private Integer dayStarted;
 
-    public WorkStatus(Long syncDate, Long endDate, Integer dayStarted) {
-        this.syncDate = syncDate;
-        this.endDate = endDate;
+    public WorkStatus( Integer dayStarted) {
         this.dayStarted = dayStarted;
     }
 

@@ -68,7 +68,7 @@ public class PreferenceUtil {
     public WorkStatus getWorkSyncData() {
         String workStatus = sPref.getString(KEY_SYNC_DATE,"");
         if(workStatus.isEmpty())
-            return new WorkStatus(null,null,0);
+            return new WorkStatus(0);
         Gson gson = new Gson();
        WorkStatus status =  gson.fromJson(workStatus,WorkStatus.class);
         return status;

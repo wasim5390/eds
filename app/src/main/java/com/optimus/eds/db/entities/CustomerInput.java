@@ -13,7 +13,7 @@ public class CustomerInput {
     @NonNull
     private Long orderId;
 
-    private Long requiredDeliveryDate;
+   // private Long requiredDeliveryDate;
     private String mobileNumber;
     private String remarks;
     private String signature;
@@ -33,7 +33,7 @@ public class CustomerInput {
     public CustomerInput(@NonNull Long outletId,@NonNull Long orderId, Long deliveryDate, String mobileNumber, String remarks, String signature) {
         this.outletId = outletId;
         this.orderId = orderId;
-        this.requiredDeliveryDate = deliveryDate;
+       // this.requiredDeliveryDate = deliveryDate;
         this.mobileNumber = mobileNumber;
         this.remarks = remarks;
         this.signature = signature;
@@ -65,13 +65,13 @@ public class CustomerInput {
         this.orderId = orderId;
     }
 
-    public Long getRequiredDeliveryDate() {
+ /*   public Long getRequiredDeliveryDate() {
         return requiredDeliveryDate;
     }
 
     public void setRequiredDeliveryDate(Long deliveryDate) {
         this.requiredDeliveryDate = deliveryDate;
-    }
+    }*/
 
     public String getSignature() {
         return signature;

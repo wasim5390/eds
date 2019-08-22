@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProviders;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
+
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.appcompat.widget.AppCompatSpinner;
@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,8 +77,7 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
 
     private void setObservers(){
 
-
-        viewModel.loadOutlet(outletId).observe(this, outlet -> onOutletLoaded(outlet));
+        viewModel.loadOutlet(outletId).observe(this, this::onOutletLoaded);
 
         viewModel.getProductGroupList().observe(this, this::onProductGroupsLoaded);
 
@@ -96,7 +94,7 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
 
         viewModel.noOrderTaken().observe(this,aBoolean -> {
             if(aBoolean)
-            AlertDialogManager.getInstance().showNoOrderAlertDialog(this,this::onNoSaleReasonEntered);
+                AlertDialogManager.getInstance().showNoOrderAlertDialog(this, this);
         });
 
         viewModel.showMessage().observe(this,s -> Toast.makeText(this, s, Toast.LENGTH_SHORT).show());
@@ -107,7 +105,7 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
         tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
     }
 
-    public void onProductGroupsLoaded(List<ProductGroup> groups) {
+    private void onProductGroupsLoaded(List<ProductGroup> groups) {
         ArrayAdapter userAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, groups);
         spinner.setAdapter(userAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -118,8 +116,9 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
                 viewModel.filterProductsByGroup(((ProductGroup)(parent.getSelectedItem())).getProductGroupId());
                 new Handler().postDelayed(() -> {
                     group = ((ProductGroup)(parent.getSelectedItem()));
+                    findViewById(R.id.btnNext).setAlpha(1.0f);
+                    findViewById(R.id.btnNext).setClickable(true);
                 },1000);
-
             }
 
             @Override
@@ -134,7 +133,8 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
     private void setSectionedAdapter(List<PackageModel> packages){
         sectionAdapter = new SectionedRecyclerViewAdapter();
         for(PackageModel pkg:packages){
-            sectionAdapter.addSection(pkg.getPackageName(),new PackageSection(pkg));
+            sectionAdapter.addSection(pkg.getPackageName(),new PackageSection(pkg,
+                    () -> Toast.makeText(OrderBookingActivity.this, "You cannot enter above maximum qty", Toast.LENGTH_LONG).show()));
         }
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvProducts.setLayoutManager(linearLayoutManager);
@@ -143,7 +143,7 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
 
 
 
-    public void onAdd(Long groupId,boolean sendToServer){
+    private void onAdd(Long groupId, boolean sendToServer){
         if(sectionAdapter!=null) {
             List<Product> orderItems = viewModel.filterOrderProducts(sectionAdapter.getCopyOfSectionsMap());
             viewModel.addOrder(orderItems,groupId,sendToServer);
@@ -153,7 +153,8 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
 
     @OnClick(R.id.btnNext)
     public void onNextClick(){
-        onAdd(group.getProductGroupId(),true);
+        if(group!=null)
+            onAdd(group.getProductGroupId(),true);
     }
 
 
@@ -178,5 +179,9 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
                     break;
             }
         }
+    }
+
+    interface QtySelectionCallback{
+        void onInvalidQtyEntered();
     }
 }

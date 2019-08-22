@@ -1,13 +1,11 @@
 package com.optimus.eds.source;
 
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.optimus.eds.AnnotationExclusionStrategy;
 import com.optimus.eds.Constant;
 import com.optimus.eds.EdsApplication;
-import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
@@ -26,13 +24,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
- * Created by sidhu on 4/11/2018.
+ * Created by sidhu on 4/4/2019.
  */
 
 public class RetrofitHelper implements Constant {
-
-    public static final String BASE_URL_DEV = "http://192.168.8.100:51185/";
-    public static final String BASE_URL = "http://optimuseds.com/API/";
+    public static final String BASE_URL = "http://192.168.100.12:34551/EDS.API/";
+   // public static final String BASE_URL = "http://optimuseds.com/API/";
 
     private static RetrofitHelper instance;
     public Retrofit retrofit;

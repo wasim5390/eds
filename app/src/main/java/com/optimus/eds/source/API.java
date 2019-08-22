@@ -5,6 +5,7 @@ import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.model.BaseResponse;
+import com.optimus.eds.model.LogModel;
 import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.model.MerchandiseModel;
 import com.optimus.eds.model.OrderResponseModel;
@@ -41,7 +42,6 @@ public interface API {
     @POST("token")
     Call<TokenResponse> refreshToken(@Field("grant_type") String type , @Field("username") String username, @Field("password") String password);
 
-
     @GET("route/routes")
     Call<RouteOutletResponseModel> loadTodayRouteOutlets();
 
@@ -61,7 +61,7 @@ public interface API {
 
     @FormUrlEncoded
     @POST("api/AppOpertion/LogStartEnd")
-    Single<BaseResponse> updateStartEndStatus(@FieldMap Map<String, Long> params);
+    Single<LogModel> updateStartEndStatus(@FieldMap Map<String, Integer> params);
 
 
     @GET("routes")

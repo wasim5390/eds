@@ -237,7 +237,8 @@
                 android:id="@+id/btnNext"
                 android:layout_width="0dp"
                 android:layout_height="55dp"
-
+                android:alpha="0.5"
+                android:clickable="false"
                 android:layout_weight="1"
                 android:theme="@style/PositiveButton"
                 android:text="@string/next"

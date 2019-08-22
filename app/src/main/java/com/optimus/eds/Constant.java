@@ -50,6 +50,8 @@ public interface Constant {
     int PRIMARY = 1;
     int SECONDARY=2;
     String ACTION_ORDER_UPLOAD = "upload_order_data";
+    String GENERIC_ERROR = "Something went wrong, Please contact Manager!";
+    String ERROR_DAY_NO_STARTED = "You have not even started your day";
 
     interface IntentExtras {
         String ACTION_CAMERA = "action-camera";

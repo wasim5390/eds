@@ -71,7 +71,7 @@ public class Util {
 
     public static String formatDate(String format, Long dateInMilli) {
         if(dateInMilli==null)
-            return "N/A";
+            return "";
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
             Calendar calendar = Calendar.getInstance();
@@ -239,6 +239,24 @@ public class Util {
             finalVal = ".".concat(String.valueOf(units));
         else
             finalVal = "0.0";
+
+        return finalVal;
+    }
+
+    public static Integer convertToUnits(Integer carton,Integer cartonSize, Integer units)
+    {
+        if(carton==null)
+            carton=0;
+        if(units==null)
+            units=0;
+
+        Integer finalVal=0;
+        if(carton<1)
+            finalVal = units;
+        else{
+            int totalUnits = carton * cartonSize ;
+            finalVal=totalUnits + units;
+        }
 
         return finalVal;
     }

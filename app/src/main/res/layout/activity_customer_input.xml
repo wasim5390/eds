@@ -74,6 +74,7 @@
                             />
 
                         <TextView
+                            android:visibility="gone"
                             android:id="@+id/delivery_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -144,6 +145,7 @@
 
                         <TextView
                             android:id="@+id/tvDeliveryDate"
+                            android:visibility="gone"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
@@ -163,16 +165,16 @@
                             android:id="@+id/etMobileNumber"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
+                            android:layout_marginStart="8dp"
                             android:background="@drawable/input_bg"
+                            android:hint="@string/mobile_number_hint"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:hint="@string/mobile_number_hint"
                             android:textSize="14sp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/barrier3"
-                            app:layout_constraintTop_toTopOf="@+id/customer_mobile_number"
                             app:layout_constraintBottom_toBottomOf="@+id/customer_mobile_number"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/customer_mobile_number"
+                            app:layout_constraintTop_toTopOf="@+id/customer_mobile_number"
 
                             />
 
@@ -180,15 +182,15 @@
                             android:id="@+id/etCustomerRemarks"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:minHeight="80dp"
-                            android:layout_marginStart="10dp"
+                            android:layout_marginStart="8dp"
                             android:background="@drawable/input_bg"
                             android:gravity="top"
-
                             android:hint="@string/remarks_hint"
+
+                            android:minHeight="80dp"
                             android:textSize="14sp"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/barrier3"
+                            app:layout_constraintStart_toEndOf="@+id/customer_remarks"
                             app:layout_constraintTop_toTopOf="@+id/customer_remarks"
 
 

@@ -22,6 +22,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 import com.optimus.eds.Constant;
+import com.optimus.eds.R;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.JobIdManager;
@@ -46,26 +47,10 @@ public class HomeViewModel extends AndroidViewModel {
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
-     /*   int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(
-                NUMBER_OF_CORES*2,
-                NUMBER_OF_CORES*2,
-                60L,
-                TimeUnit.SECONDS, new LinkedBlockingQueue<>());*/
         ExecutorService executors = Executors.newSingleThreadExecutor();
         repository = HomeRepository.singleInstance(application,RetrofitHelper.getInstance().getApi(),executors);
         disposable = new CompositeDisposable();
         preferenceUtil = PreferenceUtil.getInstance(application);
-
-        WorkStatus status  = preferenceUtil.getWorkSyncData();
-
-        // Starting new Day if previous is ended
-        if(status.getDayStarted()==2 && status.getSyncDate()!=null
-                && Util.isPastDate(status.getSyncDate())){
-            status.setDayStarted(0);
-            status.setSyncDate(null);status.setEndDate(null);
-            preferenceUtil.saveWorkSyncData(status);
-        }
 
     }
 

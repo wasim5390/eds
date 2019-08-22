@@ -162,12 +162,10 @@ public class OutletListViewModel extends AndroidViewModel {
                 .toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(new Function<OrderModel, Outlet>() {
-                    @Override
-                    public Outlet apply(OrderModel orderModel) throws Exception {
-                         outlet.setTotalAmount(orderModel.getOrder().getPayable());
-                         return outlet;
-                    }
+                .map(orderModel -> {
+                    if(orderModel.getOrder().getOrderStatus()==1)
+                     outlet.setTotalAmount(orderModel.getOrder().getPayable());
+                     return outlet;
                 });
 
     }

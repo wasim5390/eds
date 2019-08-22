@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import android.util.Log;
 
+import com.optimus.eds.Constant;
 import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.CustomerDao;
 import com.optimus.eds.db.dao.MerchandiseDao;
@@ -15,8 +16,10 @@ import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 
 import com.optimus.eds.model.BaseResponse;
+import com.optimus.eds.model.LogModel;
 import com.optimus.eds.model.PackageProductResponseModel;
 import com.optimus.eds.model.RouteOutletResponseModel;
+import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.TokenResponse;
 import com.optimus.eds.utils.PreferenceUtil;
@@ -27,9 +30,11 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.concurrent.Executor;
 
+import io.reactivex.CompletableSource;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
@@ -88,7 +93,7 @@ public class HomeRepository {
                     @Override
                     public void onSuccess(TokenResponse tokenResponse) {
                         preferenceUtil.saveToken(tokenResponse.getAccessToken());
-                        fetchTodayData(true);
+                        updateWorkStatus(true);
                     }
 
                     @Override
@@ -105,6 +110,7 @@ public class HomeRepository {
      * @param onDayStart {True for onDayStart, False for Download click}
      */
     public void fetchTodayData(boolean onDayStart){
+
         executor.execute(() -> {
             try {
                 Response<RouteOutletResponseModel> response = webService.loadTodayRouteOutlets().execute();
@@ -122,7 +128,7 @@ public class HomeRepository {
 
                 }
                 else{
-
+                msg.postValue(Constant.GENERIC_ERROR);
                 }
 
             } catch (IOException e) {
@@ -139,7 +145,6 @@ public class HomeRepository {
                 if(response.isSuccessful()){
                     if(onDayStart) {
                         orderDao.deleteAllOrders();
-                        updateWorkStatus(onDayStart);
                     }
 
                     productsDao.deleteAllPackages();
@@ -156,9 +161,9 @@ public class HomeRepository {
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e(TAG,e.getMessage());
+                msg.postValue(Constant.GENERIC_ERROR);
             }finally {
                 isLoading.postValue(false);
-
             }
 
 
@@ -172,30 +177,38 @@ public class HomeRepository {
      * @param isStart {True for dayStart, False for dayEnd}
      */
     public void updateWorkStatus(boolean isStart){
-        HashMap<String, Long> map = new HashMap<>();
-        map.put(isStart?"startDay":"endDay", Calendar.getInstance().getTimeInMillis());
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put("operationTypeId",isStart?1:2);
         webService.updateStartEndStatus(map).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new SingleObserver<BaseResponse>() {
-            @Override
-            public void onSubscribe(Disposable d) {
+                .subscribeOn(Schedulers.io())
+                .subscribe(new SingleObserver<LogModel>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-            }
+                    }
 
-            @Override
-            public void onSuccess(BaseResponse baseResponse) {
-                isLoading.postValue(false);
-                if(baseResponse.isSuccess()){
-                    onDayStartLiveData.postValue(isStart);
-                }else
-                    msg.postValue(baseResponse.getResponseMsg());
-            }
+                    @Override
+                    public void onSuccess(LogModel logModel) {
+                        isLoading.postValue(false);
+                        if(logModel.isSuccess()){
+                            WorkStatus status = preferenceUtil.getWorkSyncData();
+                            status.setDayStarted(1);
+                            status.setSyncDate(logModel.getStartDay());
+                            preferenceUtil.saveWorkSyncData(status);
+                            onDayStartLiveData.postValue(isStart);
+                            if(isStart)
+                            fetchTodayData(isStart);
+                        }else {
+                            msg.postValue(logModel.getErrorCode()==2?logModel.getResponseMsg(): Constant.GENERIC_ERROR);
+                        }
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                isLoading.postValue(false);
-                msg.postValue(e.getMessage());
-            }
-        });
+                    @Override
+                    public void onError(Throwable e) {
+                        isLoading.postValue(false);
+                        msg.postValue(e.getMessage());
+                    }
+                });
     }
 
     public MutableLiveData<Boolean> mLoading() {

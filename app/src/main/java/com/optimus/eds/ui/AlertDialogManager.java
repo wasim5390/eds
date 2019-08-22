@@ -115,6 +115,16 @@ public class AlertDialogManager {
         builderSingle.show();
     }
 
+    public void showAlertDialog(Context context,String title,String message) {
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+        builderSingle.setTitle(title);
+        builderSingle.setMessage(message);
+        builderSingle.setPositiveButton("Ok", (dialog1, which1) ->{
+            dialog1.dismiss();
+        });
+        builderSingle.show();
+    }
+
     public interface ListAlertItemClickListener{
         void onAlertItemClick(CustomObject object);
     }

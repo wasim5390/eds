@@ -20,19 +20,18 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 public class PackageSection extends StatelessSection {
 
 
-    String title;
-    List<Product> list;
+    private final String title;
+    private final List<Product> list;
+    private final OrderBookingActivity.QtySelectionCallback mCallback;
 
-
-    PackageSection(PackageModel pkg) {
+    PackageSection(PackageModel pkg, OrderBookingActivity.QtySelectionCallback callback) {
         super(SectionParameters.builder()
                 .itemResourceId(R.layout.order_booking_item_view)
                 .headerResourceId(R.layout.section_header)
                 .build());
         this.title = pkg.getPackageName();
         this.list = pkg.getProducts();
-
-
+        this.mCallback = callback;
 
     }
 
@@ -102,9 +101,23 @@ public class PackageSection extends StatelessSection {
                     return;
                 }
                 double qty = Double.parseDouble(s.toString());
+                Integer unitStock = product.getUnitStockInHand();
+
                 if(qty>0){
                     Integer[] cu = Util.convertToLongQuantity(s.toString());
-                    product.setQty(cu[0],cu[1]);
+                    Integer enteredQty = Util.convertToUnits(cu[0],product.getCartonQuantity(),cu[1]);
+                    if(enteredQty>unitStock)
+                    {
+                        s = s.toString().substring(0,start);
+                        itemHolder.etOrderQty.setText(s.toString());
+                        itemHolder.etOrderQty.setSelection(start);
+                        mCallback.onInvalidQtyEntered();
+                    }
+                    else
+                    {
+                        product.setQty(cu[0],cu[1]);
+
+                    }
                 }
             }
 
@@ -147,7 +160,6 @@ public class PackageSection extends StatelessSection {
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private final View rootView;
 
         private final TextView tvItemName;
         private final TextView whStock;
@@ -157,7 +169,6 @@ public class PackageSection extends StatelessSection {
         ItemViewHolder(View view) {
             super(view);
 
-            rootView = view;
             tvItemName = view.findViewById(R.id.item_name);
             whStock = view.findViewById(R.id.wh_stock);
             etAvlStock = view.findViewById(R.id.avl_stock);

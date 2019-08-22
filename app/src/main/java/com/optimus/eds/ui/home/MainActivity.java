@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.optimus.eds.BaseActivity;
+import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.ui.AlertDialogManager;
@@ -22,6 +23,7 @@ import com.optimus.eds.ui.customer_complaints.CustomerComplaintsActivity;
 import com.optimus.eds.ui.login.LoginActivity;
 import com.optimus.eds.ui.route.outlet.OutletListActivity;
 import com.optimus.eds.utils.PreferenceUtil;
+import com.optimus.eds.utils.Util;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -60,12 +62,15 @@ public class MainActivity extends BaseActivity {
             if(aBoolean) {
                 findViewById(R.id.btnStartDay).setClickable(false);
                 findViewById(R.id.btnStartDay).setAlpha(0.5f);
-                WorkStatus status = new WorkStatus(Calendar.getInstance().getTimeInMillis(),null,1);
-                PreferenceUtil.getInstance(this).saveWorkSyncData(status);
+               // WorkStatus status = new WorkStatus(1);
+               // PreferenceUtil.getInstance(this).saveWorkSyncData(status);
+                String date = Util.formatDate(Util.DATE_FORMAT_2,PreferenceUtil.getInstance(this).getWorkSyncData().getSyncDate());
+                AlertDialogManager.getInstance().
+                        showAlertDialog(this, "Day Started! ( " + date+" )", "Your day has been started");
             }else{
-                findViewById(R.id.btnEndDay).setClickable(false);
-                findViewById(R.id.btnEndDay).setAlpha(0.5f);
-                WorkStatus status = new WorkStatus(PreferenceUtil.getInstance(this).getWorkSyncData().getSyncDate(),Calendar.getInstance().getTimeInMillis(),2);
+                findViewById(R.id.btnStartDay).setClickable(true);
+                findViewById(R.id.btnStartDay).setAlpha(1.0f);
+                WorkStatus status = new WorkStatus(0);
                 PreferenceUtil.getInstance(this).saveWorkSyncData(status);
                 //PreferenceUtil.getInstance(this).saveEndDate(Calendar.getInstance().getTimeInMillis());
             }
@@ -142,13 +147,20 @@ public class MainActivity extends BaseActivity {
                 OutletListActivity.start(this);
                 break;
             case R.id.btnReports:
-                CustomerComplaintsActivity.start(this);
+                // CustomerComplaintsActivity.start(this);
                 break;
             case R.id.btnUpload:
                 viewModel.pushOrdersToServer();
                 break;
             case R.id.btnEndDay:
-                AlertDialogManager.getInstance().showVerificationAlertDialog(this,getString(R.string.day_closing_title),
+                String endDate = Util.formatDate(Util.DATE_FORMAT_2,PreferenceUtil.getInstance(this).getWorkSyncData().getSyncDate());
+                if(PreferenceUtil.getInstance(this).getWorkSyncData().getDayStarted()!=1)
+                {
+                    showMessage(Constant.ERROR_DAY_NO_STARTED);
+                    return;
+                }
+
+                AlertDialogManager.getInstance().showVerificationAlertDialog(this,getString(R.string.day_closing_title).concat(" ( "+endDate+" )"),
                         getString(R.string.end_day_msg)
                         ,verified -> {
                             if(verified)

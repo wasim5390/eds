@@ -104,6 +104,7 @@
     <string name="logout">Logout</string>
     <string name="already_started_day">Already started your day</string>
     <string name="profile_will_avl_soon">Profile will be available soon!</string>
+    <string name="have_not_started_day">You have not even started your day</string>
 
 
 </resources>

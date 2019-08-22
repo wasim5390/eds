@@ -36,7 +36,8 @@ public class OutletListRepository  extends OrderBookingRepository {
 
 
     public Maybe<List<Outlet>> getOutlets(Long routeId){
-        return routeDao.findAllOutletsForRoute(routeId);
+        // get All planned outlet calls
+        return routeDao.findAllOutletsForRoute(routeId,1);
     }
     public LiveData<List<Route>> getRoutes(){
         return routeDao.findAllRoutes();
