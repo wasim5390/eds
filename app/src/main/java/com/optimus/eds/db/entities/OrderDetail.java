@@ -77,6 +77,47 @@ public class OrderDetail {
     @SerializedName("avlCartonQuantity")
     public Integer avlCartonQuantity;
 
+    public Integer getUnitDefinitionId() {
+        return unitDefinitionId;
+    }
+
+    public void setUnitDefinitionId(Integer unitDefinitionId) {
+        this.unitDefinitionId = unitDefinitionId;
+    }
+
+    public Integer getCartonDefinitionId() {
+        return cartonDefinitionId;
+    }
+
+    public void setCartonDefinitionId(Integer cartonDefinitionId) {
+        this.cartonDefinitionId = cartonDefinitionId;
+    }
+
+    public Integer getActualUnitStock() {
+        return actualUnitStock;
+    }
+
+    public void setActualUnitStock(Integer actualUnitStock) {
+        this.actualUnitStock = actualUnitStock;
+    }
+
+    public Integer getActualCartonStock() {
+        return actualCartonStock;
+    }
+
+    public void setActualCartonStock(Integer actualCartonStock) {
+        this.actualCartonStock = actualCartonStock;
+    }
+
+    @SerializedName("unitDefinitionId")
+    public Integer unitDefinitionId;
+    @SerializedName("cartonDefinitionId")
+    public Integer cartonDefinitionId;
+    @SerializedName("actualUnitStock")
+    public Integer actualUnitStock;
+    @SerializedName("actualCartonStock")
+    public Integer actualCartonStock;
+
     @SerializedName("cartonCode")
     public String mCartonCode;
     @SerializedName("unitCode")

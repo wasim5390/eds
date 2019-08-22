@@ -3,7 +3,6 @@ package com.optimus.eds.model;
 public class WorkStatus {
 
     private Long syncDate;
-    private Long endDate;
     private Integer dayStarted;
 
     public WorkStatus( Integer dayStarted) {
@@ -17,15 +16,6 @@ public class WorkStatus {
     public void setSyncDate(Long syncDate) {
         this.syncDate = syncDate;
     }
-
-    public Long getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Long endDate) {
-        this.endDate = endDate;
-    }
-
     public Integer getDayStarted() {
         return dayStarted==null?0:dayStarted;
     }

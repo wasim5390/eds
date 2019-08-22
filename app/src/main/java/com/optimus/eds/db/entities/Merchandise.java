@@ -19,7 +19,7 @@ public class Merchandise implements Serializable {
 
     @PrimaryKey
     @ColumnInfo(name = "outletId")
-    private Long outletId;
+    public Long outletId;
 
     @ColumnInfo(name = "remarks")
     private String remarks;

@@ -121,7 +121,11 @@ public class UploadOrdersService extends JobService {
                 .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(this::onUpload,this::error);
     }
 
-    private void onUpload(MasterModel orderResponseModel) {
+    private void onUpload(MasterModel orderResponseModel) throws IOException{
+        if(!orderResponseModel.isSuccess()){
+            error(orderResponseModel);
+            return;
+        }
         if(orderResponseModel!=null) {
             orderResponseModel.setCustomerInput(null);
             orderResponseModel.getOrderModel().setOrderDetails(null);
@@ -147,13 +151,19 @@ public class UploadOrdersService extends JobService {
 
     }
 
-    private void error(Throwable throwable) throws IOException {
+    private void error(Object throwable) throws IOException {
+        String errorBody;
+        if(throwable instanceof Throwable) {
+           Throwable mThrowable = (Throwable) throwable;
+            mThrowable.printStackTrace();
+             errorBody = mThrowable.getMessage();
+            if (throwable instanceof HttpException) {
+                HttpException error = (HttpException) throwable;
+                errorBody = error.response().errorBody().string();
+            }
+        }else{
+            errorBody =((MasterModel)throwable).getResponseMsg();
 
-        throwable.printStackTrace();
-        String errorBody = throwable.getMessage();
-        if (throwable instanceof HttpException){
-            HttpException error = (HttpException)throwable;
-            errorBody = error.response().errorBody().string();
         }
         MasterModel baseResponse = new MasterModel();
         baseResponse.setResponseMsg(errorBody);

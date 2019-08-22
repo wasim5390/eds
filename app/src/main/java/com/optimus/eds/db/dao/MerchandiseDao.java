@@ -1,6 +1,7 @@
 package com.optimus.eds.db.dao;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
+import retrofit2.http.DELETE;
 
 import static androidx.room.OnConflictStrategy.REPLACE;
 
@@ -52,5 +54,8 @@ public interface MerchandiseDao {
 
     @Query("DELETE FROM Merchandise")
     void deleteAllMerchandise();
+
+    @Query("DELETE FROM MERCHANDISE where outletId=:merchandiseId")
+    void deleteMerchandise(Long merchandiseId);
 
 }

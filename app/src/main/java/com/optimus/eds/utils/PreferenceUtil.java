@@ -23,7 +23,6 @@ public class PreferenceUtil {
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_TOKEN = "token";
     public static final String KEY_SYNC_DATE = "sync_date";
-    public static final String KEY_END_DATE = "end_date";
     public static final String KEY_USER = "user";
 
     private static final String PREFERENCE_NAME = "send_signal_preference";
@@ -113,11 +112,6 @@ public class PreferenceUtil {
         editor.apply();
     }
 
-    public void saveEndDate(Long date) {
-        SharedPreferences.Editor editor = sPref.edit();
-        editor.putLong(KEY_END_DATE, date);
-        editor.apply();
-    }
 
     public void saveAppMode(String mode) {
         SharedPreferences.Editor editor = sPref.edit();

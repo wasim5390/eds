@@ -141,8 +141,6 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
 
             if (null != intent && intent.getAction().equals(ACTION)) {
 
-               // hideProgress();
-
                 Location locationData = intent.getParcelableExtra(LOCATION);
                 currentLocation  = locationData;
 

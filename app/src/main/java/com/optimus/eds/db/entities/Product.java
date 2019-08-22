@@ -58,6 +58,15 @@ public class Product implements Serializable {
     @SerializedName("cartonStockInHand")
     public Integer cartonStockInHand;
 
+    @SerializedName("unitDefinitionId")
+    public Integer unitDefinitionId;
+    @SerializedName("cartonDefinitionId")
+    public Integer cartonDefinitionId;
+    @SerializedName("actualUnitStock")
+    public Integer actualUnitStock;
+    @SerializedName("actualCartonStock")
+    public Integer actualCartonStock;
+
 
     @Ignore
     public Integer qtyCarton,qtyUnit;
@@ -196,6 +205,23 @@ public class Product implements Serializable {
 
     public void setCartonStockInHand(Integer cartonStockInHand) {
         this.cartonStockInHand = cartonStockInHand;
+    }
+
+
+    public Integer getUnitDefinitionId() {
+        return unitDefinitionId;
+    }
+
+    public Integer getCartonDefinitionId() {
+        return cartonDefinitionId;
+    }
+
+    public Integer getActualUnitStock() {
+        return actualUnitStock;
+    }
+
+    public Integer getActualCartonStock() {
+        return actualCartonStock;
     }
 
     @Override

@@ -78,18 +78,25 @@ public class MerchandiseUploadService extends JobService implements Constant {
 
         MerchandiseModel merchandiseModel  = new MerchandiseModel(merchandise);
 
-
         RetrofitHelper.getInstance().getApi().postMerchandise(merchandiseModel,token)
-                .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(this::onUpload,this::error);
+                .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(baseResponse -> {
+            onUpload(baseResponse,merchandise);
+
+        },this::error);
     }
 
-    private void onUpload(BaseResponse baseResponse) {
+    private void onUpload(BaseResponse baseResponse,Merchandise merchandise) {
         if(baseResponse.isSuccess()) {
             Log.i(iTAG, "File Uploaded");
+            removeRecord(merchandise);
         }
         else
             Log.i(iTAG,baseResponse.getResponseMsg());
 
+    }
+
+    private void removeRecord(Merchandise merchandise){
+        AppDatabase.getDatabase(getApplication()).merchandiseDao().deleteMerchandise(merchandise.getOutletId());
     }
 
 

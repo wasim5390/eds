@@ -13,5 +13,9 @@ public class CollectionUtil {
         return null;
     }
     // and many more methods to deal with collection
+
+    public interface Predicate<T> {
+        boolean contains(T item);
+    }
 }
 

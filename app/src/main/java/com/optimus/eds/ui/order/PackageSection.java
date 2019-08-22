@@ -156,8 +156,6 @@ public class PackageSection extends StatelessSection {
         }
     }
 
-
-
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
 

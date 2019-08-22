@@ -4,6 +4,7 @@ package com.optimus.eds.model;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.optimus.eds.db.entities.OrderDetail;
 
 public class OrderResponseModel extends BaseResponse{
@@ -46,6 +47,11 @@ public class OrderResponseModel extends BaseResponse{
 
     @Expose
     private Integer outletStatus;
+
+
+    public void setOutletStatus(Integer outletStatus) {
+        this.outletStatus = outletStatus;
+    }
 
     public Integer getOutletStatus() {
         return outletStatus;

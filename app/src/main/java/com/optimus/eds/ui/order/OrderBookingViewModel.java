@@ -286,6 +286,11 @@ public class OrderBookingViewModel extends AndroidViewModel {
             orderDetail.setCartonCode(product.getCartonCode());
             orderDetail.setUnitCode(product.getUnitCode());
             orderDetail.setProductName(product.getName());
+            orderDetail.setCartonQuantity(product.getCartonQuantity());
+            orderDetail.setActualCartonStock(product.getActualCartonStock());
+            orderDetail.setActualUnitStock(product.getActualUnitStock());
+            orderDetail.setUnitDefinitionId(product.getUnitDefinitionId());
+            orderDetail.setCartonDefinitionId(product.getCartonDefinitionId());
             orderDetail.setProductGroupId(product.getProductGroupId());
             orderDetail.setType(Constant.ProductType.PAID);
             orderDetails.add(orderDetail);
@@ -294,7 +299,6 @@ public class OrderBookingViewModel extends AndroidViewModel {
         return repository.addOrderItems(orderDetails);
         // return order;
     }
-
 
 
     protected List<Product> filterOrderProducts(Map<String,Section> sectionHashMap){

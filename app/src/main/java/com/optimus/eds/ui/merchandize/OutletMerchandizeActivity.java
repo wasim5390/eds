@@ -211,7 +211,6 @@ public class OutletMerchandizeActivity extends BaseActivity {
                 case REQUEST_CODE_IMAGE:
                     String imagePath = data.getStringExtra(Constant.IntentExtras.IMAGE_PATH);
                     if(imagePath!=null) {
-                        // @TODO send to server and show in adapter
                         compress(imagePath,type);
                     }
                     break;
@@ -235,7 +234,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
                                 viewModel.saveImages(actualImage.getPath(),type);
                         }, throwable -> {
 
-                            throwable.printStackTrace();
+                           // throwable.printStackTrace();
                             Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         });
     }

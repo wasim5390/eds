@@ -106,7 +106,7 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
     }
 
     private void onProductGroupsLoaded(List<ProductGroup> groups) {
-        ArrayAdapter userAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, groups);
+        ArrayAdapter userAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, groups);
         spinner.setAdapter(userAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
