@@ -96,21 +96,25 @@ public class OutletDetailViewModel extends AndroidViewModel {
         outletLocation.setLongitude(outlet.getLongitude());
         double distance = currentLocation.distanceTo(outletLocation);
 
-        if(distance>30)
+        if(distance>30 && outletStatus<=2)
             outletNearbyPos.postValue(outletLocation);
         else {
             outlet.setVisitTimeLat(currentLocation.getLatitude());
             outlet.setVisitTimeLng(currentLocation.getLongitude());
-            repository.updateOutlet(outlet);
+            outlet.setVisitStatus(outletStatus);
             if(statusLiveData.getValue()!=null)
             uploadStatus.postValue(statusLiveData.getValue() != 1);
+
         }
+        repository.updateOutlet(outlet);
     }
 
     public void postOrderWithNoOrder(boolean noOrderFromBooking){
         if(noOrderFromBooking) {
-            outletStatus = 5; // 5 means no order from booking view
+            outletStatus = 6; // 6 means no order from booking view
             uploadStatus.postValue(true);
+            outlet.setVisitStatus(outletStatus);
+            repository.updateOutlet(outlet);
         }
     }
 

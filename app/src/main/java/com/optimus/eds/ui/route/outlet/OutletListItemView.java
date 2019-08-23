@@ -3,6 +3,7 @@ package com.optimus.eds.ui.route.outlet;
 import android.content.Context;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.optimus.eds.R;
@@ -21,6 +22,8 @@ public class OutletListItemView extends ConstraintLayout {
     TextView outletCode;
     @BindView(R.id.orderAmount)
     TextView orderAmount;
+    @BindView(R.id.iv_status)
+    ImageView ivStatus;
 
     private OutletListAdapter.Callback callback;
     private Outlet outletItem;
@@ -47,13 +50,28 @@ public class OutletListItemView extends ConstraintLayout {
     public void setOutlet(Outlet item, OutletListAdapter.Callback callback) {
         this.callback = callback;
         this.outletItem = item;
-        if (item != null) {
 
+        if (item != null) {
             outletName.setText(outletItem.getOutletName().concat(" - "+ outletItem.getLocation()));
             outletCode.setText(getResources().getString(R.string.outlet_code,outletItem.getOutletCode()));
             orderAmount.setText("RS. "+ outletItem.getTotalAmount());
-
+            ivStatus.setVisibility(outletItem.getVisitStatus()!=0?VISIBLE:GONE);
+            Integer res = getResource();
+            if(res!=null)
+            ivStatus.setImageResource(res);
         }
+    }
+
+    private Integer getResource(){
+        Integer resourceId;
+        if(outletItem.getVisitStatus()<1)
+            resourceId = null;
+        else if(outletItem.getVisitStatus()>0 && outletItem.getVisitStatus()<=6){
+            resourceId = R.drawable.ic_tick_green;
+        }else {
+            resourceId = R.drawable.ic_tick_yellow;
+        }
+        return resourceId;
     }
 
     @OnClick(R.id.outletView)

@@ -5,6 +5,7 @@
         <item>Outlet Closed</item>
         <item>Area Inaccessible</item>
         <item>No Time</item>
+        <item>No Visit</item>
     </string-array>
 
     <string-array name="asset_verification">

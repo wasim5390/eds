@@ -131,7 +131,7 @@ public class OutletListViewModel extends AndroidViewModel {
 
                                 allOutlets.set(position, outlet);
                                 outletList.postValue(allOutlets);
-                               // mAdapter.notifyItemChanged(position);
+                                // mAdapter.notifyItemChanged(position);
                             }
 
                             @Override
@@ -163,9 +163,11 @@ public class OutletListViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(orderModel -> {
-                    if(orderModel.getOrder().getOrderStatus()==1)
-                     outlet.setTotalAmount(orderModel.getOrder().getPayable());
-                     return outlet;
+                    if(orderModel.getOrder().getOrderStatus()==1) {
+                        outlet.setTotalAmount(orderModel.getOrder().getPayable());
+                        outlet.setVisitStatus(1);
+                    }
+                    return outlet;
                 });
 
     }

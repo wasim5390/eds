@@ -54,7 +54,9 @@ public class Outlet implements Serializable {
     @SerializedName("lastSale")
     private Double mLastSale;
     @SerializedName("visitStatus")
-    private Integer mVisitStatus;
+    private Integer mVisitStatus; // 1. visited-order taken
+                                    // 2. visited- order not taken
+                                    // 3. visited- order taken and synced
 
 
     public Long getVisitDateTime() {
@@ -216,7 +218,7 @@ public class Outlet implements Serializable {
     }
 
     public Integer getVisitStatus() {
-        return mVisitStatus;
+        return mVisitStatus==null?0:mVisitStatus;
     }
 
     public Double getVisitTimeLat() {

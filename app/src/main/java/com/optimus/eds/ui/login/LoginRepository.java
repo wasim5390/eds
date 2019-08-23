@@ -49,13 +49,17 @@ public class LoginRepository {
                     @Override
                     public void onSuccess(TokenResponse tokenResponse) {
                         if(tokenResponse.isSuccess()) {
+                            String previousUsername = preferenceUtil.getUsername();
                             preferenceUtil.saveToken(tokenResponse.getAccessToken());
+                            if(!previousUsername.equals(username))
+                                preferenceUtil.clearAllPreferences();
+
                             preferenceUtil.saveUserName(username);
                             preferenceUtil.savePassword(password);
                             liveData.postValue(tokenResponse);
                         }
                         else {
-                           // error.postValue(tokenResponse.getErrorMessage());
+                            // error.postValue(tokenResponse.getErrorMessage());
                             error.postValue("Unable to Login, Please contact Administrator!");
                         }
                     }
@@ -68,7 +72,7 @@ public class LoginRepository {
                                 error.postValue("The username or password is incorrect.");
                         }
 
-                       // error.postValue(e.getMessage());
+                        // error.postValue(e.getMessage());
                     }
                 });
 

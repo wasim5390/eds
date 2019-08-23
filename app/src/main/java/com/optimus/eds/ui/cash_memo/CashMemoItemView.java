@@ -71,6 +71,7 @@ public class CashMemoItemView extends MaterialCardView {
 
     public void setCartItem(OrderDetail item, CashMemoFreeItemView.FreeItemSelector listener) {
         freeItemsContainer.removeAllViews();
+        rateContainer.removeAllViews();
         this.order = item;
         this.freeItemSelector = listener;
         if (item != null) {

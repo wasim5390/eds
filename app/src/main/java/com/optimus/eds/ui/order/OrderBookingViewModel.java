@@ -286,13 +286,14 @@ public class OrderBookingViewModel extends AndroidViewModel {
             orderDetail.setCartonCode(product.getCartonCode());
             orderDetail.setUnitCode(product.getUnitCode());
             orderDetail.setProductName(product.getName());
-            orderDetail.setCartonQuantity(product.getCartonQuantity());
+           // orderDetail.setCartonQuantity(product.getCartonQuantity());
             orderDetail.setActualCartonStock(product.getActualCartonStock());
             orderDetail.setActualUnitStock(product.getActualUnitStock());
             orderDetail.setUnitDefinitionId(product.getUnitDefinitionId());
             orderDetail.setCartonDefinitionId(product.getCartonDefinitionId());
             orderDetail.setProductGroupId(product.getProductGroupId());
             orderDetail.setType(Constant.ProductType.PAID);
+            orderDetail.setCartonSize(product.getCartonQuantity());
             orderDetails.add(orderDetail);
         }
         order.setOrderDetails(orderDetails);
@@ -337,6 +338,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
                     mOrder.setLocalOrderId(order.getOrder().getLocalOrderId());
                     mOrder.setLatitude(order.getOutlet().getLatitude());
                     mOrder.setLongitude(order.getOutlet().getLongitude());
+
                     order.setOrder(mOrder);
 
                     Gson gson = new Gson();

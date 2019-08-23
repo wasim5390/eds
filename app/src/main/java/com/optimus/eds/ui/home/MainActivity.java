@@ -89,6 +89,16 @@ public class MainActivity extends BaseActivity {
                 findViewById(R.id.btnEndDay).setAlpha(0.5f);
             }
         });
+
+        viewModel.getEndDayLiveData().observe(this,aBoolean -> {
+            String endDate = Util.formatDate(Util.DATE_FORMAT_2,PreferenceUtil.getInstance(this).getWorkSyncData().getSyncDate());
+            AlertDialogManager.getInstance().showVerificationAlertDialog(this,getString(R.string.day_closing_title).concat(" ( "+endDate+" )"),
+                    getString(R.string.end_day_msg)
+                    ,verified -> {
+                        if(verified)
+                            viewModel.updateDayEndStatus();
+                    });
+        });
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
 
         drawerLayout.addDrawerListener(drawerToggle);
@@ -144,6 +154,11 @@ public class MainActivity extends BaseActivity {
 
                 break;
             case R.id.btnPlannedCall:
+                if(PreferenceUtil.getInstance(this).getWorkSyncData().getDayStarted()!=1)
+                {
+                    showMessage(Constant.ERROR_START_DAY_FIRST);
+                    return;
+                }
                 OutletListActivity.start(this);
                 break;
             case R.id.btnReports:
@@ -153,19 +168,18 @@ public class MainActivity extends BaseActivity {
                 viewModel.pushOrdersToServer();
                 break;
             case R.id.btnEndDay:
-                String endDate = Util.formatDate(Util.DATE_FORMAT_2,PreferenceUtil.getInstance(this).getWorkSyncData().getSyncDate());
                 if(PreferenceUtil.getInstance(this).getWorkSyncData().getDayStarted()!=1)
                 {
                     showMessage(Constant.ERROR_DAY_NO_STARTED);
                     return;
                 }
-
-                AlertDialogManager.getInstance().showVerificationAlertDialog(this,getString(R.string.day_closing_title).concat(" ( "+endDate+" )"),
-                        getString(R.string.end_day_msg)
-                        ,verified -> {
-                            if(verified)
-                                viewModel.dayEnd();
-                        });
+                viewModel.findOutletsWithPendingTasks().subscribe(outlets -> {
+                    if(outlets.size()>0){
+                        viewModel.getErrorMsg().postValue("Please complete your tasks");
+                    }else{
+                        viewModel.getEndDayLiveData().postValue(true);
+                    }
+                });
                 break;
         }
     }

@@ -24,10 +24,12 @@ import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
+import com.optimus.eds.model.CustomObject;
 import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.cash_memo.CashMemoActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,7 +39,7 @@ import butterknife.OnClick;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 
 
-public class OrderBookingActivity extends BaseActivity implements AlertDialogManager.NoSaleReasonListener {
+public class OrderBookingActivity extends BaseActivity  {
 
     private static final int RES_CODE = 0x101;
     @BindView(R.id.rvProducts)
@@ -53,6 +55,7 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
     private Long outletId;
     private OrderBookingViewModel viewModel;
     private ProductGroup group;
+    private List<CustomObject> noOrderReasonList;
 
     public static void start(Context context, Long outletId,int requestCode) {
         Intent starter = new Intent(context, OrderBookingActivity.class);
@@ -72,7 +75,17 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
         setToolbar(getString(R.string.order_booking));
         viewModel = ViewModelProviders.of(this).get(OrderBookingViewModel.class);
         viewModel.setOutletId(outletId);
+        createNoOrderReasonList();
         setObservers();
+    }
+
+    private void createNoOrderReasonList(){
+        noOrderReasonList = new ArrayList<>();
+        noOrderReasonList.add(new CustomObject(1L,"Sufficient Stock"));
+        noOrderReasonList.add(new CustomObject(2L,"Price Variation"));
+        noOrderReasonList.add(new CustomObject(3L,"Buying from WS"));
+        noOrderReasonList.add(new CustomObject(4L,"Out of Cash"));
+        noOrderReasonList.add(new CustomObject(5L,"Dispute"));
     }
 
     private void setObservers(){
@@ -93,11 +106,25 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
         });
 
         viewModel.noOrderTaken().observe(this,aBoolean -> {
-            if(aBoolean)
-                AlertDialogManager.getInstance().showNoOrderAlertDialog(this, this);
+            if(aBoolean){
+                AlertDialogManager.getInstance().showVerificationAlertDialog(this,
+                        getString(R.string.checkout_without_order),
+                        getString(R.string.checkout_without_order_msg),
+                        verified -> {
+                            pickReasonForNoOrder();
+                        });
+            }
+
         });
 
         viewModel.showMessage().observe(this,s -> Toast.makeText(this, s, Toast.LENGTH_SHORT).show());
+    }
+
+    private void pickReasonForNoOrder(){
+        AlertDialogManager.getInstance().showListAlertDialog(this,getString(R.string.no_order_reason),
+                object -> {
+                    onNoOrderReasonSelected(object);
+                },noOrderReasonList);
     }
 
 
@@ -158,10 +185,10 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
     }
 
 
-    @Override
-    public void onNoSaleReasonEntered(String reason) {
+
+    public void onNoOrderReasonSelected(CustomObject object) {
         Intent intent = getIntent();
-        intent.putExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER,reason);
+        intent.putExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER,object.getId());
         intent.putExtra(Constant.EXTRA_PARAM_NO_ORDER_FROM_BOOKING,true);
         setResult(RESULT_CANCELED,intent);
         finish();
@@ -184,4 +211,5 @@ public class OrderBookingActivity extends BaseActivity implements AlertDialogMan
     interface QtySelectionCallback{
         void onInvalidQtyEntered();
     }
+
 }

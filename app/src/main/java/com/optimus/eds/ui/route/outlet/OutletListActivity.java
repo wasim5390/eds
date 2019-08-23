@@ -1,6 +1,8 @@
 package com.optimus.eds.ui.route.outlet;
 
 import android.app.SearchManager;
+
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -237,4 +239,9 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
         super.onBackPressed();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        viewModel.loadOutletsFromDb(route.getRouteId());
+    }
 }

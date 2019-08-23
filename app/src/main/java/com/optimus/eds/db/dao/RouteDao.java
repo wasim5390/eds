@@ -13,6 +13,7 @@ import com.optimus.eds.db.entities.Route;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 
@@ -36,6 +37,9 @@ public interface RouteDao extends MerchandiseDao{
 
     @Query("SELECT * FROM Outlet WHERE mRouteId=:routeId AND planned=:planned")
     Maybe<List<Outlet>> findAllOutletsForRoute(Long routeId,int planned);
+
+    @Query("SELECT * FROM Outlet WHERE planned=:planned AND mVisitStatus<=0")
+    Flowable<List<Outlet>> findOutletsWithPendingTasks( int planned);
 
     @Query("SELECT * FROM Outlet WHERE mOutletId=:id")
     LiveData<Outlet> findOutletById(Long id);

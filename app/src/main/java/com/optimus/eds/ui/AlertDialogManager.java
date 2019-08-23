@@ -36,18 +36,18 @@ public class AlertDialogManager {
      * @param listener
      * @param options
      */
-    public void showListAlertDialog(Context context,ListAlertItemClickListener listener, List<CustomObject> options) {
+    public void showListAlertDialog(Context context,String title,ListAlertItemClickListener listener, List<CustomObject> options) {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
-        builderSingle.setIcon(R.drawable.ic_discount_tag);
-        builderSingle.setTitle(context.getString(R.string.available_promotions));
-        final ArrayAdapter<CustomObject> arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
+        builderSingle.setIcon(R.drawable.ic_remove_box);
+        builderSingle.setTitle(title);
+        final ArrayAdapter<CustomObject> arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1);
         arrayAdapter.addAll(options);
 
         builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
             listener.onAlertItemClick(arrayAdapter.getItem(which));
 
         });
-        builderSingle.setPositiveButton("Ok", (dialog1, which1) -> dialog1.dismiss());
+        builderSingle.setPositiveButton("Cancel", (dialog1, which1) -> dialog1.dismiss());
         builderSingle.show();
     }
 

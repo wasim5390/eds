@@ -118,6 +118,9 @@ public class OrderDetail {
     @SerializedName("actualCartonStock")
     public Integer actualCartonStock;
 
+    @SerializedName("cartonSize")
+    public Integer cartonSize;
+
     @SerializedName("cartonCode")
     public String mCartonCode;
     @SerializedName("unitCode")
@@ -225,7 +228,13 @@ public class OrderDetail {
     public void setUnitQuantity(Integer mUnitQuantity) {
         this.mUnitQuantity = mUnitQuantity;
     }
+    public Integer getCartonSize() {
+        return cartonSize;
+    }
 
+    public void setCartonSize(Integer cartonSize) {
+        this.cartonSize = cartonSize;
+    }
 
     public Integer getAvlUnitQuantity() {
         return avlUnitQuantity;

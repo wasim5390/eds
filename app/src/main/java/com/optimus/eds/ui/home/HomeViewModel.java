@@ -6,7 +6,6 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.PersistableBundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
@@ -22,15 +21,15 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 import com.optimus.eds.Constant;
-import com.optimus.eds.R;
+import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.JobIdManager;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.source.UploadOrdersService;
 import com.optimus.eds.ui.order.OrderBookingRepository;
+import com.optimus.eds.ui.route.outlet.OutletListRepository;
 import com.optimus.eds.utils.PreferenceUtil;
-import com.optimus.eds.utils.Util;
 
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +43,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final HomeRepository repository;
     private final CompositeDisposable disposable;
     private PreferenceUtil preferenceUtil;
+    private MutableLiveData<Boolean> endDayLiveData;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
@@ -51,6 +51,7 @@ public class HomeViewModel extends AndroidViewModel {
         repository = HomeRepository.singleInstance(application,RetrofitHelper.getInstance().getApi(),executors);
         disposable = new CompositeDisposable();
         preferenceUtil = PreferenceUtil.getInstance(application);
+        endDayLiveData = new MutableLiveData<>();
 
     }
 
@@ -68,12 +69,21 @@ public class HomeViewModel extends AndroidViewModel {
         repository.getToken();
     }
 
-    public void dayEnd(){
+    public void updateDayEndStatus(){
         isLoading().postValue(true);
         repository.updateWorkStatus(false);
     }
 
+    public MutableLiveData<Boolean> getEndDayLiveData() {
+        return endDayLiveData;
+    }
 
+
+
+    public Observable<List<Outlet>> findOutletsWithPendingTasks() {
+        return OutletListRepository.getInstance(getApplication()).getOutletsWithNoVisits()
+                .toObservable().subscribeOn(Schedulers.computation());
+    }
 // --Commented out by Inspection START (8/21/2019 12:04 PM):
 //    private List<Outlet> visitedOutlets(List<Outlet> allOutlets) {
 //        List<Outlet> visitedOutlets = new ArrayList<>(allOutlets.size());

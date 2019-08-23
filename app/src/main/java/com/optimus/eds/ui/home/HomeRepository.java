@@ -15,6 +15,8 @@ import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 
+import com.optimus.eds.db.entities.Order;
+import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.LogModel;
 import com.optimus.eds.model.PackageProductResponseModel;
@@ -22,12 +24,14 @@ import com.optimus.eds.model.RouteOutletResponseModel;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.TokenResponse;
+import com.optimus.eds.ui.route.outlet.OutletListRepository;
 import com.optimus.eds.utils.PreferenceUtil;
 
 
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 import io.reactivex.CompletableSource;
@@ -210,6 +214,7 @@ public class HomeRepository {
                     }
                 });
     }
+
 
     public MutableLiveData<Boolean> mLoading() {
         return isLoading;

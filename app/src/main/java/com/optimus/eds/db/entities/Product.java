@@ -53,6 +53,7 @@ public class Product implements Serializable {
     @SerializedName("cartonSizeForDisplay")
     public String cartonSizeForDisplay;
 
+
     @SerializedName("unitStockInHand")
     public Integer unitStockInHand;
     @SerializedName("cartonStockInHand")
