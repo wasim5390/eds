@@ -66,7 +66,7 @@ public class OutletListItemView extends ConstraintLayout {
         Integer resourceId;
         if(outletItem.getVisitStatus()<1)
             resourceId = null;
-        else if(outletItem.getVisitStatus()>0 && outletItem.getVisitStatus()<=6){
+        else if(outletItem.getVisitStatus()>1 && outletItem.getVisitStatus()<=7){
             resourceId = R.drawable.ic_tick_green;
         }else {
             resourceId = R.drawable.ic_tick_yellow;

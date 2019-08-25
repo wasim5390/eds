@@ -38,7 +38,7 @@ public interface RouteDao extends MerchandiseDao{
     @Query("SELECT * FROM Outlet WHERE mRouteId=:routeId AND planned=:planned")
     Maybe<List<Outlet>> findAllOutletsForRoute(Long routeId,int planned);
 
-    @Query("SELECT * FROM Outlet WHERE planned=:planned AND mVisitStatus<=0")
+    @Query("SELECT * FROM Outlet WHERE planned=:planned AND mVisitStatus<=1")
     Flowable<List<Outlet>> findOutletsWithPendingTasks( int planned);
 
     @Query("SELECT * FROM Outlet WHERE mOutletId=:id")
@@ -71,6 +71,9 @@ public interface RouteDao extends MerchandiseDao{
 
     @Update
     int updateOutlet(Outlet outlet);
+
+    @Query("Update Outlet SET mVisitStatus=:status where mOutletId=:outletId")
+    int updateOutletVisitStatus(Long outletId,Integer status);
 
     @Update
     void updateOutlet(List<Outlet> outlets);

@@ -28,8 +28,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitHelper implements Constant {
-    public static final String BASE_URL = "http://192.168.100.12:34551/EDS.API/";
-   // public static final String BASE_URL = "http://optimuseds.com/API/";
+   // public static final String BASE_URL = "http://192.168.100.12:34551/EDS.API/";
+    public static final String BASE_URL = "http://optimuseds.com/API/";
 
     private static RetrofitHelper instance;
     public Retrofit retrofit;

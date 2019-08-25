@@ -115,6 +115,7 @@ public class OutletDetailViewModel extends AndroidViewModel {
             uploadStatus.postValue(true);
             outlet.setVisitStatus(outletStatus);
             repository.updateOutlet(outlet);
+
         }
     }
 

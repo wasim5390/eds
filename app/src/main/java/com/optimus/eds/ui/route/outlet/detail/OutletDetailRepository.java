@@ -20,6 +20,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import androidx.lifecycle.MutableLiveData;
+import io.reactivex.Single;
 import retrofit2.Response;
 
 
@@ -40,6 +41,11 @@ public class OutletDetailRepository {
 
     public LiveData<Outlet> getOutletById(Long outletId){
         return routeDao.findOutletById(outletId);
+    }
+
+    public void  updateOutletVisitStatus(Long outletId, Integer visitStatus){
+        AsyncTask.execute(() -> routeDao.updateOutletVisitStatus(outletId,visitStatus));
+
     }
 
     public void updateOutlet(Outlet outlet){

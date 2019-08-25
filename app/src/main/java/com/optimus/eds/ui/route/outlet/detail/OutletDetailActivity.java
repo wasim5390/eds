@@ -269,7 +269,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
                     break;
             }
 
-        } if(requestCode == CANCELLED){
+        } if(resultCode == RESULT_CANCELED){
             switch (requestCode){
                 case REQUEST_CODE:
                 boolean noOrderFromOrderBooking = data.getBooleanExtra(EXTRA_PARAM_NO_ORDER_FROM_BOOKING,false);

@@ -111,6 +111,7 @@ public class OrderBookingActivity extends BaseActivity  {
                         getString(R.string.checkout_without_order),
                         getString(R.string.checkout_without_order_msg),
                         verified -> {
+                            if(verified)
                             pickReasonForNoOrder();
                         });
             }

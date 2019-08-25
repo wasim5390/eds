@@ -4,6 +4,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Merchandise;
+import com.optimus.eds.db.entities.Outlet;
+
+import androidx.room.Ignore;
 
 public class MasterModel extends BaseResponse {
 

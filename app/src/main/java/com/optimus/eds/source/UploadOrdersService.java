@@ -12,6 +12,7 @@ import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
+import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
@@ -20,6 +21,8 @@ import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.ui.customer_input.CustomerInputRepository;
 import com.optimus.eds.ui.order.OrderBookingRepository;
 import com.optimus.eds.ui.order.OrderManager;
+import com.optimus.eds.ui.route.outlet.OutletListRepository;
+import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -44,6 +47,7 @@ public class UploadOrdersService extends JobService {
     private int jobId;
 
     private OrderBookingRepository orderRepository;
+    private OutletDetailRepository outletDetailRepository;
     private CustomerInputRepository customerInputRepository;
     MasterModel masterModel;
     @Override
@@ -52,6 +56,7 @@ public class UploadOrdersService extends JobService {
 
         customerInputRepository = new CustomerInputRepository(getApplication());
         orderRepository = OrderBookingRepository.singleInstance(getApplication());
+        outletDetailRepository = new OutletDetailRepository(getApplication());
         masterModel = new MasterModel();
     }
 
@@ -97,17 +102,18 @@ public class UploadOrdersService extends JobService {
                     OrderResponseModel responseModel = gson.fromJson(json,OrderResponseModel.class);
                     responseModel.setOrderDetails(orderModel.getOrderDetails());
 
-
                     masterModel.setCustomerInput(customerInput);
                     masterModel.setOrderModel(responseModel);
                     masterModel.setLocation(orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng());
                     masterModel.setOutletId(order.getOutletId());
-                    masterModel.setOutletStatus(1); // 1 for continue order
+                    masterModel.setOutletStatus(1); // 1 for order complete
                     masterModel.setOutletVisitTime(orderModel.getOutlet().getVisitDateTime()>0?orderModel.getOutlet().getVisitDateTime():null);
                     return masterModel;
                 }) ;
 
-        masterModelSingle.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(this::uploadMasterData,this::error);
+        masterModelSingle.
+                observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribe(this::uploadMasterData,this::error);
 
 
 
@@ -135,12 +141,14 @@ public class UploadOrdersService extends JobService {
         if(orderResponseModel !=null && orderResponseModel.getOrderModel()!=null)
             OrderBookingRepository.singleInstance(getApplication())
                     .findOrderById(orderResponseModel.getOrderModel().getMobileOrderId()).map(order -> {
+
                 order.setOrderStatus(orderResponseModel.getOrderModel().getOrderStatusId());
                 return order;
-                    }).flatMapCompletable(order -> OrderBookingRepository.singleInstance(getApplication())
+            }).flatMapCompletable(order -> OrderBookingRepository.singleInstance(getApplication())
                     .updateOrder(order)).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
                         Log.i("UploadOrdersService", "Order Status Updated");
+                        updateOutletTaskStatus(orderResponseModel.getOutletId());
                     },this::error);
         Intent intent = new Intent();
         intent.setAction(Constant.ACTION_ORDER_UPLOAD);
@@ -151,12 +159,16 @@ public class UploadOrdersService extends JobService {
 
     }
 
+    private void updateOutletTaskStatus(Long outletId){
+        outletDetailRepository.updateOutletVisitStatus(outletId,7); // 7 for completed task
+    }
+
     private void error(Object throwable) throws IOException {
         String errorBody;
         if(throwable instanceof Throwable) {
-           Throwable mThrowable = (Throwable) throwable;
+            Throwable mThrowable = (Throwable) throwable;
             mThrowable.printStackTrace();
-             errorBody = mThrowable.getMessage();
+            errorBody = mThrowable.getMessage();
             if (throwable instanceof HttpException) {
                 HttpException error = (HttpException) throwable;
                 errorBody = error.response().errorBody().string();

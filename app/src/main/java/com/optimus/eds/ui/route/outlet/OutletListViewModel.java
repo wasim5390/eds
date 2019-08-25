@@ -64,7 +64,6 @@ public class OutletListViewModel extends AndroidViewModel {
 
 
     public void loadOutletsFromDb(Long routeId){
-        //repository.getOutlets(routeId).observeForever(outlets -> outletList.setValue(outlets));
         ConnectableObservable<List<Outlet>> outletObservable = getOutlets(routeId).replay();
         disposable.add(
                 outletObservable
@@ -104,12 +103,7 @@ public class OutletListViewModel extends AndroidViewModel {
                         /**
                          * Converting List<Ticket> emission to single Ticket emissions
                          * */
-                        .flatMap(new Function<List<Outlet>, ObservableSource<Outlet>>() {
-                            @Override
-                            public ObservableSource<Outlet> apply(List<Outlet> tickets) throws Exception {
-                                return Observable.fromIterable(tickets);
-                            }
-                        })
+                        .flatMap((Function<List<Outlet>, ObservableSource<Outlet>>) tickets -> Observable.fromIterable(tickets))
                         /**
                          * Fetching price on each Ticket emission
                          * */
@@ -165,7 +159,7 @@ public class OutletListViewModel extends AndroidViewModel {
                 .map(orderModel -> {
                     if(orderModel.getOrder().getOrderStatus()==1) {
                         outlet.setTotalAmount(orderModel.getOrder().getPayable());
-                        outlet.setVisitStatus(1);
+                       // outlet.setVisitStatus(1);
                     }
                     return outlet;
                 });
@@ -190,10 +184,6 @@ public class OutletListViewModel extends AndroidViewModel {
         isLoading.setValue(false);
     }
 
-    private void onOutletsFetched(List<Outlet> outlets) {
-        outletList.setValue(outlets);
-        isLoading.setValue(false);
-    }
 
 
 

@@ -101,23 +101,14 @@ public class CustomerInputViewModel extends AndroidViewModel {
         isSaving.postValue(true);
         OrderModel orderModel = orderModelLiveData.getValue();
         Order order = orderModel.getOrder();
-      /*  Gson gson  = new Gson();
-        String json = gson.toJson(order);
-        OrderResponseModel responseModel = gson.fromJson(json,OrderResponseModel.class);
-        responseModel.setOrderDetails(orderModel.getOrderDetails());*/
+
         CustomerInput customerInput = new CustomerInput(outletId,order.getLocalOrderId(),deliveryDate,mobileNumber,remarks,base64Sign);
 
-   /*     MasterModel masterModel = new MasterModel();
-        masterModel.setLocation(orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng());
-        masterModel.setOutletId(order.getOutletId());
-        masterModel.setOrderModel(responseModel);
-        masterModel.setCustomerInput(customerInput);
-        masterModel.setOutletVisitTime(orderModel.getOutlet().getVisitDateTime());*/
         customerInputRepository.saveCustomerInput(customerInput)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(() -> {
-                    scheduleMasterJob(getApplication(),outletId,1,orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng(),
+                    scheduleMasterJob(getApplication(),outletId,7,orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng(),
                             deliveryDate,"",PreferenceUtil.getInstance(getApplication()).getToken());
 
                     scheduleMerchandiseJob(getApplication(),outletId, PreferenceUtil.getInstance(getApplication()).getToken());
@@ -125,9 +116,6 @@ public class CustomerInputViewModel extends AndroidViewModel {
                     updateStock(getApplication(),outletId);
                 });
 
-  /*disposable.add(webservice.saveOrder(masterModel,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(this::orderSavedSuccess,this::onError));*/
 
     }
 
