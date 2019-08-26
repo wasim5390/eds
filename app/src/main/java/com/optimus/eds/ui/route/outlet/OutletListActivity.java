@@ -242,6 +242,7 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(route!=null)
         viewModel.loadOutletsFromDb(route.getRouteId());
     }
 }

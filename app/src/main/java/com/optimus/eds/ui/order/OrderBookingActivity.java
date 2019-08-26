@@ -47,7 +47,6 @@ public class OrderBookingActivity extends BaseActivity  {
 
     @BindView(R.id.group_spinner)
     AppCompatSpinner spinner;
-
     @BindView(R.id.tvName)
     TextView tvOutletName;
     private SectionedRecyclerViewAdapter sectionAdapter;
@@ -191,7 +190,7 @@ public class OrderBookingActivity extends BaseActivity  {
         Intent intent = getIntent();
         intent.putExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER,object.getId());
         intent.putExtra(Constant.EXTRA_PARAM_NO_ORDER_FROM_BOOKING,true);
-        setResult(RESULT_CANCELED,intent);
+        setResult(RESULT_FIRST_USER,intent);
         finish();
     }
 
