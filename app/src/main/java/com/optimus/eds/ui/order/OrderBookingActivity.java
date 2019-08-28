@@ -50,6 +50,7 @@ public class OrderBookingActivity extends BaseActivity  {
     @BindView(R.id.tvName)
     TextView tvOutletName;
     private SectionedRecyclerViewAdapter sectionAdapter;
+    private Outlet outlet;
 
     private Long outletId;
     private OrderBookingViewModel viewModel;
@@ -72,6 +73,7 @@ public class OrderBookingActivity extends BaseActivity  {
         ButterKnife.bind(this);
         outletId =  getIntent().getLongExtra("OutletId",0);
         setToolbar(getString(R.string.order_booking));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         viewModel = ViewModelProviders.of(this).get(OrderBookingViewModel.class);
         viewModel.setOutletId(outletId);
         createNoOrderReasonList();
@@ -111,7 +113,7 @@ public class OrderBookingActivity extends BaseActivity  {
                         getString(R.string.checkout_without_order_msg),
                         verified -> {
                             if(verified)
-                            pickReasonForNoOrder();
+                                pickReasonForNoOrder();
                         });
             }
 
@@ -129,6 +131,7 @@ public class OrderBookingActivity extends BaseActivity  {
 
 
     private void onOutletLoaded(Outlet outlet) {
+        this.outlet = outlet;
         tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
     }
 
@@ -212,4 +215,15 @@ public class OrderBookingActivity extends BaseActivity  {
         void onInvalidQtyEntered();
     }
 
+    @Override
+    public void onBackPressed() {
+        if(outlet!=null){
+            if(outlet.getVisitStatus()==1) {
+                Toast.makeText(this, "Complete order or checkout without order!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            super.onBackPressed();
+
+        }
+    }
 }

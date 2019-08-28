@@ -78,6 +78,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
 
         ButterKnife.bind(this);
         setToolbar(getString(R.string.merchandizing));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         initMerchandiseAdapter();
         outletId =  getIntent().getLongExtra("OutletId",0);
         viewModel = ViewModelProviders.of(this).get(MerchandiseViewModel.class);
@@ -239,5 +240,9 @@ public class OutletMerchandizeActivity extends BaseActivity {
                         });
     }
 
+    @Override
+    public void onBackPressed() {
+               // Toast.makeText(this, "Complete order or checkout without order!", Toast.LENGTH_SHORT).show();
+        }
 
 }

@@ -2,6 +2,7 @@ package com.optimus.eds;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -31,6 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(getID());
         created(savedInstanceState);
 

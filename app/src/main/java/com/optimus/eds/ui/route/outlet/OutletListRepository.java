@@ -36,9 +36,9 @@ public class OutletListRepository  extends OrderBookingRepository {
 
 
 
-    public Maybe<List<Outlet>> getOutlets(Long routeId){
-        // get All planned outlet calls
-        return routeDao.findAllOutletsForRoute(routeId,1);
+    public Maybe<List<Outlet>> getOutlets(Long routeId,int outletType){
+        //1 for get All planned outlet calls
+        return routeDao.findAllOutletsForRoute(routeId,outletType);
     }
 
     public Flowable<List<Outlet>> getOutletsWithNoVisits(){

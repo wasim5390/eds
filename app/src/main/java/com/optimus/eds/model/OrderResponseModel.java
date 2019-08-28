@@ -34,13 +34,13 @@ public class OrderResponseModel extends BaseResponse{
     @Expose
     private Long outletId;
     @Expose
-    private Long payable;
+    private Double payable;
     @Expose
     private Long routeId;
     @Expose
     private Long salesmanId;
     @Expose
-    private Long subtotal;
+    private Double subtotal;
 
     @Expose
     private Long visitDayId;
@@ -152,11 +152,11 @@ public class OrderResponseModel extends BaseResponse{
         this.outletId = outletId;
     }
 
-    public Long getPayable() {
+    public Double getPayable() {
         return payable;
     }
 
-    public void setPayable(Long payable) {
+    public void setPayable(Double payable) {
         this.payable = payable;
     }
 
@@ -176,11 +176,11 @@ public class OrderResponseModel extends BaseResponse{
         this.salesmanId = salesmanId;
     }
 
-    public Long getSubtotal() {
+    public Double getSubtotal() {
         return subtotal;
     }
 
-    public void setSubtotal(Long subtotal) {
+    public void setSubtotal(Double subtotal) {
         this.subtotal = subtotal;
     }
 

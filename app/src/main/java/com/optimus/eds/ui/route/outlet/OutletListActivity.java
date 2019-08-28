@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 
+import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -52,12 +54,13 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
     RecyclerView recyclerView;
     @BindView(R.id.route_spinner)
     AppCompatSpinner spinner;
-    //@BindView(R.id.tabLayout)
-    //TabLayout tabLayout;
+    @BindView(R.id.tabLayout)
+    TabLayout tabLayout;
     SearchView searchView;
     private OutletListAdapter outletListAdapter;
     private OutletListViewModel viewModel;
     int SELECTED_ROUTE_INDEX=0;
+    int SELECTED_TAB=0;
     Route route;
 
     public static void start(Context context) {
@@ -86,6 +89,13 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
             updateOutletsList(outlets);
         });
 
+        viewModel.isLoading().observe(this,aBoolean -> {
+            if(aBoolean)
+                showProgress(true);
+            else
+                hideProgress();
+        });
+
     }
 
 
@@ -99,14 +109,14 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
         outletListAdapter = new OutletListAdapter(this,new ArrayList<>(),this);
         recyclerView.setAdapter(outletListAdapter);
         recyclerView.setNestedScrollingEnabled(false);
-/*        tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 int pos = tab.getPosition();
-                if(pos<1)
-                    Toast.makeText(OutletListActivity.this, "PJP", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(OutletListActivity.this, "Non PJP", Toast.LENGTH_SHORT).show();
+                SELECTED_TAB=pos; // pos <1 because pjp is on zero index
+                if(route!=null)
+                AsyncTask.execute(() -> viewModel.loadOutletsFromDb(route.getRouteId(),SELECTED_TAB<1));
+
             }
 
             @Override
@@ -118,13 +128,15 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-        });*/
+        });
 
 
     }
 
     private void updateOutletsList(List<Outlet> outlets) {
         outletListAdapter.populateOutlets(outlets);
+        new Handler().postDelayed(() -> hideProgress(),800);
+
     }
 
 
@@ -161,7 +173,7 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SELECTED_ROUTE_INDEX=position;
                 route = ((Route)(parent.getSelectedItem()));
-                viewModel.loadOutletsFromDb(route.getRouteId());
+                viewModel.loadOutletsFromDb(route.getRouteId(),SELECTED_TAB<1);
 
             }
 
@@ -243,6 +255,6 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(route!=null)
-        viewModel.loadOutletsFromDb(route.getRouteId());
+            viewModel.loadOutletsFromDb(route.getRouteId(),SELECTED_TAB<1);
     }
 }

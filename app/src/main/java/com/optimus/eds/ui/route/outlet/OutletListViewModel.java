@@ -63,8 +63,9 @@ public class OutletListViewModel extends AndroidViewModel {
     }
 
 
-    public void loadOutletsFromDb(Long routeId){
-        ConnectableObservable<List<Outlet>> outletObservable = getOutlets(routeId).replay();
+    public void loadOutletsFromDb(Long routeId,boolean isPjp){
+        isLoading.postValue(true);
+        ConnectableObservable<List<Outlet>> outletObservable = getOutlets(routeId,isPjp).replay();
         disposable.add(
                 outletObservable
                         .subscribeOn(Schedulers.io())
@@ -86,7 +87,6 @@ public class OutletListViewModel extends AndroidViewModel {
 
                             @Override
                             public void onComplete() {
-
                             }
                         }));
 
@@ -125,17 +125,18 @@ public class OutletListViewModel extends AndroidViewModel {
 
                                 allOutlets.set(position, outlet);
                                 outletList.postValue(allOutlets);
+
                                 // mAdapter.notifyItemChanged(position);
                             }
 
                             @Override
                             public void onError(Throwable e) {
+                                isLoading.postValue(false);
                                 errorMsg.postValue(e.getMessage());
                             }
 
                             @Override
                             public void onComplete() {
-
                             }
                         }));
 
@@ -145,8 +146,8 @@ public class OutletListViewModel extends AndroidViewModel {
 
 
 
-    private Observable<List<Outlet>> getOutlets(Long routeId) {
-        return repository.getOutlets(routeId).toObservable()
+    private Observable<List<Outlet>> getOutlets(Long routeId,boolean isPjp) {
+        return repository.getOutlets(routeId,isPjp?1:0).toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -179,10 +180,7 @@ public class OutletListViewModel extends AndroidViewModel {
         });
         return orderAlreadyTaken;
     }
-    private void onRoutesFetched(List<Route> routes) {
-        routeList.setValue(routes);
-        isLoading.setValue(false);
-    }
+
 
 
 
@@ -195,8 +193,15 @@ public class OutletListViewModel extends AndroidViewModel {
 
         return routeList;
     }
+
+    public MutableLiveData<Boolean> isLoading() {
+        return isLoading;
+    }
+
     private void onError(Throwable throwable) {
-        isLoading.setValue(false);
+        isLoading.postValue(false);
         errorMsg.setValue(throwable.getMessage());
     }
+
+
 }

@@ -96,6 +96,12 @@ public class PreferenceUtil {
         editor.apply();
     }
 
+    public void clearToken() {
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.remove(KEY_TOKEN);
+        editor.apply();
+    }
+
     public void clearCredentials() {
         SharedPreferences.Editor editor = sPref.edit();
         editor.remove(KEY_TOKEN);
@@ -103,6 +109,7 @@ public class PreferenceUtil {
         editor.remove(KEY_PASSWORD);
         editor.apply();
     }
+
 
     public void saveWorkSyncData(WorkStatus status) {
         Gson gson = new Gson();

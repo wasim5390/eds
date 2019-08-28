@@ -46,7 +46,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
-import retrofit2.Response;
 
 
 public class OrderBookingViewModel extends AndroidViewModel {
@@ -191,7 +190,11 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
 
     private void updateOrder(OrderModel order) {
-        if(order==null || order.getOrderDetails()==null) return;
+        if(order==null || order.getOrderDetails()==null ||order.getOrder().getPayable()==null || order.getOrder().getSubTotal()==null){
+            msg.postValue(Constant.PRICING_ERROR);
+            isSaving.postValue(false);
+            return;
+        }
         setOrder(order);
         Completable orderUpdateCompletable= repository.updateOrder(order.getOrder());
         Completable removeOrderItems = repository.deleteOrderItems(order.getOrder().getLocalOrderId());
@@ -271,6 +274,10 @@ public class OrderBookingViewModel extends AndroidViewModel {
             HttpException error = (HttpException)throwable;
             errorBody = error.response().errorBody().string();
         }
+        if (throwable instanceof IOException){
+            errorBody = "Please check your internet connection";
+        }
+
         msg.postValue(errorBody);
         isSaving.postValue(false);
 
@@ -325,7 +332,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
         NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {
             if (!aBoolean){
                 isSaving.postValue(false);
-                orderSaved.postValue(true);
+              //  orderSaved.postValue(true); // pricing is not implemented in mobile so should'nt move to cash memo
                 return;
             }else {
 
@@ -334,7 +341,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
                     Order mOrder = new Order(order.getOrder().getOutletId());
                     mOrder.setRouteId(order.getOutlet().getRouteId());
                     mOrder.setVisitDayId(order.getOutlet().getVisitDay());
-                    mOrder.setOrderStatus(2); //created
+                    mOrder.setOrderStatus(Constant.ORDER_CREATED); //2 created
                     mOrder.setLocalOrderId(order.getOrder().getLocalOrderId());
                     mOrder.setLatitude(order.getOutlet().getLatitude());
                     mOrder.setLongitude(order.getOutlet().getLongitude());

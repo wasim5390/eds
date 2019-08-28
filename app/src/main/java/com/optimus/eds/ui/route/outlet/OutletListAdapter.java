@@ -23,11 +23,6 @@ public class OutletListAdapter extends
     private List<Outlet> outlets;
     private List<Outlet> outletsFiltered;
 
-    public OutletListAdapter(Context context, OutletListAdapter.Callback callback) {
-        this.mCallback = callback;
-        this.mContext = context;
-        this.outlets = new ArrayList<>();
-    }
 
     public OutletListAdapter(Context context, List<Outlet> outlets,OutletListAdapter.Callback callback) {
         this.outlets = new ArrayList<>();

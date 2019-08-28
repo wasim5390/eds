@@ -71,7 +71,11 @@ public class OutletDetailRepository {
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG,e.getMessage());
-        }finally {
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e(TAG,e.getMessage());
+        }
+        finally {
             loaded.postValue(true);
         }
 

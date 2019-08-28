@@ -118,7 +118,7 @@ public class MainActivity extends BaseActivity {
                             getString(R.string.logout), getString(R.string.are_you_sure_to_logout), verified -> {
                                 if(verified)
                                 {
-                                    PreferenceUtil.getInstance(this).clearCredentials();
+                                    PreferenceUtil.getInstance(this).clearToken();
                                     finishAffinity();
                                     LoginActivity.start(this);
 

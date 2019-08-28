@@ -53,6 +53,8 @@ public interface Constant {
     String GENERIC_ERROR = "Something went wrong, Please contact Manager!";
     String ERROR_DAY_NO_STARTED = "You have not even started your day";
     String ERROR_START_DAY_FIRST = "Please start your day first";
+    int ORDER_CREATED = 2;
+    String PRICING_ERROR = "Something went wrong, Please try again!";
 
     interface IntentExtras {
         String ACTION_CAMERA = "action-camera";

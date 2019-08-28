@@ -50,10 +50,10 @@ public class LoginRepository {
                     public void onSuccess(TokenResponse tokenResponse) {
                         if(tokenResponse.isSuccess()) {
                             String previousUsername = preferenceUtil.getUsername();
-                            preferenceUtil.saveToken(tokenResponse.getAccessToken());
+
                             if(!previousUsername.equals(username))
                                 preferenceUtil.clearAllPreferences();
-
+                            preferenceUtil.saveToken(tokenResponse.getAccessToken());
                             preferenceUtil.saveUserName(username);
                             preferenceUtil.savePassword(password);
                             liveData.postValue(tokenResponse);
