@@ -1,6 +1,9 @@
 package com.optimus.eds;
 
 import android.content.Context;
+
+import com.google.firebase.FirebaseApp;
+
 import androidx.multidex.MultiDexApplication;
 
 public class EdsApplication extends MultiDexApplication implements AppLifecycleHandler.LifeCycleDelegate {
@@ -21,7 +24,7 @@ public class EdsApplication extends MultiDexApplication implements AppLifecycleH
     public void onCreate() {
         super.onCreate();
         instance = this;
-
+        FirebaseApp.initializeApp(this);
         lifeCycleHandler = new AppLifecycleHandler(this);
         registerLifecycleHandler(lifeCycleHandler);
 

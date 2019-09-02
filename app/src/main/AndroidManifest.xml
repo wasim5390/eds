@@ -49,7 +49,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.route.outlet.detail.OutletDetailActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.merchandize.OutletMerchandizeActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.merchandize.OutletMerchandiseActivity" android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.order.OrderBookingActivity"
             android:screenOrientation="portrait"
@@ -94,6 +94,26 @@
             android:name=".location_services.LocationService"
             android:enabled="true"
             android:exported="true" />
+
+        <!-- Firebase Notification Start-->
+        <service
+            android:name=".firebase.FirebaseService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+
+        <!-- Firebase End-->
+
     </application>
 
 </manifest>

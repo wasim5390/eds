@@ -19,9 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.LocationRequest;
 import com.karumi.dexter.Dexter;
@@ -36,15 +34,13 @@ import com.optimus.eds.db.entities.Outlet;
 
 import com.optimus.eds.location_services.GpsUtils;
 import com.optimus.eds.location_services.LocationService;
-import com.optimus.eds.model.CustomObject;
 import com.optimus.eds.ui.AlertDialogManager;
-import com.optimus.eds.ui.merchandize.OutletMerchandizeActivity;
+import com.optimus.eds.ui.merchandize.OutletMerchandiseActivity;
 import com.optimus.eds.ui.order.OrderBookingActivity;
 import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -122,7 +118,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
                 viewModel.scheduleMasterJob(this,outletId,currentLocation, Calendar.getInstance().getTimeInMillis(),reasonForNoSale, PreferenceUtil.getInstance(getApplication()).getToken());
                 finish(); // finish activity after sending status
             }else{
-               // OutletMerchandizeActivity.start(this,outletId,REQUEST_CODE);
+               // OutletMerchandiseActivity.start(this,outletId,REQUEST_CODE);
                 OrderBookingActivity.start(this,outletId,REQUEST_CODE);
             }
         });

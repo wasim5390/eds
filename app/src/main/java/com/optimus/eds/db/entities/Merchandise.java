@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created By apple on 4/23/19
+ * Created By sidhu on 4/23/19
  */
 
 @Entity(tableName = "Merchandise")

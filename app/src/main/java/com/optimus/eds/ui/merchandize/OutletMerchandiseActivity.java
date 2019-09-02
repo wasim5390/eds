@@ -30,6 +30,7 @@ import com.optimus.eds.ui.merchandize.planogaram.ImageDialog;
 import com.optimus.eds.utils.Util;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -39,21 +40,23 @@ import id.zelory.compressor.Compressor;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class OutletMerchandizeActivity extends BaseActivity {
+public class OutletMerchandiseActivity extends BaseActivity {
 
-    @BindView(R.id.rv_merchandise_images)
-    RecyclerView recyclerView;
+    @BindView(R.id.rvBeforeMerchandize)
+    RecyclerView recyclerViewBefore;
+    @BindView(R.id.rvAfterMerchandise)
+    RecyclerView recyclerViewAfter;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
-    @BindView(R.id.btnAfterMerchandize)
-    Button btnAfterMerchandize;
+    @BindView(R.id.btnAfterMerchandise)
+    Button btnAfterMerchandise;
     @BindView(R.id.btnNext)
     Button btnNext;
     @BindView(R.id.tvName)
     TextView tvOutletName;
     @BindView(R.id.etRemarks)
     EditText etRemarks;
-    private MerchandiseAdapter merchandiseAdapter;
+    private MerchandiseAdapter merchandiseAdapterBefore,merchandiseAdapterAfter;
     private Long outletId;
     private static final int REQUEST_CODE_IMAGE = 0x0005;
     private static final int REQUEST_CODE=0x1100;
@@ -63,7 +66,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
     ImageDialog dialogFragment;
 
     public static void start(Context context,Long outletId, int requestCode) {
-        Intent starter = new Intent(context, OutletMerchandizeActivity.class);
+        Intent starter = new Intent(context, OutletMerchandiseActivity.class);
         starter.putExtra("OutletId",outletId);
         ((Activity)context).startActivityForResult(starter,requestCode);
     }
@@ -99,20 +102,21 @@ public class OutletMerchandizeActivity extends BaseActivity {
         });
 
         viewModel.getMerchandiseImages().observe(this, merchandiseItems -> {
+            
             updateMerchandiseList(merchandiseItems);
         });
 
 
         viewModel.isSaved().observe(this, aBoolean -> {
             if(aBoolean){
-                OrderBookingActivity.start(OutletMerchandizeActivity.this,outletId,REQUEST_CODE);
+                OrderBookingActivity.start(OutletMerchandiseActivity.this,outletId,REQUEST_CODE);
             }
         });
         viewModel.isInProgress().observe(this, this::setProgress);
 
         viewModel.enableAfterMerchandiseButton().observe(this, aBoolean -> {
-            btnAfterMerchandize.setEnabled(aBoolean);
-            btnAfterMerchandize.setAlpha(aBoolean?1.0f:0.5f);
+            btnAfterMerchandise.setEnabled(aBoolean);
+            btnAfterMerchandise.setAlpha(aBoolean?1.0f:0.5f);
         });
         viewModel.enableNextButton().observe(this, aBoolean -> {
             btnNext.setEnabled(aBoolean);
@@ -120,7 +124,7 @@ public class OutletMerchandizeActivity extends BaseActivity {
         });
 
         viewModel.lessImages().observe(this, aBoolean ->{
-            Toast.makeText(OutletMerchandizeActivity.this,"At least 2 images required",Toast.LENGTH_LONG).show();
+            Toast.makeText(OutletMerchandiseActivity.this,"At least 2 images required",Toast.LENGTH_LONG).show();
         });
     }
     private void onOutletLoaded(Outlet outlet) {
@@ -134,7 +138,16 @@ public class OutletMerchandizeActivity extends BaseActivity {
     }
 
     private void updateMerchandiseList(List<MerchandiseImage> merchandiseImages) {
-        merchandiseAdapter.populateMerchandise(merchandiseImages);
+        List<MerchandiseImage> merchandiseImagesBefore = new ArrayList<>();
+        List<MerchandiseImage> merchandiseImagesAfter = new ArrayList<>();
+        for(MerchandiseImage image:merchandiseImages){
+            if(image.getType()==MerchandiseImgType.BEFORE_MERCHANDISE)
+                merchandiseImagesBefore.add(image);
+            else
+                merchandiseImagesAfter.add(image);
+        }
+        merchandiseAdapterBefore.populateMerchandise(merchandiseImagesBefore);
+        merchandiseAdapterAfter.populateMerchandise(merchandiseImagesAfter);
     }
 
     private void setProgress(boolean isLoading) {
@@ -146,14 +159,20 @@ public class OutletMerchandizeActivity extends BaseActivity {
     }
 
     private void initMerchandiseAdapter() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setNestedScrollingEnabled(false);
-        merchandiseAdapter = new MerchandiseAdapter(this);
-        recyclerView.setAdapter(merchandiseAdapter);
-        recyclerView.setNestedScrollingEnabled(false);
+
+        recyclerViewBefore.setLayoutManager(new LinearLayoutManager(this,RecyclerView.HORIZONTAL,false));
+        recyclerViewBefore.setHasFixedSize(true);
+        recyclerViewBefore.setNestedScrollingEnabled(false);
+        merchandiseAdapterBefore = new MerchandiseAdapter(this);
+        recyclerViewBefore.setAdapter(merchandiseAdapterBefore);
+
+        recyclerViewAfter.setLayoutManager(new LinearLayoutManager(this,RecyclerView.HORIZONTAL,false));
+        recyclerViewAfter.setHasFixedSize(true);
+        recyclerViewAfter.setNestedScrollingEnabled(false);
+        merchandiseAdapterAfter = new MerchandiseAdapter(this);
+        recyclerViewAfter.setAdapter(merchandiseAdapterAfter);
+
+
     }
 
     @OnClick(R.id.btnNext)
@@ -180,13 +199,13 @@ public class OutletMerchandizeActivity extends BaseActivity {
         AssetsVerificationActivity.start(this,outletId);
     }
 
-    @OnClick(R.id.btnBeforeMerchandize)
+    @OnClick(R.id.btnBeforeMerchandise)
     public void onBeforeMerchandiseClick(){
         type= MerchandiseImgType.BEFORE_MERCHANDISE;
         actionPic(Constant.IntentExtras.ACTION_CAMERA);
     }
 
-    @OnClick(R.id.btnAfterMerchandize)
+    @OnClick(R.id.btnAfterMerchandise)
     public void onAfterMerchandiseClick(){
         type=MerchandiseImgType.AFTER_MERCHANDISE;
         actionPic(Constant.IntentExtras.ACTION_CAMERA);

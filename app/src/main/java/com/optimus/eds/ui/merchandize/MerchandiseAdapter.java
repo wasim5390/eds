@@ -51,7 +51,7 @@ public class MerchandiseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         MerchandiseImage merchandiseImage = merchandiseImages.get(position);
         File imgFile = new File(merchandiseImage.getPath());
         Picasso.get().load(imgFile).fit().into(merchandiseListHolder.imageView);
-        merchandiseListHolder.deleteImageView.setOnClickListener(view -> ((OutletMerchandizeActivity) mContext).removeImage(merchandiseImage));
+        merchandiseListHolder.deleteImageView.setOnClickListener(view -> ((OutletMerchandiseActivity) mContext).removeImage(merchandiseImage));
     }
 
     @Override

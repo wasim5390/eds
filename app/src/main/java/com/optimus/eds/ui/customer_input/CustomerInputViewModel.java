@@ -264,7 +264,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
 
 
     private void error(Object throwable) throws IOException {
-        String errorBody;
+        String errorBody = Constant.GENERIC_ERROR;
         if (throwable instanceof IOException || throwable instanceof TimeoutException){
             errorBody = "Please check your internet connection";
             msg.postValue(errorBody);
@@ -275,10 +275,11 @@ public class CustomerInputViewModel extends AndroidViewModel {
             errorBody = mThrowable.getMessage();
             if (throwable instanceof HttpException) {
                 HttpException error = (HttpException) throwable;
-                errorBody = error.response().errorBody().string();
+               // errorBody = error.response().errorBody().string();
             }
         }
         else{
+            if(((MasterModel)throwable).getErrorCode()==2)
             errorBody =((MasterModel)throwable).getResponseMsg();
 
         }
