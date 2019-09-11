@@ -190,7 +190,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
 
     private void updateOrder(OrderModel order) {
-        if(order==null || order.getOrderDetails()==null ||order.getOrder().getPayable()==null || order.getOrder().getSubTotal()==null){
+        if(order==null ||order.getOrder()==null || !order.isSuccess()|| order.getOrderDetails()==null ||order.getOrder().getPayable()==null || order.getOrder().getSubTotal()==null){
             msg.postValue(Constant.PRICING_ERROR);
             isSaving.postValue(false);
             return;
@@ -354,13 +354,13 @@ public class OrderBookingViewModel extends AndroidViewModel {
                     responseModel.setOrderDetails(order.getOrderDetails());
                     disposable
                             .add(webservice.calculatePricing(responseModel).map(orderResponseModel -> {
-
                                 OrderModel orderModel = new OrderModel();
                                 String orderString = new Gson().toJson(orderResponseModel);
                                 Order order = new Gson().fromJson(orderString, Order.class);
                                 orderModel.setOrderDetails(orderResponseModel.getOrderDetails());
                                 orderModel.setOrder(order);
                                 orderModel.setOutlet(this.order.getOutlet());
+                                orderModel.setSuccess(orderResponseModel.isSuccess());
                                 return orderModel;
                             }).observeOn(AndroidSchedulers.mainThread())
                                     .subscribeOn(Schedulers.io())

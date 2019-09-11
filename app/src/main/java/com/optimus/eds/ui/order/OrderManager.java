@@ -26,7 +26,7 @@ public class OrderManager {
     public OrderQuantity calculateOrderQty(Integer productUnitsPerCarton, Integer orderedUnits, Integer orderedCartons){
 
         OrderQuantity orderQuantity = new OrderQuantity(orderedUnits,orderedCartons);
-        if(orderedUnits!=null && productUnitsPerCarton!=null && orderedUnits>productUnitsPerCarton  && productUnitsPerCarton>0) {
+        if(orderedUnits!=null && productUnitsPerCarton!=null && orderedUnits>=productUnitsPerCarton  && productUnitsPerCarton>0) {
             if(orderedCartons==null) orderedCartons = 0;
             Integer quotient = orderedUnits / productUnitsPerCarton;
             Integer remainder = orderedUnits % productUnitsPerCarton;
@@ -36,10 +36,7 @@ public class OrderManager {
         return orderQuantity;
     }
 
-
-
-
-    public class OrderQuantity{
+    public static class OrderQuantity{
 
         public OrderQuantity(Integer units, Integer carton) {
             this.units = units;

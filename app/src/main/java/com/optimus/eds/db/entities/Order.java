@@ -53,6 +53,9 @@ public class Order {
     @SerializedName("deliveryDate")
     public Long deliveryDate;
 
+    @SerializedName("distributionId")
+    private Long distributionId;
+
     public Long getDistributionId() {
         return distributionId;
     }
@@ -61,8 +64,7 @@ public class Order {
         this.distributionId = distributionId;
     }
 
-    @SerializedName("distributionId")
-    private Long distributionId;
+
 
     public Order(Long outletId) {
         this.outletId = outletId;

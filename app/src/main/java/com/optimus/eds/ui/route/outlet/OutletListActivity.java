@@ -106,7 +106,7 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        outletListAdapter = new OutletListAdapter(this,new ArrayList<>(),this);
+        outletListAdapter = new OutletListAdapter(new ArrayList<>(),this);
         recyclerView.setAdapter(outletListAdapter);
         recyclerView.setNestedScrollingEnabled(false);
         tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {

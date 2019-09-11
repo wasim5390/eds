@@ -43,8 +43,8 @@ public class OutletDetailRepository {
         return routeDao.findOutletById(outletId);
     }
 
-    public void  updateOutletVisitStatus(Long outletId, Integer visitStatus){
-        AsyncTask.execute(() -> routeDao.updateOutletVisitStatus(outletId,visitStatus));
+    public void  updateOutletVisitStatus(Long outletId, Integer visitStatus,int synced){
+        AsyncTask.execute(() -> routeDao.updateOutletVisitStatus(outletId,visitStatus,synced));
 
     }
 

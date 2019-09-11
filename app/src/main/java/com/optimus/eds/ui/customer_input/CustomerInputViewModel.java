@@ -127,9 +127,10 @@ public class CustomerInputViewModel extends AndroidViewModel {
     }
 
     public void postData(OrderModel orderModel,Long deliveryDate,CustomerInput customerInput){
+        updateOutletTaskStatus(outletId,Constant.STATUS_PENDING_TO_SYNC,0);
         NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {
             if (!aBoolean){
-                 scheduleMasterJob(getApplication(),outletId,7,orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng(),
+                 scheduleMasterJob(getApplication(),outletId,Constant.STATUS_COMPLETED,orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng(),
                          deliveryDate,"",PreferenceUtil.getInstance(getApplication()).getToken());
                 isSaving.postValue(false);
                 orderSaved.postValue(true);
@@ -154,7 +155,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
         masterModel.setOrderModel(responseModel);
         masterModel.setLocation(orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng());
         masterModel.setOutletId(order.getOutletId());
-        masterModel.setOutletStatus(1); // 1 for order complete
+        masterModel.setOutletStatus(Constant.STATUS_CONTINUE); // 8 for order complete
         masterModel.setOutletVisitTime(orderModel.getOutlet().getVisitDateTime()>0?orderModel.getOutlet().getVisitDateTime():null);
         return masterModel;
 
@@ -162,7 +163,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
 
     private void uploadMasterData(MasterModel masterModel) {
 
-        RetrofitHelper.getInstance().getApi().saveOrder(masterModel,PreferenceUtil.getInstance(getApplication()).getToken())
+        RetrofitHelper.getInstance().getApi().saveOrder(masterModel,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken())
                 .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(this::onUpload,this::error);
     }
 
@@ -187,15 +188,15 @@ public class CustomerInputViewModel extends AndroidViewModel {
                     .updateOrder(order)).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
                         Log.i("UploadOrdersService", "Order Status Updated");
-                        updateOutletTaskStatus(orderResponseModel.getOutletId());
+                        updateOutletTaskStatus(orderResponseModel.getOutletId(),Constant.STATUS_COMPLETED,1);
                     },this::error);
         msg.postValue("Order Uploaded Successfully!");
         orderSavedSuccess(orderResponseModel);
 
     }
 
-    private void updateOutletTaskStatus(Long outletId){
-        outletDetailRepository.updateOutletVisitStatus(outletId,7); // 7 for completed task
+    private void updateOutletTaskStatus(Long outletId,int status,int sync){
+        outletDetailRepository.updateOutletVisitStatus(outletId,status,sync); // 7 for completed task
     }
 
 

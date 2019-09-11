@@ -8,6 +8,7 @@ import android.util.Log;
 import com.optimus.eds.Constant;
 import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.MasterModel;
+import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class MasterDataUploadService extends JobService implements Constant {
     private final String iTAG = MasterDataUploadService.class.getSimpleName();
     String token;
     private int jobId;
+    private OutletDetailRepository outletDetailRepository;
     public MasterDataUploadService() {
 
     }
@@ -27,6 +29,7 @@ public class MasterDataUploadService extends JobService implements Constant {
     @Override
     public boolean onStartJob(JobParameters params) {
         if (params != null) {
+            outletDetailRepository = new OutletDetailRepository(getApplication());
             PersistableBundle bundle = params.getExtras();
             jobId=params.getJobId();
             final Long outletId = bundle.getLong(EXTRA_PARAM_OUTLET_ID);
@@ -74,12 +77,17 @@ public class MasterDataUploadService extends JobService implements Constant {
         Log.i(iTAG,"JobId: "+jobId);
 
         RetrofitHelper.getInstance().getApi().saveOrder(masterModel,token)
-                .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(this::onUpload,this::error);
+                .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(masterModel1 -> {
+            onUpload(masterModel1,masterModel.getOutletId(),masterModel.getOutletStatus());
+        },this::error);
     }
 
-    private void onUpload(BaseResponse baseResponse) {
-        if(baseResponse.isSuccess())
-            Log.i(iTAG,"File Uploaded");
+    private void onUpload(BaseResponse baseResponse,Long outletId,Integer status) {
+        if(baseResponse.isSuccess()) {
+            Log.i(iTAG, "File Uploaded");
+            outletDetailRepository.updateOutletVisitStatus(outletId,status,1);
+
+        }
         else
             Log.i(iTAG,baseResponse.getResponseMsg());
 

@@ -23,14 +23,16 @@ public class CashMemoAdapter extends
     private Context mContext;
     private List<OrderDetailAndPriceBreakdown> products;
     private  FreeItemListener mListener;
+    private ItemLevelPriceListener itemLevelPriceListener;
 
     public CashMemoAdapter(Context context) {
         this.mContext = context;
         this.products = new ArrayList<>();
     }
 
-    public void populateCartItems(List<OrderDetailAndPriceBreakdown> products,FreeItemListener listener) {
+    public void populateCartItems(List<OrderDetailAndPriceBreakdown> products,FreeItemListener listener,ItemLevelPriceListener itemLevelPriceListener) {
         this.mListener = listener;
+        this.itemLevelPriceListener = itemLevelPriceListener;
         this.products = products;
         notifyDataSetChanged();
     }
@@ -57,20 +59,20 @@ public class CashMemoAdapter extends
         ((CashMemoItemView)viewHolder.itemView).setCartItem(product, new CashMemoFreeItemView.FreeItemSelector() {
             @Override
             public void onFreeItemAdd(OrderDetail freeItem) {
-                if(freeItem.getCartonQuantity()>0)
-                    addCartonFreeItems(product,freeItem);
-                else if(freeItem.getUnitQuantity()>0)
-                    addUnitFreeItems(product,freeItem);
+                if (freeItem.getCartonQuantity() > 0)
+                    addCartonFreeItems(product, freeItem);
+                else if (freeItem.getUnitQuantity() > 0)
+                    addUnitFreeItems(product, freeItem);
             }
 
             @Override
             public void onFreeItemRemove(OrderDetail freeItem) {
-                if(freeItem.getCartonQuantity()>0)
-                    removeCartonFreeItems(product,freeItem);
-                else if(freeItem.getUnitQuantity()>0)
-                    removeUnitFreeItems(product,freeItem);
+                if (freeItem.getCartonQuantity() > 0)
+                    removeCartonFreeItems(product, freeItem);
+                else if (freeItem.getUnitQuantity() > 0)
+                    removeUnitFreeItems(product, freeItem);
             }
-        });
+        }, isAvailable -> itemLevelPriceListener.onPriceAvailable(isAvailable));
     }
 
 
@@ -146,5 +148,9 @@ public class CashMemoAdapter extends
 
     public interface FreeItemListener{
         void onFreeItemsSelected(List<OrderDetailAndPriceBreakdown> products);
+    }
+
+    public interface ItemLevelPriceListener{
+        void onPriceAvailable(boolean isAvailable);
     }
 }

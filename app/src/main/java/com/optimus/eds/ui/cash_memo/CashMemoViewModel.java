@@ -51,7 +51,7 @@ public class CashMemoViewModel extends AndroidViewModel {
     protected LiveData<OrderModel> getOrder(Long outletId){
 
         repository.findOrder(outletId).map(orderModel -> {
-            List<OrderDetail> freeGoods = new ArrayList<>();
+           // List<OrderDetail> freeGoods = new ArrayList<>();
             float freeQty =0f;
             for(OrderDetailAndPriceBreakdown orderWithDetails:orderModel.getOrderDetailAndCPriceBreakdowns()){
                 Integer unitFreeQty = orderWithDetails.getOrderDetail().getUnitFreeGoodQuantity();

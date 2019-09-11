@@ -15,7 +15,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.optimus.eds.R;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.MerchandiseWorker;
+import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.home.MainActivity;
+import com.optimus.eds.ui.login.LoginRepository;
 import com.optimus.eds.utils.PreferenceUtil;
 
 import androidx.core.app.NotificationCompat;
@@ -93,7 +95,8 @@ public class FirebaseService extends FirebaseMessagingService {
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
-        sendRegistrationToServer(token);
+
+       // sendRegistrationToServer(token);
     }
     // [END on_new_token]
 
@@ -120,17 +123,6 @@ public class FirebaseService extends FirebaseMessagingService {
         preferenceUtil.saveWorkSyncData(status);*/
     }
 
-    /**
-     * Persist token to third-party servers.
-     *
-     * Modify this method to associate the user's FCM InstanceID token with any server-side account
-     * maintained by your application.
-     *
-     * @param token The new token.
-     */
-    private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
-    }
 
     /**
      * Create and show a simple notification containing the received FCM message.

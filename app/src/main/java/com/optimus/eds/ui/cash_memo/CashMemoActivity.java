@@ -15,10 +15,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.optimus.eds.BaseActivity;
+import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
+import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.customer_input.CustomerInputActivity;
 import com.optimus.eds.ui.route.outlet.OutletListActivity;
 
@@ -96,7 +98,6 @@ public class CashMemoActivity extends BaseActivity {
             updateCart(orderModel.getOrderDetailAndCPriceBreakdowns());
             updatePricesOnUi(orderModel);
             configUi();
-
         });
     }
 
@@ -134,6 +135,16 @@ public class CashMemoActivity extends BaseActivity {
 
         cartAdapter.populateCartItems(products, productsWithFreeItem -> {
             viewModel.updateOrder(productsWithFreeItem);
+        },isAvailable -> {
+            if(cashMemoEditable) {
+                btnNext.setVisibility(isAvailable ? View.VISIBLE : View.GONE);
+                if(!isAvailable)
+                    AlertDialogManager.getInstance()
+                            .showVerificationAlertDialog(this, "Oops!", Constant.PRICING_CASHMEMO_ERROR, verified -> {
+                                if(verified)
+                                    finish();
+                            });
+            }
         });
     }
 

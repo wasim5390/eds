@@ -5,13 +5,7 @@ package com.optimus.eds;
  */
 
 public interface Constant {
-    int UNASSIGNED=0;
-    int ASSIGNED=1;
-    int STARTED = 2;
-    int PAUSED=3;
-    int STOPPED=4;
-    int COMPLETED=5;
-    int CANCELLED=6;
+
 
     int QUERY_LIMIT=15;
     int MAX_HORIZONTAL_ACCURACY_LIMIT=24;
@@ -55,6 +49,11 @@ public interface Constant {
     String ERROR_START_DAY_FIRST = "Please start your day first";
     int ORDER_CREATED = 2;
     String PRICING_ERROR = "Something went wrong, Please try again!";
+    String PRICING_CASHMEMO_ERROR = "System is not able to calculate price, Please try again!";
+    int STATUS_CONTINUE = 1;
+    int STATUS_PENDING_TO_SYNC = 7;
+    int STATUS_COMPLETED = 8;
+
 
     interface IntentExtras {
         String ACTION_CAMERA = "action-camera";

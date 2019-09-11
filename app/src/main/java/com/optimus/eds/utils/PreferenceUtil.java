@@ -27,6 +27,7 @@ public class PreferenceUtil {
 
     private static final String PREFERENCE_NAME = "send_signal_preference";
     private static final String KEY_APP_MODE ="app_mode" ;
+    private static final String KEY_FIREBASE_TOKEN = "firebase_token";
     private String defaultAppMode="Production";
 
     private static PreferenceUtil instance;

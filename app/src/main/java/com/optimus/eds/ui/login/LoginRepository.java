@@ -2,6 +2,7 @@ package com.optimus.eds.ui.login;
 
 import android.app.Application;
 
+import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.source.TokenResponse;
@@ -66,17 +67,45 @@ public class LoginRepository {
 
                     @Override
                     public void onError(Throwable e) {
-                        if(e instanceof HttpException){
-                            int code = ((HttpException)e).code();
-                            if(code==400)
-                                error.postValue("The username or password is incorrect.");
-                        }
+                        error(e);
+
 
                         // error.postValue(e.getMessage());
                     }
                 });
 
         return liveData;
+
+    }
+
+    public LiveData<BaseResponse> postFirebaseToken(String token,String imei){
+        MutableLiveData<BaseResponse> response = new MutableLiveData<>();
+        api.postFirebaseToken(token,imei) .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new SingleObserver<BaseResponse>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(BaseResponse tokenResponse) {
+                response.postValue(tokenResponse);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            response.postValue(new BaseResponse(false,"Something went wrong, please login again!",2));
+            }
+        });
+        return response;
+    }
+
+    public void error(Throwable e){
+        if(e instanceof HttpException){
+            int code = ((HttpException)e).code();
+            if(code==400)
+                error.postValue("The username or password is incorrect.");
+        }
 
     }
 

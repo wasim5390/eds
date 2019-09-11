@@ -5,23 +5,21 @@ import androidx.lifecycle.LiveData;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 
+import com.optimus.eds.Constant;
 import com.optimus.eds.db.AppDatabase;
 
 import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
-import com.optimus.eds.source.API;
-import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.ui.order.OrderBookingRepository;
 
 import java.util.List;
 
 public class OutletListRepository  extends OrderBookingRepository {
 
-    public List<Outlet> outletList;
-    private RouteDao routeDao;
+    private final RouteDao routeDao;
 
-    static OutletListRepository repository;
+    private static OutletListRepository repository;
 
     public static OutletListRepository getInstance(Application application){
         if(repository==null)
@@ -29,7 +27,7 @@ public class OutletListRepository  extends OrderBookingRepository {
         return repository;
     }
 
-    public OutletListRepository(Application application){
+    private OutletListRepository(Application application){
         super(application);
         routeDao = AppDatabase.getDatabase(application).routeDao();
     }
@@ -44,6 +42,11 @@ public class OutletListRepository  extends OrderBookingRepository {
     public Flowable<List<Outlet>> getOutletsWithNoVisits(){
         // get All planned outlet calls
         return routeDao.findOutletsWithPendingTasks(1);
+    }
+
+    public Flowable<List<Outlet>> getUnsyncedOutlets(){
+        // get All planned outlet calls
+        return routeDao.findOutletsWithPendingOrderToSync(false);
     }
 
     public LiveData<List<Route>> getRoutes(){

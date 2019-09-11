@@ -26,6 +26,9 @@ public class OrderModel {
     public Outlet outlet;
 
     @Ignore
+    boolean success;
+
+    @Ignore
     List<OrderDetail> orderDetails;
 
     @Ignore
@@ -83,6 +86,14 @@ public class OrderModel {
 
     public void setOutlet(Outlet outlet){
         this.outlet = outlet;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public JsonObject toJSON(){

@@ -1,9 +1,17 @@
 package com.optimus.eds.source;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.Context;
+import android.util.Log;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
+import java.util.logging.Logger;
 
 import androidx.annotation.IntDef;
+import androidx.core.content.ContextCompat;
 
 public class JobIdManager {
 
@@ -31,6 +39,22 @@ public class JobIdManager {
             String err = String.format("objectId %s must be between %s and %s",
                     objectId,0,(1<<JOB_TYPE_SHIFTS));
             throw new IllegalArgumentException(err);
+        }
+    }
+
+    public static void cancelJob(Context context,int outletId){
+        try {
+            int jobId =  getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId);
+            JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
+
+            jobScheduler.cancel(jobId);
+        }catch (NullPointerException e){
+            Log.e("JobCancel:",e.getMessage());
+            e.printStackTrace();
+        }
+        catch (Exception e){
+            Log.e("JobCancel:",e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -26,6 +26,7 @@ import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.model.CustomObject;
 import com.optimus.eds.model.PackageModel;
+import com.optimus.eds.source.JobIdManager;
 import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.cash_memo.CashMemoActivity;
 
@@ -133,6 +134,7 @@ public class OrderBookingActivity extends BaseActivity  {
     private void onOutletLoaded(Outlet outlet) {
         this.outlet = outlet;
         tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
+        JobIdManager.cancelJob(this,outlet.getOutletId().intValue());
     }
 
     private void onProductGroupsLoaded(List<ProductGroup> groups) {

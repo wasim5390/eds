@@ -103,6 +103,7 @@ public class OutletDetailViewModel extends AndroidViewModel {
             outlet.setVisitTimeLat(currentLocation.getLatitude());
             outlet.setVisitTimeLng(currentLocation.getLongitude());
             outlet.setVisitStatus(outletStatus);
+            outlet.setSynced(0);
             if(statusLiveData.getValue()!=null)
             uploadStatus.postValue(statusLiveData.getValue() != 1);
 
@@ -113,6 +114,7 @@ public class OutletDetailViewModel extends AndroidViewModel {
     public void postOrderWithNoOrder(boolean noOrderFromBooking){
         if(noOrderFromBooking) {
             outletStatus = 6; // 6 means no order from booking view
+            outlet.setSynced(0);
             uploadStatus.postValue(true);
             outlet.setVisitStatus(outletStatus);
             repository.updateOutlet(outlet);

@@ -1,6 +1,6 @@
 package com.optimus.eds.ui.route.outlet;
 
-import android.content.Context;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,17 +18,16 @@ import java.util.List;
 public class OutletListAdapter extends
         RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
-    private Context mContext;
-    private Callback mCallback;
+
+    private final Callback mCallback;
     private List<Outlet> outlets;
     private List<Outlet> outletsFiltered;
 
 
-    public OutletListAdapter(Context context, List<Outlet> outlets,OutletListAdapter.Callback callback) {
+    public OutletListAdapter( List<Outlet> outlets,OutletListAdapter.Callback callback) {
         this.outlets = new ArrayList<>();
         this.outletsFiltered = new ArrayList<>();
         this.mCallback = callback;
-        this.mContext = context;
         this.outlets = outlets;
         this.outletsFiltered = outlets;
     }
@@ -40,8 +39,9 @@ public class OutletListAdapter extends
 
     }
 
+    @NonNull
     @Override
-    public OutletListHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public OutletListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater =
                 LayoutInflater.from(parent.getContext());
 
@@ -51,7 +51,7 @@ public class OutletListAdapter extends
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Outlet outlet = outletsFiltered.get(position);
         ((OutletListItemView)holder.itemView).setOutlet(outlet,mCallback);
 
@@ -64,10 +64,8 @@ public class OutletListAdapter extends
 
     static class OutletListHolder extends RecyclerView.ViewHolder {
 
-        View view;
-        public OutletListHolder(View itemView) {
+        OutletListHolder(View itemView) {
             super(itemView);
-            this.view = itemView;
         }
 
     }
@@ -99,11 +97,13 @@ public class OutletListAdapter extends
 
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = outletsFiltered;
+
                 return filterResults;
             }
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                //noinspection unchecked
                 outletsFiltered = (ArrayList<Outlet>) filterResults.values;
                 notifyDataSetChanged();
             }

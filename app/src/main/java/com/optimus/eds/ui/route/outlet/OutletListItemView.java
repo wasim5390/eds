@@ -63,13 +63,14 @@ public class OutletListItemView extends ConstraintLayout {
     }
 
     private Integer getResource(){
+        Integer visitStatus = outletItem.getVisitStatus();
         Integer resourceId;
-        if(outletItem.getVisitStatus()<1)
+        if(visitStatus<1)
             resourceId = null;
-        else if(outletItem.getVisitStatus()>1 && outletItem.getVisitStatus()<=7){
+        else if((visitStatus>1 && visitStatus<=6) || visitStatus>7){
             resourceId = R.drawable.ic_tick_green;
         }else {
-            resourceId = R.drawable.ic_tick_yellow;
+            resourceId = R.drawable.ic_tick_red;
         }
         return resourceId;
     }

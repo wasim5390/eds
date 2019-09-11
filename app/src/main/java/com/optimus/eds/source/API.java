@@ -42,6 +42,10 @@ public interface API {
     @POST("token")
     Call<TokenResponse> refreshToken(@Field("grant_type") String type , @Field("username") String username, @Field("password") String password);
 
+    @FormUrlEncoded
+    @POST("api/operation/LogDeviceInfo")
+    Single<BaseResponse> postFirebaseToken(@Field("deviceToken") String firebaseToken,@Field("mobileIdentity") String imei);
+
     @GET("route/routes")
     Call<RouteOutletResponseModel> loadTodayRouteOutlets();
 

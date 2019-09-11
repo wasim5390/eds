@@ -11,6 +11,15 @@ import java.io.Serializable;
 public class BaseResponse implements Serializable {
 
 
+    public BaseResponse(Boolean success, String errorMessage, Integer errorCode) {
+        this.success = success;
+        this.errorMessage = errorMessage;
+        this.errorCode = errorCode;
+    }
+
+    public BaseResponse() {
+    }
+
     public void setSuccess(Boolean success) {
         this.success = success;
     }

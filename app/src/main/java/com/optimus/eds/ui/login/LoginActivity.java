@@ -10,15 +10,19 @@ import android.graphics.pdf.PdfRenderer;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.optimus.eds.BaseActivity;
+import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.ui.home.MainActivity;
+import com.optimus.eds.utils.NetworkManager;
 import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
@@ -32,6 +36,8 @@ import butterknife.ButterKnife;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends BaseActivity {
+
+    private static final String TAG = LoginActivity.class.getSimpleName();
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -63,6 +69,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void created(Bundle savedInstanceState) {
+
         if(!PreferenceUtil.getInstance(this).getToken().isEmpty()){
             MainActivity.start(this);
             this.finish();
@@ -138,12 +145,31 @@ public class LoginActivity extends BaseActivity {
             removeFocus();
             showProgress(true);
             viewModel.login(username,password).observe(this,tokenResponse -> {
-
+               // saveFirebaseAndImei();
+                String error= Constant.GENERIC_ERROR;
                 showProgress(false);
-                MainActivity.start(this);
-                this.finish();
+                if(tokenResponse.isSuccess()) {
+                    MainActivity.start(this);
+                    this.finish();
+                }else{
+                    Snackbar.make(mLoginFormView,error,Snackbar.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
+
+    public void saveFirebaseAndImei(){
+        try {
+            NetworkManager.getInstance().findIMEI(this).observe(this, s -> {
+                System.out.println("IMEI::" + s);
+                retrieveFireBaseToken(s);
 
             });
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e(TAG,e.getMessage());
+        }finally {
+            return;
         }
     }
 
@@ -155,6 +181,48 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    private void retrieveFireBaseToken(String imei){
+        if(imei==null)
+            return;
+        // generate if token is not saved yet.
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "getInstanceId failed", task.getException());
+                        return;
+                    }
+
+                    // Get new Instance ID token
+                    String token = task.getResult().getToken();
+                    saveImeiAndToken(token,imei);
+                    Log.d(TAG, token);
+
+
+
+                });
+    }
+
+    /**
+     * Save firebase token on server for successfully logged-in to system
+     * @param token
+     * @param imei
+     */
+    private void saveImeiAndToken(String token,String imei){
+
+        viewModel.saveFirebaseToken(token,imei).observe(this,baseResponse -> {
+            String error= Constant.GENERIC_ERROR;
+            showProgress(false);
+            if(baseResponse.isSuccess()) {
+                MainActivity.start(this);
+                this.finish();
+            }else{
+                if(baseResponse.getErrorCode()==2){
+                    error = baseResponse.getResponseMsg();
+                }
+                Snackbar.make(mLoginFormView,error,Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
 
 
     private boolean isPasswordValid(String password) {

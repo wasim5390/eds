@@ -58,6 +58,15 @@ public class Outlet implements Serializable {
                                     // 2. visited- order not taken
                                     // 3. visited- order taken and synced
 
+    private Integer synced;
+    public Integer getSynced() {
+        return synced;
+    }
+
+    public void setSynced(Integer synced) {
+        this.synced = synced;
+    }
+
 
     public Long getVisitDateTime() {
         return visitDateTime;

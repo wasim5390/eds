@@ -25,6 +25,7 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.JobIdManager;
+import com.optimus.eds.source.MasterDataUploadService;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.source.UploadOrdersService;
 import com.optimus.eds.ui.order.OrderBookingRepository;
@@ -97,18 +98,25 @@ public class HomeViewModel extends AndroidViewModel {
 
     public void pushOrdersToServer(){
 
-        List<OrderModel> count =  OrderBookingRepository.singleInstance(getApplication()).findPendingOrder().blockingFirst();
+
+        List<Outlet> count =  OutletListRepository.getInstance(getApplication()).getUnsyncedOutlets().blockingFirst();
         if(count.size()<1) {
-            getErrorMsg().postValue("Already Uploaded");
+            getErrorMsg().postValue("Updated!");
             return;
         }
+
         disposable.add(findPendingOrders()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
-                .subscribe(orderModel -> {
+                .subscribe(outlet -> {
                     Log.i(TAG,"OnNext");
-                    scheduleMasterJob(getApplication(),orderModel.getOrder().getOutletId(),"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken());
-                },this::onError,() -> Log.i(TAG,"OnComplete")));
+                    if(outlet.getVisitStatus()>=7)
+                        scheduleMasterJob(getApplication(),outlet,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken());
+                    else
+                        emptyCheckoutOrderJob(getApplication(),outlet,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken());
+                },this::onError,()->{ Log.i(TAG,"OnComplete");
+                    isLoading().postValue(false);
+                }));
 
     }
 
@@ -119,19 +127,40 @@ public class HomeViewModel extends AndroidViewModel {
         disposable.dispose();
     }
 
-    private Observable<OrderModel> findPendingOrders() {
-        return OrderBookingRepository.singleInstance(getApplication()).findPendingOrder()
+    private Observable<Outlet> findPendingOrders() {
+        return OutletListRepository.getInstance(getApplication()).getUnsyncedOutlets()
                 .concatMap(Flowable::fromIterable).toObservable().subscribeOn(Schedulers.computation());
     }
 
     // schedule
-    private void scheduleMasterJob(Context context, Long outletId, String token) {
+    private void scheduleMasterJob(Context context, Outlet outlet, String token) {
         PersistableBundle extras = new PersistableBundle();
-        extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outletId);
+        extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outlet.getOutletId());
         extras.putString(Constant.TOKEN, token);
         ComponentName serviceComponent = new ComponentName(context, UploadOrdersService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue()), serviceComponent);
+        JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outlet.getOutletId().intValue()), serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
+        builder.setMinimumLatency(1);
+        builder.setOverrideDeadline(1);
+        builder.setExtras(extras);
+        builder.setPersisted(true);
+        JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
+        Objects.requireNonNull(jobScheduler).schedule(builder.build());
+    }
+
+    private void emptyCheckoutOrderJob(Context context,Outlet outlet,String token){
+        PersistableBundle extras = new PersistableBundle();
+        extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outlet.getOutletId());
+        extras.putInt(Constant.EXTRA_PARAM_OUTLET_STATUS_ID,outlet.getVisitStatus());
+        extras.putLong(Constant.EXTRA_PARAM_OUTLET_VISIT_TIME,outlet.getVisitDateTime());
+        extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LAT,outlet.getVisitTimeLat());
+        extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LNG,outlet.getVisitTimeLng());
+        extras.putString(Constant.TOKEN, token);
+        ComponentName serviceComponent = new ComponentName(context, MasterDataUploadService.class);
+        JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outlet.getOutletId().intValue()), serviceComponent);
+        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
+        builder.setMinimumLatency(1);
+        builder.setOverrideDeadline(1);
         builder.setExtras(extras);
         builder.setPersisted(true);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);

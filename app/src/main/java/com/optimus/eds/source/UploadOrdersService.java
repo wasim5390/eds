@@ -106,7 +106,7 @@ public class UploadOrdersService extends JobService {
                     masterModel.setOrderModel(responseModel);
                     masterModel.setLocation(orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng());
                     masterModel.setOutletId(order.getOutletId());
-                    masterModel.setOutletStatus(1); // 1 for order complete
+                    masterModel.setOutletStatus(Constant.STATUS_CONTINUE); // 1 for order complete
                     masterModel.setOutletVisitTime(orderModel.getOutlet().getVisitDateTime()>0?orderModel.getOutlet().getVisitDateTime():null);
                     return masterModel;
                 }) ;
@@ -132,13 +132,10 @@ public class UploadOrdersService extends JobService {
             error(orderResponseModel);
             return;
         }
-        if(orderResponseModel!=null) {
+
+        if(orderResponseModel !=null && orderResponseModel.getOrderModel()!=null) {
             orderResponseModel.setCustomerInput(null);
             orderResponseModel.getOrderModel().setOrderDetails(null);
-        }
-
-
-        if(orderResponseModel !=null && orderResponseModel.getOrderModel()!=null)
             OrderBookingRepository.singleInstance(getApplication())
                     .findOrderById(orderResponseModel.getOrderModel().getMobileOrderId()).map(order -> {
 
@@ -149,7 +146,8 @@ public class UploadOrdersService extends JobService {
                     .subscribe(() -> {
                         Log.i("UploadOrdersService", "Order Status Updated");
                         updateOutletTaskStatus(orderResponseModel.getOutletId());
-                    },this::error);
+                    }, this::error);
+        }
         Intent intent = new Intent();
         intent.setAction(Constant.ACTION_ORDER_UPLOAD);
         intent.putExtra("Response", orderResponseModel);
@@ -160,7 +158,7 @@ public class UploadOrdersService extends JobService {
     }
 
     private void updateOutletTaskStatus(Long outletId){
-        outletDetailRepository.updateOutletVisitStatus(outletId,7); // 7 for completed task
+        outletDetailRepository.updateOutletVisitStatus(outletId,Constant.STATUS_COMPLETED,1); // 8 for completed task
     }
 
     private void error(Object throwable) throws IOException {

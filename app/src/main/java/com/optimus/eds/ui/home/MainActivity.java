@@ -64,7 +64,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void created(Bundle savedInstanceState) {
         ButterKnife.bind(this);
-        retrieveFireBaseToken();
+       // retrieveFireBaseToken();
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         viewModel.isLoading().observe(this, this::setProgress);
         viewModel.getErrorMsg().observe(this, this::showMessage);
@@ -194,20 +194,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void retrieveFireBaseToken(){
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w(TAG, "getInstanceId failed", task.getException());
-                        return;
-                    }
 
-                    // Get new Instance ID token
-                    String token = task.getResult().getToken();
-                    Log.d(TAG, token);
-
-                });
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
-import com.optimus.eds.model.OrderModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +24,13 @@ import io.reactivex.schedulers.Schedulers;
 
 
 public class OutletListViewModel extends AndroidViewModel {
-    private OutletListRepository repository;
-    public MutableLiveData<List<Outlet>> outletList;
-    public MutableLiveData<List<Route>> routeList;
-    private MutableLiveData<Boolean> isLoading;
-    private MutableLiveData<String> errorMsg;
-    private List<Outlet> allOutlets;
-    CompositeDisposable disposable;
-    Long SELECTED_ROUTE_ID;
+    private final OutletListRepository repository;
+    private final MutableLiveData<List<Outlet>> outletList;
+    private final MutableLiveData<List<Route>> routeList;
+    private final MutableLiveData<Boolean> isLoading;
+    private final MutableLiveData<String> errorMsg;
+    private final List<Outlet> allOutlets;
+    private final CompositeDisposable disposable;
 
 
     public OutletListViewModel(@NonNull Application application) {
@@ -50,16 +48,8 @@ public class OutletListViewModel extends AndroidViewModel {
 
 
 
-    public void loadRoutesFromDb() {
-
+    private void loadRoutesFromDb() {
         repository.getRoutes().observeForever(routes -> routeList.setValue(routes));
-
-   /*    Disposable allRoutesDisposable = repository.getRoutes()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onRoutesFetched, this::onError);
-
-        disposable.add(allRoutesDisposable);*/
     }
 
 
@@ -91,28 +81,12 @@ public class OutletListViewModel extends AndroidViewModel {
                         }));
 
         /////////////
-        /**
-         * Fetching individual ticket price
-         * First FlatMap converts single List<Ticket> to multiple emissions
-         * Second FlatMap makes HTTP call on each Ticket emission
-         * */
         disposable.add(
                 outletObservable
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        /**
-                         * Converting List<Ticket> emission to single Ticket emissions
-                         * */
-                        .flatMap((Function<List<Outlet>, ObservableSource<Outlet>>) tickets -> Observable.fromIterable(tickets))
-                        /**
-                         * Fetching price on each Ticket emission
-                         * */
-                        .flatMap(new Function<Outlet, ObservableSource<Outlet>>() {
-                            @Override
-                            public ObservableSource<Outlet> apply(Outlet outlet) throws Exception {
-                                return getOrderObservable(outlet);
-                            }
-                        })
+                        .flatMap((Function<List<Outlet>, ObservableSource<Outlet>>) Observable::fromIterable)
+                        .flatMap((Function<Outlet, ObservableSource<Outlet>>) this::getOrderObservable)
                         .subscribeWith(new DisposableObserver<Outlet>() {
 
                             @Override
@@ -126,7 +100,6 @@ public class OutletListViewModel extends AndroidViewModel {
                                 allOutlets.set(position, outlet);
                                 outletList.postValue(allOutlets);
 
-                                // mAdapter.notifyItemChanged(position);
                             }
 
                             @Override
@@ -170,10 +143,7 @@ public class OutletListViewModel extends AndroidViewModel {
     public LiveData<Boolean> orderTaken(Long outletId){
         MutableLiveData<Boolean> orderAlreadyTaken = new MutableLiveData<>();
         repository.findOrder(outletId).toSingle().observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread()).subscribe(orderModel -> {
-
-            orderAlreadyTaken.postValue(orderModel.getOrder().getOrderStatus()==1?true:false);
-        },throwable -> {
+                .subscribeOn(Schedulers.newThread()).subscribe(orderModel -> orderAlreadyTaken.postValue(orderModel.getOrder().getOrderStatus() == 1), throwable -> {
             if(throwable instanceof NoSuchElementException)
                 orderAlreadyTaken.postValue(false);
             else onError(throwable);
