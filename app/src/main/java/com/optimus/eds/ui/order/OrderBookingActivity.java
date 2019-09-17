@@ -121,6 +121,8 @@ public class OrderBookingActivity extends BaseActivity  {
         });
 
         viewModel.showMessage().observe(this,s -> Toast.makeText(this, s, Toast.LENGTH_SHORT).show());
+
+      //  new Handler().postDelayed(() -> JobIdManager.cancelJob(OrderBookingActivity.this,outlet.getOutletId().intValue()),2000);
     }
 
     private void pickReasonForNoOrder(){
@@ -134,7 +136,6 @@ public class OrderBookingActivity extends BaseActivity  {
     private void onOutletLoaded(Outlet outlet) {
         this.outlet = outlet;
         tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
-        JobIdManager.cancelJob(this,outlet.getOutletId().intValue());
     }
 
     private void onProductGroupsLoaded(List<ProductGroup> groups) {

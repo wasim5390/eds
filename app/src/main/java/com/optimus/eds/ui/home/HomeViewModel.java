@@ -143,7 +143,7 @@ public class HomeViewModel extends AndroidViewModel {
         builder.setMinimumLatency(1);
         builder.setOverrideDeadline(1);
         builder.setExtras(extras);
-        builder.setPersisted(true);
+        builder.setPersisted(false);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
         Objects.requireNonNull(jobScheduler).schedule(builder.build());
     }
@@ -162,7 +162,7 @@ public class HomeViewModel extends AndroidViewModel {
         builder.setMinimumLatency(1);
         builder.setOverrideDeadline(1);
         builder.setExtras(extras);
-        builder.setPersisted(true);
+        builder.setPersisted(false);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
         Objects.requireNonNull(jobScheduler).schedule(builder.build());
     }

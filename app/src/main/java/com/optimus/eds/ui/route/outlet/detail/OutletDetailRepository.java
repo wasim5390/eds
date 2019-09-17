@@ -65,7 +65,10 @@ public class OutletDetailRepository {
             if(response.isSuccessful()){
 
                 productsDao.deleteAllProducts();
+                productsDao.deleteAllProductGroups();
                 productsDao.insertProducts(response.body().getProductList());
+                productsDao.insertProductGroups(response.body().getProductGroups());
+
             }
 
         } catch (IOException e) {

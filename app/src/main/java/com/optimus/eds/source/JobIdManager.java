@@ -30,7 +30,7 @@ public class JobIdManager {
     }
 
     //16-1 for short. Adjust per your needs
-    private static final int JOB_TYPE_SHIFTS = 20;
+    private static final int JOB_TYPE_SHIFTS = 30;
 
     public static int getJobId(@JobType int jobType, int objectId) {
         if ( 0 < objectId && objectId < (1<< JOB_TYPE_SHIFTS) ) {
@@ -46,8 +46,14 @@ public class JobIdManager {
         try {
             int jobId =  getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId);
             JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
+            List<JobInfo> jobInfos = jobScheduler.getAllPendingJobs();
+            for(JobInfo jobInfo:jobInfos){
+                if(jobInfo.getId()==jobId){
+                    jobScheduler.cancel(jobId);
+                    return;
+                }
+            }
 
-            jobScheduler.cancel(jobId);
         }catch (NullPointerException e){
             Log.e("JobCancel:",e.getMessage());
             e.printStackTrace();
