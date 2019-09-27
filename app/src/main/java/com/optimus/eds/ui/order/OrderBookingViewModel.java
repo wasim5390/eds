@@ -210,7 +210,8 @@ public class OrderBookingViewModel extends AndroidViewModel {
             }
         });
 
-        orderUpdateCompletable.andThen(Completable.fromAction(()-> System.out.println("Update Order finished")))
+        orderUpdateCompletable
+                .andThen(Completable.fromAction(()-> System.out.println("Update Order finished")))
                 .andThen(removeOrderItems)
                 .andThen(Completable.fromAction(() -> System.out.println("Remove Order Items finished")))
                 .andThen(insertOrderItems).andThen(Completable.fromAction(() -> System.out.println("Insert Order Items")))

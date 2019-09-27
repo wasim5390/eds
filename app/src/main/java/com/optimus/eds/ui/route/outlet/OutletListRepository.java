@@ -23,7 +23,7 @@ public class OutletListRepository  extends OrderBookingRepository {
 
     public static OutletListRepository getInstance(Application application){
         if(repository==null)
-           repository =  new OutletListRepository(application);
+            repository =  new OutletListRepository(application);
         return repository;
     }
 
@@ -53,8 +53,16 @@ public class OutletListRepository  extends OrderBookingRepository {
         return routeDao.findAllRoutes();
     }
 
+    public int getPjpCount() {
+        return routeDao.getPjpCount(1);
+    }
 
-
+    public int getCompletedCount() {
+        return routeDao.getVisitedOutletCount();
+    }
+    public int getProductiveCount() {
+        return routeDao.getProductiveOutletCount();
+    }
 
 
 }

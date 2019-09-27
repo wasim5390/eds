@@ -5,16 +5,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+
 import android.telephony.TelephonyManager;
 
-import com.optimus.eds.Constant;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.security.Permission;
-import java.util.concurrent.Callable;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

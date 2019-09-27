@@ -167,5 +167,7 @@ public class OrderBookingRepository {
         return orderDao.findOrderItemsByOrderId(orderId);
     }
 
-
+    public Single<List<OrderModel>> getOrders(){
+        return orderDao.findAllOrders();
+    }
 }

@@ -77,6 +77,7 @@ public class OutletListViewModel extends AndroidViewModel {
 
                             @Override
                             public void onComplete() {
+
                             }
                         }));
 

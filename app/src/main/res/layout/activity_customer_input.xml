@@ -74,17 +74,32 @@
                             />
 
                         <TextView
-                            android:visibility="gone"
-                            android:id="@+id/delivery_date"
+                            android:visibility="visible"
+                            android:id="@+id/tvCnic"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="15dp"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="@string/required_delivery_date"
+                            android:text="@string/cnic"
                             android:textColor="@color/black"
                             android:textSize="14sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tvOrderAmount"
+
+                            />
+
+                        <TextView
+                            android:visibility="visible"
+                            android:id="@+id/tvStrn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="@string/customer_strn"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tvCnic"
 
                             />
 
@@ -98,7 +113,7 @@
                             android:textColor="@color/black"
                             android:textSize="14sp"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/tvDeliveryDate"
+                            app:layout_constraintTop_toBottomOf="@+id/tvStrn"
 
                             />
 
@@ -119,7 +134,7 @@
                             android:id="@+id/barrier3"
                             android:layout_height="wrap_content"
                             app:barrierDirection="right"
-                            app:constraint_referenced_ids="name,amount,delivery_date"
+                            app:constraint_referenced_ids="name,amount,customer_mobile_number"
 
                             tools:layout_editor_absoluteX="123dp"
                             android:layout_width="wrap_content" />
@@ -143,20 +158,41 @@
                             app:layout_constraintStart_toEndOf="@+id/barrier3"
                             app:layout_constraintTop_toTopOf="@+id/amount" />
 
-                        <TextView
-                            android:id="@+id/tvDeliveryDate"
-                            android:visibility="gone"
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/customer_cnic"
+                            android:visibility="visible"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
+                            android:layout_marginStart="8dp"
                             android:background="@drawable/input_bg"
-
-                            android:text="16/4/2019"
+                            android:maxLength="13"
+                            android:hint="@string/_13_digits_cnic"
+                            android:maxLines="1"
+                            android:singleLine="true"
                             android:textSize="14sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/barrier3"
-                            app:layout_constraintTop_toTopOf="@+id/delivery_date"
-                            app:layout_constraintBottom_toBottomOf="@+id/delivery_date"
+                            app:layout_constraintTop_toTopOf="@+id/tvCnic"
+                            app:layout_constraintBottom_toBottomOf="@+id/tvCnic"
+
+                            />
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/customer_strn"
+                            android:visibility="visible"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/input_bg"
+                            android:maxLength="12"
+                            android:hint="@string/sales_tax_registration_number"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/barrier3"
+                            app:layout_constraintTop_toTopOf="@+id/tvStrn"
+                            app:layout_constraintBottom_toBottomOf="@+id/tvStrn"
 
                             />
 
@@ -173,7 +209,7 @@
                             android:textSize="14sp"
                             app:layout_constraintBottom_toBottomOf="@+id/customer_mobile_number"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/customer_mobile_number"
+                            app:layout_constraintStart_toEndOf="@+id/barrier3"
                             app:layout_constraintTop_toTopOf="@+id/customer_mobile_number"
 
                             />

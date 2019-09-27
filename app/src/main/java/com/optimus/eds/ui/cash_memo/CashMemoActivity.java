@@ -115,7 +115,7 @@ public class CashMemoActivity extends BaseActivity {
             carton+= cQty!=null?cQty:0;
             units+=uQty!=null?uQty:0;
         }
-        tvQty.setText(String.valueOf(carton)+"."+String.valueOf(units));
+        tvQty.setText(carton +"."+ units);
         tvFreeQty.setText(String.valueOf(order.getFreeAvailableQty()));
 
     }

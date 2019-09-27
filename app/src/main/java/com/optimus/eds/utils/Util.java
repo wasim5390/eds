@@ -32,8 +32,10 @@ import java.util.Locale;
 public class Util {
     public static final String DATE_FORMAT_1 = "MM/dd/yyyy hh:mm:ss";
     public static final String DATE_FORMAT_2 = "MMM dd";
-    public static final String DATE_FORMAT_3 = "hh:mm a";
+    public static final String DATE_FORMAT_3 = "MMM-dd";
+    public static final String DATE_FORMAT_5 = "hh:mm a";
     public static final String DATE_FORMAT_4 = "MM/dd/yyyy hh:mm a";
+
     private static final String TAG = "Util";
 
    /* public static String getAuthorizationHeader(Context context) throws UnsupportedEncodingException {

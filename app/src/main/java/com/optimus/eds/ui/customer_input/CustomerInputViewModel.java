@@ -107,12 +107,12 @@ public class CustomerInputViewModel extends AndroidViewModel {
     }
 
 
-    public void saveOrder(String mobileNumber,String remarks,String base64Sign,long deliveryDate){
+    public void saveOrder(String mobileNumber,String remarks,String cnic,String strn,String base64Sign,long deliveryDate){
         isSaving.postValue(true);
         OrderModel orderModel = orderModelLiveData.getValue();
         Order order = orderModel.getOrder();
 
-        CustomerInput customerInput = new CustomerInput(outletId,order.getLocalOrderId(),deliveryDate,mobileNumber,remarks,base64Sign);
+        CustomerInput customerInput = new CustomerInput(outletId,order.getLocalOrderId(),mobileNumber,cnic,strn,remarks,base64Sign);
 
         customerInputRepository.saveCustomerInput(customerInput)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -128,6 +128,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
 
     public void postData(OrderModel orderModel,Long deliveryDate,CustomerInput customerInput){
         updateOutletTaskStatus(outletId,Constant.STATUS_PENDING_TO_SYNC,0);
+        outletDetailRepository.updateOutletCnic(outletId,customerInput.getMobileNumber(),customerInput.getCnic(),customerInput.getStrn());
         NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {
             if (!aBoolean){
                  scheduleMasterJob(getApplication(),outletId,Constant.STATUS_COMPLETED,orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng(),

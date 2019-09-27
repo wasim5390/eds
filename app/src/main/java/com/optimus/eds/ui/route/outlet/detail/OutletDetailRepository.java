@@ -45,7 +45,10 @@ public class OutletDetailRepository {
 
     public void  updateOutletVisitStatus(Long outletId, Integer visitStatus,int synced){
         AsyncTask.execute(() -> routeDao.updateOutletVisitStatus(outletId,visitStatus,synced));
+    }
 
+    public void  updateOutletCnic(Long outletId,String mobileNumber, String cnic,String strn){
+        AsyncTask.execute(() -> routeDao.updateOutletCnic(outletId,mobileNumber,cnic,strn));
     }
 
     public void updateOutlet(Outlet outlet){

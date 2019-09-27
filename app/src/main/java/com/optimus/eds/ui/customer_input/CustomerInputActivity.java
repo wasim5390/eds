@@ -19,14 +19,10 @@ import com.optimus.eds.BaseActivity;
 import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
-import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.model.OrderModel;
-import com.optimus.eds.model.OrderResponseModel;
-import com.optimus.eds.ui.customer_complaints.CustomerComplaintsActivity;
 import com.optimus.eds.utils.Util;
 
-import java.io.Serializable;
 import java.util.Calendar;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -46,10 +42,12 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
     @BindView(R.id.tvOrderAmount)
     TextView tvOrderAmount;
 
-    @BindView(R.id.tvDeliveryDate)
-    TextView tvDeliveryDate;
     @BindView(R.id.etMobileNumber)
     EditText etMobileNumber;
+    @BindView(R.id.customer_cnic)
+    EditText etCnic;
+    @BindView(R.id.customer_strn)
+    EditText etStrn;
     @BindView(R.id.etCustomerRemarks)
     EditText etCustomerRemarks;
 
@@ -79,7 +77,7 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
         signaturePad.setMaxWidth(2);
         signaturePad.setOnSignedListener(this);
         setObserver();
-        tvDeliveryDate.setText(Util.formatDate("MM/dd/yyyy",calendar.getTimeInMillis()));
+
 
     }
 
@@ -103,6 +101,9 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
 
     private void onOutletLoaded(Outlet outlet) {
         tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
+        etMobileNumber.setText(outlet.getMobileNumber());
+        etCnic.setText(outlet.getCnic());
+        etStrn.setText(outlet.getStrn());
     }
 
 
@@ -133,7 +134,6 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, monthOfYear);
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        tvDeliveryDate.setText(Util.formatDate("MM/dd/yyyy",calendar.getTimeInMillis()));
     };
 
     @OnClick(R.id.btnClearSignature)
@@ -141,10 +141,12 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
         signaturePad.clear();
     }
 
-    @OnClick(R.id.tvDeliveryDate)
+
     public void deliveryDateClick(){
         onDatePickerClick();
     }
+
+
 
     @OnClick(R.id.btnNext)
     public void navigateToComplaints(){
@@ -155,8 +157,11 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
         }
         String mobileNumber = etMobileNumber.getText().toString();
         String remarks = etCustomerRemarks.getText().toString();
+        String cnic = etCnic.getText().toString();
+        String strn = etStrn.getText().toString();
         String base64Sign = Util.compressBitmap(signature);
-        viewModel.saveOrder(mobileNumber,remarks,base64Sign,calendar.getTimeInMillis());
+
+        viewModel.saveOrder(mobileNumber,remarks,cnic,strn,base64Sign,calendar.getTimeInMillis());
     }
     @Override
     public void onStartSigning() {

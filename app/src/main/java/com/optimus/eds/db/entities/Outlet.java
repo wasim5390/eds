@@ -57,6 +57,13 @@ public class Outlet implements Serializable {
     private Integer mVisitStatus; // 1. visited-order taken
                                     // 2. visited- order not taken
                                     // 3. visited- order taken and synced
+    @SerializedName("cnic")
+    private String cnic;
+    @SerializedName("strn")
+    private String strn;
+
+    @SerializedName("mobileNumber")
+    private String mobileNumber;
 
     private Integer synced;
     public Integer getSynced() {
@@ -67,7 +74,29 @@ public class Outlet implements Serializable {
         this.synced = synced;
     }
 
+    public String getStrn() {
+        return strn==null?"":strn;
+    }
 
+    public void setStrn(String strn) {
+        this.strn = strn;
+    }
+
+    public String getCnic() {
+        return cnic==null?"":cnic;
+    }
+
+    public void setCnic(String mCnic) {
+        this.cnic = mCnic;
+    }
+
+    public String getMobileNumber() {
+         return mobileNumber==null?"":mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
     public Long getVisitDateTime() {
         return visitDateTime;
     }

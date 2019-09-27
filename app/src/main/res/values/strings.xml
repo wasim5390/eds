@@ -35,8 +35,9 @@
     <string name="clear_signature">Clear Signature</string>
     <string name="customer_signature">Customer Signature</string>
     <string name="customer_input">Customer Input</string>
+
     <string name="order_amount">Order Amount:</string>
-    <string name="required_delivery_date">Required Delivery Date:</string>
+    <string name="cnic">Customer CNIC:</string>
     <string name="remarks">Remarks:</string>
     <string name="after_merchandize">After Merchandise</string>
     <string name="before_merchandize">Before Merchandise</string>
@@ -109,6 +110,12 @@
     <string name="checkout_without_order_msg">Are you sure you want to checkout without any order?</string>
     <string name="fcm_message">EDS Notification</string>
     <string name="default_notification_channel_id">eds_system</string>
+    <string name="customer_strn">Customer STRN :</string>
+    <string name="sales_tax_registration_number">Sales tax registration number</string>
+    <string name="_13_digits_cnic">13 digits CNIC</string>
+    <string name="planned">Planned</string>
+    <string name="completed">Completed</string>
+    <string name="productive">Productive</string>
 
 
 </resources>

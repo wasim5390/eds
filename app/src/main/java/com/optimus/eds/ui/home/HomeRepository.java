@@ -34,10 +34,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
 import io.reactivex.CompletableSource;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -119,16 +122,41 @@ public class HomeRepository {
             try {
                 Response<RouteOutletResponseModel> response = webService.loadTodayRouteOutlets().execute();
                 if(response.isSuccessful()){
-                    //routeDao.deleteAllOutlets();
-                    routeDao.deleteAllRoutes();
-                    routeDao.deleteAllAssets();
-                    if(onDayStart) {
-                        merchandiseDao.deleteAllMerchandise();
-                        customerDao.deleteAllCustomerInput();
-                    }
-                    routeDao.insertRoutes(response.body().getRouteList());
-                    routeDao.insertOutlets(response.body().getOutletList());
-                    routeDao.insertAssets(response.body().getAssetList());
+                    //
+                    deleteAllRoutesAssets().andThen(Completable.fromAction(() -> {
+                        if(onDayStart)
+                        {
+                            routeDao.deleteAllOutlets();
+                            routeDao.deleteAllMerchandise();
+                            customerDao.deleteAllCustomerInput();
+                        }
+                    })).andThen(Completable.fromAction(() -> {
+                        routeDao.insertRoutes(response.body().getRouteList());
+                    })).andThen(Completable.fromAction(() ->  routeDao.insertOutlets(response.body().getOutletList())))
+                            .andThen(Completable.fromAction(() -> { routeDao.insertAssets(response.body().getAssetList());}))
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(Schedulers.single()).subscribe(new CompletableObserver() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                        Log.e(TAG,e.getMessage());
+                        e.printStackTrace();
+                        }
+                    });
+
+
+
+
+
 
                 }
                 else{
@@ -142,6 +170,8 @@ public class HomeRepository {
 
 
         });
+
+
 
         executor.execute(() -> {
             try {
@@ -174,6 +204,24 @@ public class HomeRepository {
         });
 
 
+    }
+
+    public Completable deleteAllRoutesAssets(){
+        return Completable.fromAction(()->{
+            routeDao.deleteAllRoutes();
+            routeDao.deleteAllAssets();
+        });
+    }
+    public Completable deleteAllOutlets(){
+        return Completable.fromAction(()->routeDao.deleteAllOutlets());
+    }
+
+    public Completable deleteAllMerchandise(){
+        return Completable.fromAction(()->routeDao.deleteAllMerchandise());
+    }
+
+    public Completable deleteAllCustomerInput(){
+        return Completable.fromAction(() -> customerDao.deleteAllCustomerInput());
     }
 
     /**
