@@ -8,94 +8,76 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="5dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="5dp"
         >
         <androidx.gridlayout.widget.GridLayout
             android:id="@+id/top_summary_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
+
             android:layout_marginTop="5dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:columnCount="3"
-            app:rowCount="1"
+            app:rowCount="2"
             android:padding="1dp"
-           android:background="@color/white"
-
-            >
-            <LinearLayout
+            android:background="@color/white">
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_columnWeight="1"
                 app:layout_rowWeight="1"
-               android:background="@color/grey"
-                android:orientation="vertical"
+                android:background="@color/grey"
                 android:gravity="center"
                 android:layout_marginEnd="1dp"
-                >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/roboto_medium"
-                    android:textSize="16sp"
-                    android:text="@string/planned"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/white"
-                    />
-                <TextView
-                    android:id="@+id/tvPlannedCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/roboto_medium"
-                    android:textSize="16sp"
-                    android:text="50"/>
-            </LinearLayout>
-            <LinearLayout
-
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/planned"/>
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_columnWeight="1"
                 app:layout_rowWeight="1"
-                android:background="@color/colorAccent"
-                android:orientation="vertical"
+                android:background="@color/grey"
                 android:gravity="center"
                 android:layout_marginEnd="1dp"
-                >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/roboto_medium"
-                    android:textSize="16sp"
-                    android:text="@string/completed"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/white"
-                    />
-                <TextView
-                    android:id="@+id/tvCompletedCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/roboto_medium"
-                    android:textSize="16sp"
-                    android:text="50"/>
-            </LinearLayout>
-            <LinearLayout
-
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/completed"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:background="@color/grey"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/productive"/>
+            <TextView
+                android:id="@+id/tvPlannedCount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:background="@color/grey"
+                android:gravity="center"
+                android:layout_marginEnd="1dp"
+                android:layout_marginTop="1dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="16sp"
+                android:text="100"/>
+            <TextView
+                android:id="@+id/tvCompletedCount"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_columnWeight="1"
@@ -103,82 +85,195 @@
                 android:background="@color/grey"
                 android:orientation="vertical"
                 android:gravity="center"
-                >
+                android:layout_marginEnd="1dp"
+                android:layout_marginTop="1dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="16sp"
+                android:text="150"/>
+            <TextView
+                android:id="@+id/tvProductiveCount"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:background="@color/grey"
+                android:layout_marginTop="1dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="16sp"
+                android:text="200"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/roboto_medium"
-                    android:textSize="16sp"
-                    android:text="@string/productive"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/white"
-                    />
-                <TextView
-                    android:id="@+id/tvProductiveCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/roboto_medium"
-                    android:textSize="16sp"
-                    android:text="50"/>
-            </LinearLayout>
+
 
         </androidx.gridlayout.widget.GridLayout>
-        <LinearLayout
+
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/top_summary_view2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/total_order_view"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
+
+            android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/top_summary_view"
-            app:layout_constraintEnd_toEndOf="@id/unit_qty_view"
-            android:gravity="center"
-            android:orientation="vertical"
-            >
+            app:columnCount="2"
+            app:rowCount="2"
+            android:padding="1dp"
+            android:background="@color/white">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="@color/black"
-                android:text="Total Orders"
-                android:textSize="18sp"
-
-                />
-            <TextView
-                android:id="@+id/tvOrders"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:fontFamily="@font/roboto_bold"
-                android:background="@drawable/reports_bg_1"
-                android:textColor="@color/white"
-                android:text="0"
-                android:textSize="30sp"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:background="@color/grey"
                 android:gravity="center"
-                android:padding="20dp"
+                android:layout_marginEnd="1dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/completion_rate"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:background="@color/grey"
+                android:gravity="center"
+                android:layout_marginEnd="1dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/strike_rate"/>
 
-                />
-        </LinearLayout>
+            <TextView
+                android:id="@+id/tvCompRate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:background="@color/grey"
+                android:gravity="center"
+                android:layout_marginEnd="1dp"
+                android:layout_marginTop="1dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="16sp"
+                android:text="90 %"/>
+            <TextView
+                android:id="@+id/tvStrikeRate"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:background="@color/grey"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginEnd="1dp"
+                android:layout_marginTop="1dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="16sp"
+                android:text="150"/>
+
+
+
+
+        </androidx.gridlayout.widget.GridLayout>
+
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/top_summary_view3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/top_summary_view2"
+            app:columnCount="2"
+            app:rowCount="2"
+            android:padding="1dp"
+            android:background="@color/white">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:background="@color/grey"
+                android:gravity="center"
+                android:layout_marginEnd="1dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/avg_sku"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:background="@color/grey"
+                android:gravity="center"
+                android:layout_marginEnd="1dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="16sp"
+                android:text="@string/drop_size"/>
+
+            <TextView
+                android:id="@+id/tvAvgSku"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:background="@color/grey"
+                android:gravity="center"
+                android:layout_marginEnd="1dp"
+                android:layout_marginTop="1dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="16sp"
+                android:text="90 %"/>
+            <TextView
+                android:id="@+id/tvDropSize"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                android:background="@color/grey"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginEnd="1dp"
+                android:layout_marginTop="1dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="16sp"
+                android:text="150"/>
+
+
+
+
+        </androidx.gridlayout.widget.GridLayout>
+
+
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/carton_qty_view"
-            android:layout_marginStart="5dp"
+
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/unit_qty_view"
-            app:layout_constraintTop_toBottomOf="@id/total_order_view"
+            app:layout_constraintTop_toBottomOf="@id/top_summary_view3"
             android:gravity="center"
             android:orientation="vertical"
             >
@@ -189,12 +284,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:fontFamily="@font/roboto_medium"
                 android:textColor="@color/black"
-                android:text="@string/carton_s"
+                android:text="@string/carton_unit"
                 android:textSize="18sp"
 
                 />
             <TextView
-                android:id="@+id/tvCartonQty"
+                android:id="@+id/tvOrderQty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
@@ -203,93 +298,58 @@
                 android:fontFamily="@font/roboto_bold"
                 android:background="@drawable/reports_bg_1"
                 android:textColor="@color/white"
-                android:text="0"
-                android:textSize="30sp"
+                android:text="50"
+                android:textSize="20sp"
                 android:gravity="center"
-                android:padding="20dp"
+                android:padding="10dp"
 
                 />
         </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/unit_qty_view"
-                android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/unit_qty_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/carton_qty_view"
+            app:layout_constraintStart_toEndOf="@id/carton_qty_view"
+
+
+            android:orientation="vertical"
+            android:gravity="center"
+
+            >
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/carton_qty_view"
-                app:layout_constraintStart_toEndOf="@id/carton_qty_view"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/black"
+                android:text="@string/amount"
+                android:textSize="18sp"
                 android:gravity="center"
 
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:fontFamily="@font/roboto_medium"
-                    android:textColor="@color/black"
-                    android:text="@string/unit"
-                    android:textSize="18sp"
-                    android:gravity="center"
-
-                    />
-                <TextView
-                    android:id="@+id/tvUnitQty"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:fontFamily="@font/roboto_bold"
-                    android:textColor="@color/white"
-                    android:text="0"
-                    android:textSize="30sp"
-                    android:gravity="center"
-                    android:layout_marginTop="5dp"
-                    android:padding="20dp"
-                    android:background="@drawable/reports_bg_1"
-
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
+                />
+            <TextView
+                android:id="@+id/tvOrderAmount"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/carton_qty_view"
-                app:layout_constraintStart_toStartOf="@id/carton_qty_view"
-                app:layout_constraintEnd_toEndOf="@id/unit_qty_view"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="@color/white"
 
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:layout_marginTop="50dp"
-                android:orientation="horizontal"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Today's Sale:"
-                    android:fontFamily="@font/roboto_medium"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:layout_marginEnd="10dp"
-                    />
-                <TextView
-                    android:id="@+id/tvSaleValue"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Rs 00.00"
-                    android:fontFamily="@font/roboto_medium"
-                    android:background="@drawable/rounded_white_bg"
-                    android:textColor="@color/black"
-                    android:textSize="30sp"
-                    android:padding="15dp"
+                android:text="Rs 00.00"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:layout_marginTop="5dp"
+                android:padding="10dp"
+                android:background="@drawable/reports_bg_1"
 
-                    />
+                />
+        </LinearLayout>
 
-
-            </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

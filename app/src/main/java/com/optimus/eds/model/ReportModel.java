@@ -5,13 +5,13 @@ package com.optimus.eds.model;
 public class ReportModel {
 
     private Long mCarton;
-    private Double mTotalSale;
+    private Double mGrandTotal;
     private Long mUnit;
     private Integer mSkuSize;
     private Integer totalOrders;
 
 
-    private Integer pjpCount,completedTaskCount,productiveOutletCount;
+    private Integer pjpCount, completedOutletsCount,productiveOutletCount;
 
     public Long getCarton() {
         return mCarton;
@@ -21,12 +21,12 @@ public class ReportModel {
         mCarton = carton;
     }
 
-    public Double getTotalSale() {
-        return mTotalSale;
+    public Double getTotalAmount() {
+        return mGrandTotal;
     }
 
-    public void setTotalSale(Double totalSale) {
-        mTotalSale = totalSale;
+    public void setTotalSale(Double totalAmount) {
+        mGrandTotal = totalAmount;
     }
 
     public Long getUnit() {
@@ -45,12 +45,26 @@ public class ReportModel {
          return mSkuSize==null?0:mSkuSize;
     }
 
+    public float getAvgSkuSize(){
+        if(getProductiveOutletCount()<1)
+            return 0;
+        int skuSize = getSkuSize();
+        return skuSize/ getProductiveOutletCount();
+    }
+
+    public float getDropSize(){
+        if(getProductiveOutletCount()<1)
+            return 0;
+        int totalOrder = getTotalOrders();
+        return totalOrder/ getProductiveOutletCount();
+    }
+
     public void setSkuSize(int mSkuSize) {
         this.mSkuSize = mSkuSize;
     }
 
     public Integer getPjpCount() {
-        return pjpCount;
+        return pjpCount==null?0:pjpCount;
     }
 
     public void setPjpCount(Integer pjpCount) {
@@ -59,20 +73,20 @@ public class ReportModel {
 
     public void setCounts(Integer pjpCount,Integer completedTaskCount, Integer productiveOutletCount) {
         this.pjpCount = pjpCount;
-        this.completedTaskCount = completedTaskCount;
+        this.completedOutletsCount = completedTaskCount;
         this.productiveOutletCount = productiveOutletCount;
     }
 
-    public Integer getCompletedTaskCount() {
-        return completedTaskCount;
+    public Integer getCompletedOutletsCount() {
+        return completedOutletsCount ==null?0: completedOutletsCount;
     }
 
-    public void setCompletedTaskCount(Integer completedTaskCount) {
-        this.completedTaskCount = completedTaskCount;
+    public void setCompletedOutletsCount(Integer completedTaskCount) {
+        this.completedOutletsCount = completedTaskCount;
     }
 
     public Integer getProductiveOutletCount() {
-        return productiveOutletCount;
+        return productiveOutletCount==null?0:productiveOutletCount;
     }
 
     public void setProductiveOutletCount(Integer productiveOutletCount) {

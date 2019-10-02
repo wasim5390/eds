@@ -37,6 +37,7 @@
     <string name="customer_input">Customer Input</string>
 
     <string name="order_amount">Order Amount:</string>
+    <string name="amount">Total Amount</string>
     <string name="cnic">Customer CNIC:</string>
     <string name="remarks">Remarks:</string>
     <string name="after_merchandize">After Merchandise</string>
@@ -82,6 +83,7 @@
     <string name="product_group">Product Group:</string>
     <string name="unit">Unit(s)</string>
     <string name="carton_s">Carton(s)</string>
+    <string name="carton_unit">Carton(Unit)</string>
     <string name="edit">Edit Order</string>
     <string name="scanned">Scanned</string>
     <string name="enter_remarks_here">Enter Remarks Here</string>
@@ -116,6 +118,10 @@
     <string name="planned">Planned</string>
     <string name="completed">Completed</string>
     <string name="productive">Productive</string>
+    <string name="completion_rate">Completion Rate</string>
+    <string name="strike_rate">Strike Rate</string>
+    <string name="avg_sku">Avg Sku</string>
+    <string name="drop_size">Drop Size</string>
 
 
 </resources>
