@@ -22,7 +22,7 @@ public class ReportModel {
     }
 
     public Double getTotalAmount() {
-        return mGrandTotal;
+        return mGrandTotal==null?0:mGrandTotal;
     }
 
     public void setTotalSale(Double totalAmount) {
@@ -49,14 +49,13 @@ public class ReportModel {
         if(getProductiveOutletCount()<1)
             return 0;
         int skuSize = getSkuSize();
-        return skuSize/ getProductiveOutletCount();
+        return (float)skuSize/ getProductiveOutletCount();
     }
 
-    public float getDropSize(){
+    public Double getDropSize(){
         if(getProductiveOutletCount()<1)
-            return 0;
-        int totalOrder = getTotalOrders();
-        return totalOrder/ getProductiveOutletCount();
+            return 0.0;
+        return getTotalAmount()/ getProductiveOutletCount();
     }
 
     public void setSkuSize(int mSkuSize) {

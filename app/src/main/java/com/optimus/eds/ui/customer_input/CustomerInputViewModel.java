@@ -42,6 +42,7 @@ import com.optimus.eds.utils.NetworkManager;
 import com.optimus.eds.utils.PreferenceUtil;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -165,7 +166,9 @@ public class CustomerInputViewModel extends AndroidViewModel {
     private void uploadMasterData(MasterModel masterModel) {
 
         RetrofitHelper.getInstance().getApi().saveOrder(masterModel,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken())
-                .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(this::onUpload,this::error);
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::onUpload,this::error);
     }
 
     private void onUpload(MasterModel orderResponseModel) throws IOException{
@@ -218,6 +221,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
         ComponentName serviceComponent = new ComponentName(context, UploadOrdersService.class);
         JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue()), serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
+
         builder.setMinimumLatency(1);
         builder.setOverrideDeadline(1);
         builder.setExtras(extras);
@@ -267,8 +271,10 @@ public class CustomerInputViewModel extends AndroidViewModel {
 
     private void error(Object throwable) throws IOException {
         String errorBody = Constant.GENERIC_ERROR;
-        if (throwable instanceof IOException || throwable instanceof TimeoutException){
-            errorBody = "Please check your internet connection";
+        if (throwable instanceof IOException || throwable instanceof TimeoutException
+        || throwable instanceof SocketTimeoutException
+        ){
+            errorBody = Constant.NETWORK_ERROR;
             msg.postValue(errorBody);
             isSaving.postValue(false); return;
         }else if(throwable instanceof Throwable) {

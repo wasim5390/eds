@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.OrderDetail;
 
 public class OrderResponseModel extends BaseResponse{
@@ -25,6 +26,9 @@ public class OrderResponseModel extends BaseResponse{
     private Long orderDate;
     @Expose
     private List<OrderDetail> orderDetails;
+
+    @Expose
+    private List<CartonPriceBreakDown> priceBreakDown;
     @Expose
     private Long orderId;
     @Expose
@@ -190,6 +194,10 @@ public class OrderResponseModel extends BaseResponse{
 
     public void setVisitDayId(Long visitDayId) {
         this.visitDayId = visitDayId;
+    }
+
+    public List<CartonPriceBreakDown> getPriceBreakDown() {
+        return priceBreakDown;
     }
 
 }

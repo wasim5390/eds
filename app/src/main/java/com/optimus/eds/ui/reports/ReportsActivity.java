@@ -75,7 +75,7 @@ public class ReportsActivity extends BaseActivity {
         int productive = summary.getProductiveOutletCount();
 
         float avgSku = summary.getAvgSkuSize();
-        float dropSize = summary.getDropSize();
+        double dropSize = summary.getDropSize();
 
         float compRate =(completed/planned)*100;
         float strikeRate = (productive/planned)*100;

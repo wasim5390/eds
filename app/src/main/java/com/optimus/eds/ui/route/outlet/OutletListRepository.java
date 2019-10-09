@@ -54,7 +54,7 @@ public class OutletListRepository  extends OrderBookingRepository {
     }
 
     public int getPjpCount() {
-        return routeDao.getPjpCount(1);
+        return routeDao.getPjpCount();
     }
 
     public int getCompletedCount() {

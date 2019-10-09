@@ -6,8 +6,12 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import com.google.gson.annotations.SerializedName;
+import com.optimus.eds.db.converters.PriceBreakdownConverter;
+
+import java.util.List;
 
 @Entity (foreignKeys =
 @ForeignKey(
@@ -56,6 +60,11 @@ public class Order {
     @SerializedName("distributionId")
     private Long distributionId;
 
+    @SerializedName("priceBreakDown")
+    @TypeConverters(PriceBreakdownConverter.class)
+    public List<CartonPriceBreakDown> priceBreakDown;
+
+
     public Long getDistributionId() {
         return distributionId;
     }
@@ -64,7 +73,13 @@ public class Order {
         this.distributionId = distributionId;
     }
 
+    public List<CartonPriceBreakDown> getPriceBreakDown() {
+        return priceBreakDown;
+    }
 
+    public void setPriceBreakDown(List<CartonPriceBreakDown> priceBreakDown) {
+        this.priceBreakDown = priceBreakDown;
+    }
 
     public Order(Long outletId) {
         this.outletId = outletId;

@@ -9,7 +9,6 @@ import android.content.Context;
 
 import com.optimus.eds.db.converters.AssetConverter;
 import com.optimus.eds.db.converters.MerchandiseItemConverter;
-import com.optimus.eds.db.converters.OutletConverter;
 import com.optimus.eds.db.converters.ProductConverter;
 import com.optimus.eds.db.dao.CustomerDao;
 import com.optimus.eds.db.dao.MerchandiseDao;
@@ -34,8 +33,8 @@ import com.optimus.eds.db.entities.UnitPriceBreakDown;
         Product.class, Package.class, Order.class,
         OrderDetail.class, CartonPriceBreakDown.class,
         UnitPriceBreakDown.class, CustomerInput.class
-}, version = 1, exportSchema = false)
-@TypeConverters({OutletConverter.class, MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
+}, version = 2, exportSchema = false)
+@TypeConverters({MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
 
 public abstract class AppDatabase extends RoomDatabase {
 

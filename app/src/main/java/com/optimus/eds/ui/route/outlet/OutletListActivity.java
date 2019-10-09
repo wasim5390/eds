@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.optimus.eds.BaseActivity;
+import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
@@ -62,6 +65,7 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
     int SELECTED_ROUTE_INDEX=0;
     int SELECTED_TAB=0;
     Route route;
+    private String TAG=OutletListActivity.class.getSimpleName();
 
     public static void start(Context context) {
         Intent starter = new Intent(context, OutletListActivity.class);
@@ -249,6 +253,23 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver(orderUploadSuccessReceiver,new IntentFilter(Constant.ACTION_ORDER_UPLOAD));
+        Log.i(TAG,"Receiver Regd");
+    }
+
+    @Override
+    protected void onStop() {
+        if (orderUploadSuccessReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(orderUploadSuccessReceiver);
+            Log.i(TAG,"Receiver UnRegd");
+
+        }
+        super.onStop();
     }
 
     @Override

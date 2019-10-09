@@ -1,5 +1,6 @@
 package com.optimus.eds;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -10,9 +11,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 import com.optimus.eds.db.AppDatabase;
+import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.ui.ProgressFragmentDialog;
 
 
@@ -160,6 +163,15 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
     }
 
 
+    protected BroadcastReceiver orderUploadSuccessReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction()==Constant.ACTION_ORDER_UPLOAD){
+                MasterModel response = (MasterModel) intent.getSerializableExtra("Response");
+                Toast.makeText(context, response.isSuccess()?"Order Uploaded Successfully!":response.getResponseMsg(), Toast.LENGTH_SHORT).show();
 
+            }
+        }
+    };
 
 }

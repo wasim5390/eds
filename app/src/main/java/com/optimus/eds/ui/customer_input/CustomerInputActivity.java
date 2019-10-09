@@ -185,7 +185,6 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
     protected void onDestroy() {
         if (orderUploadSuccessReceiver != null) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(orderUploadSuccessReceiver);
-            orderUploadSuccessReceiver = null;
         }
         super.onDestroy();
     }
@@ -201,4 +200,5 @@ public class CustomerInputActivity extends BaseActivity implements SignaturePad.
             }
         }
     };
+
 }

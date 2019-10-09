@@ -26,10 +26,13 @@ import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -170,6 +173,11 @@ public class UploadOrdersService extends JobService {
             if (throwable instanceof HttpException) {
                 HttpException error = (HttpException) throwable;
                 errorBody = error.response().errorBody().string();
+            }
+            if (throwable instanceof SocketTimeoutException
+            || throwable instanceof SocketException
+            ) {
+                errorBody = Constant.NETWORK_ERROR;
             }
         }else{
             errorBody =((MasterModel)throwable).getResponseMsg();
