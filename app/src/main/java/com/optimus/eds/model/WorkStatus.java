@@ -10,7 +10,7 @@ public class WorkStatus {
     }
 
     public Long getSyncDate() {
-        return syncDate;
+        return syncDate==null?0L:syncDate;
     }
 
     public void setSyncDate(Long syncDate) {

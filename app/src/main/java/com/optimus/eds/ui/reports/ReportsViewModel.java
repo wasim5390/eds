@@ -4,10 +4,12 @@ import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.ReportModel;
 
+import com.optimus.eds.ui.order.OrderManager;
 import com.optimus.eds.ui.route.outlet.OutletListRepository;
 
 
@@ -35,7 +37,8 @@ public class ReportsViewModel extends AndroidViewModel {
     private CompositeDisposable disposable = new CompositeDisposable();
     private MutableLiveData<ReportModel> summaryMutable;
     private ReportModel reportModel;
-    private List<Long> skuList;
+
+    private List<OrderDetail> orderDetailList; // this list is sku based
     private Double total=0.0;
     private Long carton=0l;
     private Long unit = 0l;
@@ -46,7 +49,7 @@ public class ReportsViewModel extends AndroidViewModel {
     public ReportsViewModel(@NonNull Application application) {
         super(application);
         repository = OutletListRepository.getInstance(application);
-        skuList = new ArrayList<>();
+        orderDetailList = new ArrayList<>();
         reportModel = new ReportModel();
         summaryMutable = new MutableLiveData<>();
     }
@@ -82,27 +85,50 @@ public class ReportsViewModel extends AndroidViewModel {
                         total+=price;
                         for(OrderDetailAndPriceBreakdown detailAndPriceBreakdown:orderDetail.getOrderDetailAndCPriceBreakdowns())
                         {
-                            Integer cQty = detailAndPriceBreakdown.getOrderDetail().getCartonQuantity();
-                            Integer uQty = detailAndPriceBreakdown.getOrderDetail().getUnitQuantity();
-                            carton+= cQty!=null?cQty:0;
-                            unit+=uQty!=null?uQty:0;
-                            Long sku= detailAndPriceBreakdown.getOrderDetail().getProductId();
+                            OrderDetail orderItem = detailAndPriceBreakdown.getOrderDetail();
+                            Integer cQty = orderItem.getCartonQuantity();
+                            Integer uQty = orderItem.getUnitQuantity();
+                            cQty= cQty!=null?cQty:0;
+                            uQty = uQty!=null?uQty:0;
+
+                            if(orderDetailList.contains(orderItem)){
+                                int pos = orderDetailList.indexOf(orderItem);
+                                OrderDetail savedItem = orderDetailList.get(pos);
+                                int cartons = savedItem.getCartonQuantity()+cQty;
+                                int units = savedItem.getUnitQuantity()+uQty;
+
+                              OrderManager.OrderQuantity quantity =   OrderManager.instance().calculateOrderQty(orderItem.getCartonSize(),units,cartons);
+                                orderDetailList.get(pos).setCartonQuantity(quantity.getCarton());
+                                orderDetailList.get(pos).setUnitQuantity(quantity.getUnits());
+                            }else{
+                                orderDetailList.add(orderItem);
+                            }
+
+                           // carton+= cQty;
+                           // unit+=uQty;
+                         /*   Long sku= detailAndPriceBreakdown.getOrderDetail().getProductId();
                             if(!skuList.contains(sku)){
                                 skuList.add(sku);
-                            }
+                            }*/
+
+
                         }
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.e("ReportsViewModel",e.getMessage());
-                        summaryMutable.postValue(setSummary(total,carton,unit,totalOrder,skuList.size()));
+                        summaryMutable.postValue(setSummary(total,carton,unit,totalOrder,orderDetailList.size()));
                     }
 
                     @Override
                     public void onComplete() {
-
-                        summaryMutable.postValue(setSummary(total,carton,unit,totalOrder,skuList.size()));
+                        for (OrderDetail item: orderDetailList) {
+                            carton+=item.getCartonQuantity()!=null?item.getCartonQuantity():0;
+                            unit+=item.getUnitQuantity()!=null?item.getUnitQuantity():0;
+                        }
+                        summaryMutable.postValue(setSummary(total,carton,unit,totalOrder,orderDetailList.size()));
                     }
                 }));
 

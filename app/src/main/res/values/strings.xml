@@ -93,6 +93,7 @@
     <string name="update_routes_title">Update Routes and Outlets!</string>
     <string name="update_routes_msg">Are you sure you want to fetch updated routes and outlets?</string>
     <string name="day_already_ended">Your day has already ended</string>
+    <string name="already_updated">Already Updated</string>
     <string name="title_activity_login">Sign in</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Username</string>

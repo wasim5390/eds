@@ -137,6 +137,20 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
 
     }
 
+    public void showProgress(boolean cancelable,String title) {
+
+        if (pd==null) {
+            pd = ProgressFragmentDialog.newInstance();
+        }
+        pd.setCancelable(cancelable);
+        Bundle bundle = new Bundle();
+        bundle.putString("Title",title);
+        pd.setArguments(bundle);
+        pd.show(getSupportFragmentManager(), "TAG");
+
+
+    }
+
     /******************* hide progress ***********************/
 
     public void hideProgress() {

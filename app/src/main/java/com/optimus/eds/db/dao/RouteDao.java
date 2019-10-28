@@ -17,6 +17,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 
+import static androidx.room.OnConflictStrategy.IGNORE;
 import static androidx.room.OnConflictStrategy.REPLACE;
 
 
@@ -76,7 +77,7 @@ public interface RouteDao extends MerchandiseDao{
     @Insert(onConflict = REPLACE)
     long insertOutlet(Outlet outlet);
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = IGNORE)
     void insertOutlets(List<Outlet> outlets);
 
     @Insert(onConflict = REPLACE)

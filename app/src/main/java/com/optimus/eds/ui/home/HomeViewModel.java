@@ -16,12 +16,17 @@ import androidx.annotation.NonNull;
 import io.reactivex.Flowable;
 
 import io.reactivex.Observable;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
+import retrofit2.Response;
 
 import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.model.AppUpdateModel;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.JobIdManager;
@@ -31,7 +36,9 @@ import com.optimus.eds.source.UploadOrdersService;
 import com.optimus.eds.ui.order.OrderBookingRepository;
 import com.optimus.eds.ui.route.outlet.OutletListRepository;
 import com.optimus.eds.utils.PreferenceUtil;
+import com.optimus.eds.utils.Util;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -45,6 +52,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final CompositeDisposable disposable;
     private PreferenceUtil preferenceUtil;
     private MutableLiveData<Boolean> endDayLiveData;
+    private MutableLiveData<AppUpdateModel> appUpdateLiveData;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
@@ -53,10 +61,11 @@ public class HomeViewModel extends AndroidViewModel {
         disposable = new CompositeDisposable();
         preferenceUtil = PreferenceUtil.getInstance(application);
         endDayLiveData = new MutableLiveData<>();
+        appUpdateLiveData = new MutableLiveData<>();
 
     }
 
-    public LiveData<Boolean> onStartDay(){
+    public MutableLiveData<Boolean> onStartDay(){
         return repository.startDay();
     }
 
@@ -177,11 +186,6 @@ public class HomeViewModel extends AndroidViewModel {
 
 
 
-    private void onError(Throwable throwable) {
-        isLoading().postValue(false);
-        getErrorMsg().postValue(throwable.getMessage());
-    }
-
 
     public LiveData<Boolean> dayStarted(){
         MutableLiveData<Boolean> when = new MutableLiveData<>();
@@ -196,5 +200,48 @@ public class HomeViewModel extends AndroidViewModel {
         when.postValue(syncDate.getDayStarted()==2);
         //when.postValue(DateUtils.isToday(syncDate));
         return when;
+    }
+
+    public LiveData<AppUpdateModel> appUpdateLiveData(){
+       return appUpdateLiveData;
+    }
+
+    public void checkDayEnd(){
+        Long lastSyncDate = PreferenceUtil.getInstance(getApplication()).getWorkSyncData().getSyncDate();
+        if( !Util.isDateToday(lastSyncDate)){
+            onStartDay().postValue(false);
+
+        }
+    }
+
+    public void checkAppUpdate(){
+
+        repository.updateApp().observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(appUpdateModel -> {
+                    if(appUpdateModel.getSuccess()){
+                    appUpdateLiveData.postValue(appUpdateModel);
+                   // isLoading().postValue(false);
+                    }else{
+                        getErrorMsg().postValue(appUpdateModel.getMsg());
+                    }
+                },this::onError);
+
+    }
+
+    private void onError(Throwable throwable) throws IOException {
+        throwable.printStackTrace();
+        String errorBody = throwable.getMessage();
+        if (throwable instanceof HttpException){
+            HttpException error = (HttpException)throwable;
+            errorBody = error.response().errorBody().string();
+        }
+        if (throwable instanceof IOException){
+            errorBody = "Please check your internet connection";
+        }
+
+        getErrorMsg().postValue(errorBody);
+        isLoading().postValue(false);
+
     }
 }

@@ -17,6 +17,7 @@ import com.optimus.eds.db.dao.RouteDao;
 
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.model.AppUpdateModel;
 import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.LogModel;
 import com.optimus.eds.model.PackageProductResponseModel;
@@ -37,6 +38,7 @@ import java.util.concurrent.Executor;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.CompletableSource;
+import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -61,6 +63,7 @@ public class HomeRepository {
     private MutableLiveData<Boolean> isLoading;
     private MutableLiveData<String> msg;
     private MutableLiveData<Boolean> onDayStartLiveData;
+    private MutableLiveData<AppUpdateModel> onUpdateReq;
     private API webService;
     private Executor executor;
 
@@ -81,6 +84,7 @@ public class HomeRepository {
         isLoading = new MutableLiveData<>();
         onDayStartLiveData = new MutableLiveData<>();
         msg = new MutableLiveData<>();
+        onUpdateReq = new MutableLiveData<>();
         webService = api;
         this.executor = executor;
 
@@ -93,7 +97,6 @@ public class HomeRepository {
         isLoading.setValue(true);
         String username = preferenceUtil.getUsername();
         String password = preferenceUtil.getPassword();
-        // webService.getToken("password","imran","imranshabrati");
         webService.getToken("password",username,password)
                 .observeOn(Schedulers.io()).subscribeOn(Schedulers.io())
                 .subscribeWith(new DisposableSingleObserver<TokenResponse>() {
@@ -123,14 +126,16 @@ public class HomeRepository {
                 Response<RouteOutletResponseModel> response = webService.loadTodayRouteOutlets().execute();
                 if(response.isSuccessful()){
                     //
-                    deleteAllRoutesAssets().andThen(Completable.fromAction(() -> {
-                        if(onDayStart)
-                        {
-                            routeDao.deleteAllOutlets();
-                            routeDao.deleteAllMerchandise();
-                            customerDao.deleteAllCustomerInput();
-                        }
-                    })).andThen(Completable.fromAction(() -> {
+                    deleteAllRoutesAssets()
+                            .andThen(Completable.fromAction(() -> {
+                                if(onDayStart)
+                                {
+                                    orderDao.deleteAllOrders();
+                                    routeDao.deleteAllMerchandise();
+                                    customerDao.deleteAllCustomerInput();
+                                    routeDao.deleteAllOutlets();
+                                }
+                            })).andThen(Completable.fromAction(() -> {
                         routeDao.insertRoutes(response.body().getRouteList());
                     })).andThen(Completable.fromAction(() ->  routeDao.insertOutlets(response.body().getOutletList())))
                             .andThen(Completable.fromAction(() -> { routeDao.insertAssets(response.body().getAssetList());}))
@@ -148,8 +153,8 @@ public class HomeRepository {
 
                         @Override
                         public void onError(Throwable e) {
-                        Log.e(TAG,e.getMessage());
-                        e.printStackTrace();
+                            Log.e(TAG,e.getMessage());
+                            e.printStackTrace();
                         }
                     });
 
@@ -160,7 +165,7 @@ public class HomeRepository {
 
                 }
                 else{
-                msg.postValue(Constant.GENERIC_ERROR);
+                    msg.postValue(Constant.GENERIC_ERROR);
                 }
 
             } catch (IOException e) {
@@ -177,9 +182,6 @@ public class HomeRepository {
             try {
                 Response<PackageProductResponseModel> response = webService.loadTodayPackageProduct().execute();
                 if(response.isSuccessful()){
-                    if(onDayStart) {
-                        orderDao.deleteAllOrders();
-                    }
 
                     productsDao.deleteAllPackages();
                     productsDao.deleteAllProductGroups();
@@ -210,6 +212,7 @@ public class HomeRepository {
         return Completable.fromAction(()->{
             routeDao.deleteAllRoutes();
             routeDao.deleteAllAssets();
+
         });
     }
     public Completable deleteAllOutlets(){
@@ -248,8 +251,9 @@ public class HomeRepository {
                             status.setSyncDate(logModel.getStartDay());
                             preferenceUtil.saveWorkSyncData(status);
                             onDayStartLiveData.postValue(isStart);
-                            if(isStart)
-                            fetchTodayData(isStart);
+                            if(isStart) {
+                                fetchTodayData(isStart);
+                            }
                         }else {
                             msg.postValue(logModel.getErrorCode()==2?logModel.getResponseMsg(): Constant.GENERIC_ERROR);
                         }
@@ -263,12 +267,16 @@ public class HomeRepository {
                 });
     }
 
+    public Single<AppUpdateModel> updateApp(){
+       return webService.checkAppUpdate();
+    }
+
 
     public MutableLiveData<Boolean> mLoading() {
         return isLoading;
     }
 
-    public LiveData<Boolean> startDay(){
+    public MutableLiveData<Boolean> startDay(){
         return onDayStartLiveData;
     }
 

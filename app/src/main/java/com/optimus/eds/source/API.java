@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
+import com.optimus.eds.model.AppUpdateModel;
 import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.LogModel;
 import com.optimus.eds.model.MasterModel;
@@ -66,6 +67,9 @@ public interface API {
     @FormUrlEncoded
     @POST("api/AppOpertion/LogStartEnd")
     Single<LogModel> updateStartEndStatus(@FieldMap Map<String, Integer> params);
+
+    @GET("api/AppOpertion/GetLatestAPKInfo")
+    Single<AppUpdateModel> checkAppUpdate();
 
 
     @GET("routes")

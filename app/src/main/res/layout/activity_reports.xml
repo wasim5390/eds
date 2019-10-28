@@ -288,22 +288,23 @@
                 android:textSize="18sp"
 
                 />
+
             <TextView
                 android:id="@+id/tvOrderQty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="5dp"
-                android:fontFamily="@font/roboto_bold"
+                android:layout_marginEnd="2dp"
                 android:background="@drawable/reports_bg_1"
-                android:textColor="@color/white"
-                android:text="50"
-                android:textSize="20sp"
+                android:fontFamily="@font/roboto_bold"
                 android:gravity="center"
                 android:padding="10dp"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
 
-                />
+                app:layout_constraintTop_toTopOf="parent" />
         </LinearLayout>
 
         <LinearLayout
@@ -331,23 +332,24 @@
                 android:gravity="center"
 
                 />
+
             <TextView
                 android:id="@+id/tvOrderAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:fontFamily="@font/roboto_bold"
-                android:textColor="@color/white"
-
-                android:text="Rs 00.00"
-                android:textSize="20sp"
-                android:gravity="center"
+                android:layout_marginLeft="2dp"
                 android:layout_marginTop="5dp"
-                android:padding="10dp"
                 android:background="@drawable/reports_bg_1"
+                android:fontFamily="@font/roboto_bold"
 
-                />
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="Rs 00.00"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+
+                app:layout_constraintTop_toTopOf="parent" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,7 +33,9 @@ public interface OrderDao {
     @Query("SELECT * FROM OrderDetail where fk_oid=:orderId")
     Single<List<OrderDetail>> findOrderItemsByOrderId(Long orderId);
 
-    @Query("SELECT * FROM 'Order' where orderStatus in (1,2)")
+
+    @Query("SELECT * FROM 'Order' WHERE c_outletId IN (SELECT mOutletId From Outlet where mVisitStatus in (7,8))")
+    @Transaction
     Single<List<OrderModel>> findAllOrders();
 
     @Query("SELECT * FROM `Order`,Outlet" +
