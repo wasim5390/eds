@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Environment;
 
 import com.optimus.eds.model.AppUpdateModel;
+import com.optimus.eds.utils.PreferenceUtil;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 
@@ -20,9 +21,9 @@ public class ApkDownloader {
     }
 
     public void downloadApk(Context context, AppUpdateModel updateModel){
-        //String url = "https://www.apkfiles.com/storage/apkfiles.com_596431_Voice%20changer.apk?ip=103.255.5.33";
         String name = "EDS_"+updateModel.getVersion()+".apk";
         String downloadFileName = name;
+        PreferenceUtil.getInstance(context).saveUpdatedApkData(updateModel);
 
         DownloadManager downloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
 

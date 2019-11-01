@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.optimus.eds.model.AppUpdateModel;
 import com.optimus.eds.model.WorkStatus;
+import com.optimus.eds.source.ApkDownloader;
 import com.optimus.eds.ui.home.User;
 
 import java.util.Calendar;
@@ -28,6 +30,7 @@ public class PreferenceUtil {
     private static final String PREFERENCE_NAME = "send_signal_preference";
     private static final String KEY_APP_MODE ="app_mode" ;
     private static final String KEY_FIREBASE_TOKEN = "firebase_token";
+    private static final String KEY_APK_UPDATE = "apk_update";
     private String defaultAppMode="Production";
 
     private static PreferenceUtil instance;
@@ -120,6 +123,22 @@ public class PreferenceUtil {
         editor.apply();
     }
 
+    public void saveUpdatedApkData(AppUpdateModel updateModel) {
+        Gson gson = new Gson();
+        String statusString = gson.toJson(updateModel);
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putString(KEY_APK_UPDATE, statusString);
+        editor.apply();
+    }
+
+    public AppUpdateModel getUpdatedVersion() {
+        String update = sPref.getString(KEY_APK_UPDATE,"");
+        if(update.isEmpty())
+            return null;
+        Gson gson = new Gson();
+        AppUpdateModel data =  gson.fromJson(update, AppUpdateModel.class);
+        return data;
+    }
 
     public void saveAppMode(String mode) {
         SharedPreferences.Editor editor = sPref.edit();

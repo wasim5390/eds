@@ -32,6 +32,7 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.Constant;
 import com.optimus.eds.R;
+import com.optimus.eds.model.AppUpdateModel;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.ApkDownloader;
 import com.optimus.eds.source.UploadOrdersService;
@@ -108,13 +109,13 @@ public class MainActivity extends BaseActivity {
 
                         @Override
                         public void onPermissionsGranted() {
-                            showProgress(true,"Downloading...");
+                            showProgress(true,getString(R.string.downloading));
                             viewModel.checkAppUpdate();
                         }
 
                         @Override
                         public void onPermissionDenied() {
-                            Toast.makeText(MainActivity.this, "Need Permission to update!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, getString(R.string.access_to_update), Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -269,7 +270,7 @@ public class MainActivity extends BaseActivity {
 
     private void setProgress(boolean isLoading) {
         if (isLoading) {
-            showProgress(true,"Loading...");
+            showProgress(true,getString(R.string.loading));
         } else {
             hideProgress();
         }
@@ -304,13 +305,13 @@ public class MainActivity extends BaseActivity {
                 else {
                     hideProgress();
                     // download is assumed cancelled
-                    Toast.makeText(ctxt, "Download Cancelled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctxt, getString(R.string.download_cancel), Toast.LENGTH_SHORT).show();
                 }
             }
             else {
                 hideProgress();
                 // download is assumed cancelled
-                Toast.makeText(ctxt, "Download Cancelled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctxt, getString(R.string.download_cancel), Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -319,8 +320,11 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        AppUpdater.getInstance().deleteInstalledApkFromDownloads("VoiceChanger.apk");
+        AppUpdateModel updateModel = PreferenceUtil.getInstance(this).getUpdatedVersion();
+        if(updateModel==null)
+            return;
+        String name = "EDS_"+updateModel.getVersion()+".apk";
+        AppUpdater.getInstance().deleteInstalledApkFromDownloads(name);
     }
 
     @Override
