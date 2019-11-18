@@ -54,6 +54,7 @@ public interface Constant {
     int STATUS_CONTINUE = 1;
     int STATUS_PENDING_TO_SYNC = 7;
     int STATUS_COMPLETED = 8;
+    int STATUS_NO_ORDER_FROM_BOOKING = 6;
 
 
     interface IntentExtras {

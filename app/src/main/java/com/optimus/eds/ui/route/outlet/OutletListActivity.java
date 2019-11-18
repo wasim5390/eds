@@ -4,6 +4,8 @@ import android.app.SearchManager;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
@@ -33,6 +35,7 @@ import com.optimus.eds.Constant;
 import com.optimus.eds.R;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
+import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.ui.cash_memo.CashMemoActivity;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailActivity;
@@ -263,13 +266,13 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
     }
 
     @Override
-    protected void onStop() {
+    protected void onDestroy() {
         if (orderUploadSuccessReceiver != null) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(orderUploadSuccessReceiver);
             Log.i(TAG,"Receiver UnRegd");
 
         }
-        super.onStop();
+        super.onDestroy();
     }
 
     @Override
@@ -278,4 +281,16 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
         if(route!=null)
             viewModel.loadOutletsFromDb(route.getRouteId(),SELECTED_TAB<1);
     }
+
+    protected BroadcastReceiver orderUploadSuccessReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction()==Constant.ACTION_ORDER_UPLOAD){
+                MasterModel response = (MasterModel) intent.getSerializableExtra("Response");
+                Toast.makeText(context, response.isSuccess()?"Order Uploaded Successfully!":response.getResponseMsg(), Toast.LENGTH_SHORT).show();
+                if(route!=null)
+                    viewModel.loadOutletsFromDb(route.getRouteId(),SELECTED_TAB<1);
+            }
+        }
+    };
 }

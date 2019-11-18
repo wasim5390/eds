@@ -15,9 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.optimus.eds.Constant;
+import com.optimus.eds.db.entities.Order;
+import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.source.JobIdManager;
 import com.optimus.eds.source.MasterDataUploadService;
+import com.optimus.eds.source.StatusRepository;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -26,6 +29,7 @@ import java.util.Objects;
 public class OutletDetailViewModel extends AndroidViewModel {
 
     private final OutletDetailRepository repository;
+    private final StatusRepository statusRepository;
 
     private final MutableLiveData<Integer> statusLiveData;
 
@@ -44,6 +48,7 @@ public class OutletDetailViewModel extends AndroidViewModel {
     public OutletDetailViewModel(@NonNull Application application) {
         super(application);
         repository = new OutletDetailRepository(application);
+        statusRepository = StatusRepository.singleInstance(application);
         statusLiveData = new MutableLiveData<>();
         uploadStatus = new MutableLiveData<>();
         outletNearbyPos = new MutableLiveData<>();
@@ -74,6 +79,8 @@ public class OutletDetailViewModel extends AndroidViewModel {
         JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue()), serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
         builder.setExtras(extras);
+        builder.setOverrideDeadline(1);
+        builder.setMinimumLatency(1);
         builder.setPersisted(true);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
         Objects.requireNonNull(jobScheduler).schedule(builder.build());
@@ -106,18 +113,21 @@ public class OutletDetailViewModel extends AndroidViewModel {
             outlet.setSynced(0);
             if(statusLiveData.getValue()!=null)
             uploadStatus.postValue(statusLiveData.getValue() != 1);
-
         }
+
+        statusRepository.insertStatus(new OrderStatus(outlet.getOutletId(),outletStatus,0,0.0));
         repository.updateOutlet(outlet);
+
     }
 
-    public void postOrderWithNoOrder(boolean noOrderFromBooking){
+    public void postEmptyCheckout(boolean noOrderFromBooking){
         if(noOrderFromBooking) {
-            outletStatus = 6; // 6 means no order from booking view
+            outletStatus = Constant.STATUS_NO_ORDER_FROM_BOOKING; // 6 means no order from booking view
             outlet.setSynced(0);
             uploadStatus.postValue(true);
             outlet.setVisitStatus(outletStatus);
-            repository.updateOutlet(outlet);
+            repository.updateOutlet(outlet); // TODO remove this if below successful
+            statusRepository.insertStatus(new OrderStatus(outlet.getOutletId(),outletStatus,0,0.0));
 
         }
     }

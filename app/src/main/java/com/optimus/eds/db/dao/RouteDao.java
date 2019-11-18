@@ -8,7 +8,9 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.optimus.eds.db.entities.Asset;
+import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.db.entities.OutletOrderStatus;
 import com.optimus.eds.db.entities.Route;
 
 import java.util.List;
@@ -43,17 +45,25 @@ public interface RouteDao extends MerchandiseDao{
     Flowable<List<Outlet>> findOutletsWithPendingTasks( int planned);
 
 
-    @Query("SELECT * FROM Outlet WHERE synced=:synced AND mVisitStatus between 2 AND 7 ")
-    Flowable<List<Outlet>> findOutletsWithPendingOrderToSync(boolean synced);
+    @Query("SELECT * FROM Outlet WHERE mOutletId in (:outlets)")
+    Flowable<List<Outlet>> findOutletsWithPendingOrderToSync(List<Long> outlets);
+
+    @Query("SELECT * FROM OrderStatus WHERE sync=:synced AND status between 2 AND 7 ")
+    Flowable<List<OrderStatus>> findOutletsWithPendingOrderToSync(boolean synced);
 
     @Query("SELECT COUNT() FROM Outlet WHERE planned=1")
     int getPjpCount();
 
-    @Query("SELECT COUNT(*) FROM Outlet WHERE planned=1 AND mVisitStatus between 2 AND 8 ")
-    int getVisitedOutletCount();
+    @Query("SELECT Outlet.*, OrderStatus.* FROM Outlet INNER JOIN OrderStatus ON Outlet.mOutletId = OrderStatus.outletId" +
+            " WHERE Outlet.planned=1 AND OrderStatus.status between 2 AND 8" )
+    List<OutletOrderStatus> getVisitedOutletCount();
 
-    @Query("SELECT COUNT(*) FROM Outlet WHERE  planned=1 and mVisitStatus  >=7")
-    int getProductiveOutletCount();
+   /* @Query("SELECT COUNT(*) FROM Outlet WHERE planned=1 AND mVisitStatus between 2 AND 8 ")
+    List<OutletOrderStatus> getVisitedOutletCount();*/
+
+    @Query("SELECT Outlet.*, OrderStatus.* FROM Outlet INNER JOIN OrderStatus ON Outlet.mOutletId = OrderStatus.outletId" +
+            " WHERE Outlet.planned=1 AND OrderStatus.status >=7" )
+    List<OutletOrderStatus> getProductiveOutletCount();
 
     @Query("SELECT * FROM Outlet WHERE mOutletId=:id")
     LiveData<Outlet> findOutletById(Long id);

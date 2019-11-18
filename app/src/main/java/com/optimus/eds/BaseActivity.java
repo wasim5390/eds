@@ -132,6 +132,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
         if (pd==null) {
             pd = ProgressFragmentDialog.newInstance();
         }
+        if(pd.isAdded())
+            return;
         pd.setCancelable(cancelable);
         pd.show(getSupportFragmentManager(), "TAG");
 
@@ -142,6 +144,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
         if (pd==null) {
             pd = ProgressFragmentDialog.newInstance();
         }
+        if(pd.isAdded())
+            return;
         pd.setCancelable(cancelable);
         Bundle bundle = new Bundle();
         bundle.putString("Title",title);
@@ -177,15 +181,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
     }
 
 
-    protected BroadcastReceiver orderUploadSuccessReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.getAction()==Constant.ACTION_ORDER_UPLOAD){
-                MasterModel response = (MasterModel) intent.getSerializableExtra("Response");
-                Toast.makeText(context, response.isSuccess()?"Order Uploaded Successfully!":response.getResponseMsg(), Toast.LENGTH_SHORT).show();
 
-            }
-        }
-    };
 
 }

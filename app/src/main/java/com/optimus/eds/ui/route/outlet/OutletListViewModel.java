@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
+import com.optimus.eds.source.StatusRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class OutletListViewModel extends AndroidViewModel {
     private final OutletListRepository repository;
+    private final StatusRepository statusRepository;
     private final MutableLiveData<List<Outlet>> outletList;
     private final MutableLiveData<List<Route>> routeList;
     private final MutableLiveData<Boolean> isLoading;
@@ -36,6 +38,7 @@ public class OutletListViewModel extends AndroidViewModel {
     public OutletListViewModel(@NonNull Application application) {
         super(application);
         repository = OutletListRepository.getInstance(application);
+        statusRepository = StatusRepository.singleInstance(application);
         outletList = new MutableLiveData<>();
         routeList = new MutableLiveData<>();
         disposable = new CompositeDisposable();
@@ -127,15 +130,17 @@ public class OutletListViewModel extends AndroidViewModel {
     }
 
     private Observable<Outlet> getOrderObservable(final Outlet outlet) {
-        return repository.findOrder(outlet.getOutletId())
+        return statusRepository.findOrderStatus(outlet.getOutletId())
                 .toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(orderModel -> {
-                    if(orderModel.getOrder().getOrderStatus()==1) {
-                        outlet.setTotalAmount(orderModel.getOrder().getPayable());
+                .map(orderStatus -> {
+                    outlet.setVisitStatus(orderStatus.getStatus());
+                    outlet.setSynced(orderStatus.getSynced());
+                   // if(orderStatus.getOrder().getOrderStatus()==1) {
+                        outlet.setTotalAmount(orderStatus.getOrderAmount());
                        // outlet.setVisitStatus(1);
-                    }
+                   // }
                     return outlet;
                 });
 

@@ -54,9 +54,7 @@ public class Outlet implements Serializable {
     @SerializedName("lastSale")
     private Double mLastSale;
     @SerializedName("visitStatus")
-    private Integer mVisitStatus; // 1. visited-order taken
-                                    // 2. visited- order not taken
-                                    // 3. visited- order taken and synced
+    private Integer mVisitStatus; // [1-8] Order status for Outlet
     @SerializedName("cnic")
     private String cnic;
     @SerializedName("strn")

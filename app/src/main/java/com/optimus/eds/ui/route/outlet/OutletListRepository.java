@@ -9,7 +9,9 @@ import com.optimus.eds.Constant;
 import com.optimus.eds.db.AppDatabase;
 
 import com.optimus.eds.db.dao.RouteDao;
+import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.db.entities.OutletOrderStatus;
 import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.ui.order.OrderBookingRepository;
 
@@ -44,9 +46,14 @@ public class OutletListRepository  extends OrderBookingRepository {
         return routeDao.findOutletsWithPendingTasks(1);
     }
 
-    public Flowable<List<Outlet>> getUnsyncedOutlets(){
+    public Flowable<List<OrderStatus>> getOrderStatus(){
         // get All planned outlet calls
         return routeDao.findOutletsWithPendingOrderToSync(false);
+    }
+
+    public Flowable<List<Outlet>> getUnsyncedOutlets(List<Long> outlets){
+        // get All planned outlet calls
+        return routeDao.findOutletsWithPendingOrderToSync(outlets);
     }
 
     public LiveData<List<Route>> getRoutes(){
@@ -57,10 +64,10 @@ public class OutletListRepository  extends OrderBookingRepository {
         return routeDao.getPjpCount();
     }
 
-    public int getCompletedCount() {
+    public List<OutletOrderStatus> getCompletedCount() {
         return routeDao.getVisitedOutletCount();
     }
-    public int getProductiveCount() {
+    public List<OutletOrderStatus> getProductiveCount() {
         return routeDao.getProductiveOutletCount();
     }
 

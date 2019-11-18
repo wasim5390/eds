@@ -13,6 +13,7 @@ import com.optimus.eds.db.converters.ProductConverter;
 import com.optimus.eds.db.dao.CustomerDao;
 import com.optimus.eds.db.dao.MerchandiseDao;
 import com.optimus.eds.db.dao.OrderDao;
+import com.optimus.eds.db.dao.OrderStatusDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Asset;
@@ -21,6 +22,7 @@ import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
+import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
@@ -30,7 +32,7 @@ import com.optimus.eds.db.entities.UnitPriceBreakDown;
 
 
 @Database(entities = {Route.class, Outlet.class, Merchandise.class, Asset.class,ProductGroup.class,
-        Product.class, Package.class, Order.class,
+        Product.class, Package.class, Order.class, OrderStatus.class,
         OrderDetail.class, CartonPriceBreakDown.class,
         UnitPriceBreakDown.class, CustomerInput.class
 }, version = 2, exportSchema = false)
@@ -43,6 +45,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract RouteDao routeDao();
     public abstract ProductsDao productsDao();
     public abstract OrderDao orderDao();
+    public abstract OrderStatusDao orderStatusDao();
     public abstract MerchandiseDao merchandiseDao();
     public abstract CustomerDao customerDao();
     public static synchronized AppDatabase getDatabase(Context context) {

@@ -25,6 +25,7 @@ import retrofit2.HttpException;
 import retrofit2.Response;
 
 import com.optimus.eds.Constant;
+import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.AppUpdateModel;
 import com.optimus.eds.model.OrderModel;
@@ -34,11 +35,13 @@ import com.optimus.eds.source.MasterDataUploadService;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.source.UploadOrdersService;
 import com.optimus.eds.ui.order.OrderBookingRepository;
+import com.optimus.eds.ui.route.outlet.OutletListActivity;
 import com.optimus.eds.ui.route.outlet.OutletListRepository;
 import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -108,13 +111,13 @@ public class HomeViewModel extends AndroidViewModel {
     public void pushOrdersToServer(){
 
 
-        List<Outlet> count =  OutletListRepository.getInstance(getApplication()).getUnsyncedOutlets().blockingFirst();
+        List<OrderStatus> count =  OutletListRepository.getInstance(getApplication()).getOrderStatus().blockingFirst();
         if(count.size()<1) {
             getErrorMsg().postValue("Updated!");
             return;
         }
 
-        disposable.add(findPendingOrders()
+        disposable.add(findPendingOrders(count)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .subscribe(outlet -> {
@@ -136,8 +139,14 @@ public class HomeViewModel extends AndroidViewModel {
         disposable.dispose();
     }
 
-    private Observable<Outlet> findPendingOrders() {
-        return OutletListRepository.getInstance(getApplication()).getUnsyncedOutlets()
+    private Observable<Outlet> findPendingOrders(List<OrderStatus> nonSyncedOutlets) {
+        List<Long> outlets = new ArrayList(nonSyncedOutlets.size());
+
+        for(OrderStatus status:nonSyncedOutlets){
+            outlets.add(status.getOutletId());
+        }
+
+        return OutletListRepository.getInstance(getApplication()).getUnsyncedOutlets(outlets)
                 .concatMap(Flowable::fromIterable).toObservable().subscribeOn(Schedulers.computation());
     }
 

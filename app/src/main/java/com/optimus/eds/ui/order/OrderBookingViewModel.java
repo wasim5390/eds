@@ -199,7 +199,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
         Completable orderUpdateCompletable= repository.updateOrder(order.getOrder());
         Completable removeOrderItems = repository.deleteOrderItems(order.getOrder().getLocalOrderId());
         Completable insertOrderItems = repository.addOrderItems(order.getOrderDetails());
-      //  Completable updateOrderItems = repository.updateOrderItems(order.getOrderDetails());
+        // Completable updateOrderItems = repository.updateOrderItems(order.getOrderDetails());
 
         Completable insertBreakdown= Completable.fromAction(()-> {
             for(OrderDetail orderDetail:order.getOrderDetails()){
@@ -273,7 +273,10 @@ public class OrderBookingViewModel extends AndroidViewModel {
         String errorBody = throwable.getMessage();
         if (throwable instanceof HttpException){
             HttpException error = (HttpException)throwable;
-            errorBody = error.response().errorBody().string();
+            if(error.code()==500)
+                errorBody = Constant.GENERIC_ERROR;
+            else
+                errorBody = error.response().errorBody().string();
         }
         if (throwable instanceof IOException){
             errorBody = "Please check your internet connection";
@@ -294,7 +297,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
             orderDetail.setCartonCode(product.getCartonCode());
             orderDetail.setUnitCode(product.getUnitCode());
             orderDetail.setProductName(product.getName());
-           // orderDetail.setCartonQuantity(product.getCartonQuantity());
+            // orderDetail.setCartonQuantity(product.getCartonQuantity());
             orderDetail.setActualCartonStock(product.getActualCartonStock());
             orderDetail.setActualUnitStock(product.getActualUnitStock());
             orderDetail.setUnitDefinitionId(product.getUnitDefinitionId());
@@ -333,7 +336,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
         NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {
             if (!aBoolean){
                 isSaving.postValue(false);
-              //  orderSaved.postValue(true); // pricing is not implemented in mobile so should'nt move to cash memo
+                //  orderSaved.postValue(true); // pricing is not implemented in mobile so should'nt move to cash memo
                 return;
             }else {
 

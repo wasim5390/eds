@@ -8,11 +8,13 @@ import android.util.Log;
 
 import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.OrderDao;
+import com.optimus.eds.db.dao.OrderStatusDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 
+import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
@@ -90,6 +92,8 @@ public class OrderBookingRepository {
     public Maybe<OrderModel> findOrder(Long outletId){
         return orderDao.getOrderWithItems(outletId);
     }
+
+
 
     public Maybe<Order> findOrderById(Long mobileOrderId){
         return orderDao.findOrderById(mobileOrderId);

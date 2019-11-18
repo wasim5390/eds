@@ -270,7 +270,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
                 case REQUEST_CODE:
                 boolean noOrderFromOrderBooking = data.getBooleanExtra(EXTRA_PARAM_NO_ORDER_FROM_BOOKING,false);
                 reasonForNoSale = String.valueOf(data.getLongExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER,1L));
-                viewModel.postOrderWithNoOrder(noOrderFromOrderBooking);
+                viewModel.postEmptyCheckout(noOrderFromOrderBooking);
                 break;
             }
         }

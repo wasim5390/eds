@@ -1,6 +1,5 @@
 package com.optimus.eds.db.entities.pricing;
 
-import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;

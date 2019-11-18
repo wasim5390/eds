@@ -12,6 +12,7 @@ import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
+import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.MasterModel;
@@ -49,16 +50,17 @@ public class UploadOrdersService extends JobService {
     String token;
     private int jobId;
 
-    private OrderBookingRepository orderRepository;
+
     private OutletDetailRepository outletDetailRepository;
+    private StatusRepository repository;
     private CustomerInputRepository customerInputRepository;
     MasterModel masterModel;
     @Override
     public void onCreate() {
         super.onCreate();
-
+        repository = StatusRepository.singleInstance(getApplication());
         customerInputRepository = new CustomerInputRepository(getApplication());
-        orderRepository = OrderBookingRepository.singleInstance(getApplication());
+
         outletDetailRepository = new OutletDetailRepository(getApplication());
         masterModel = new MasterModel();
     }
@@ -77,7 +79,7 @@ public class UploadOrdersService extends JobService {
 
     public void findOrder(Long outletId){
 
-        Maybe<OrderModel> orderSingle = orderRepository.findOrder(outletId)
+        Maybe<OrderModel> orderSingle = repository.findOrder(outletId)
                 .map(orderModel -> {
                     List<OrderDetail> orderDetails = new ArrayList<>();
                     for(OrderDetailAndPriceBreakdown orderDetail:orderModel.getOrderDetailAndCPriceBreakdowns()){
@@ -148,7 +150,8 @@ public class UploadOrdersService extends JobService {
                     .updateOrder(order)).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
                         Log.i("UploadOrdersService", "Order Status Updated");
-                        updateOutletTaskStatus(orderResponseModel.getOutletId());
+                        updateOutletTaskStatus(orderResponseModel.getOutletId(),orderResponseModel.getOrderModel().getPayable());
+
                     }, this::error);
         }
         Intent intent = new Intent();
@@ -160,8 +163,9 @@ public class UploadOrdersService extends JobService {
 
     }
 
-    private void updateOutletTaskStatus(Long outletId){
+    private void updateOutletTaskStatus(Long outletId,Double amount){
         outletDetailRepository.updateOutletVisitStatus(outletId,Constant.STATUS_COMPLETED,1); // 8 for completed task
+        repository.updateStatus(new OrderStatus(outletId,Constant.STATUS_COMPLETED,1,amount));
     }
 
     private void error(Object throwable) throws IOException {

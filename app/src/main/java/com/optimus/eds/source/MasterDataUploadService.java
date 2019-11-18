@@ -2,10 +2,12 @@ package com.optimus.eds.source;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.Intent;
 import android.os.PersistableBundle;
 import android.util.Log;
 
 import com.optimus.eds.Constant;
+import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
@@ -13,6 +15,7 @@ import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 import java.io.File;
 import java.io.IOException;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 
@@ -22,6 +25,7 @@ public class MasterDataUploadService extends JobService implements Constant {
     String token;
     private int jobId;
     private OutletDetailRepository outletDetailRepository;
+    private StatusRepository statusRepository;
     public MasterDataUploadService() {
 
     }
@@ -30,6 +34,7 @@ public class MasterDataUploadService extends JobService implements Constant {
     public boolean onStartJob(JobParameters params) {
         if (params != null) {
             outletDetailRepository = new OutletDetailRepository(getApplication());
+            statusRepository = StatusRepository.singleInstance(getApplication());
             PersistableBundle bundle = params.getExtras();
             jobId=params.getJobId();
             final Long outletId = bundle.getLong(EXTRA_PARAM_OUTLET_ID);
@@ -86,7 +91,11 @@ public class MasterDataUploadService extends JobService implements Constant {
         if(baseResponse.isSuccess()) {
             Log.i(iTAG, "File Uploaded");
             outletDetailRepository.updateOutletVisitStatus(outletId,status,1);
-
+            statusRepository.updateStatus(new OrderStatus(outletId,status,1,0.0));
+            Intent intent = new Intent();
+            intent.setAction(Constant.ACTION_ORDER_UPLOAD);
+            intent.putExtra("Response", baseResponse);
+            LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(intent);
         }
         else
             Log.i(iTAG,baseResponse.getResponseMsg());

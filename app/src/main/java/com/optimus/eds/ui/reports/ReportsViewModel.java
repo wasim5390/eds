@@ -58,8 +58,8 @@ public class ReportsViewModel extends AndroidViewModel {
 
         AsyncTask.execute(() -> {
             pjpCount = repository.getPjpCount();
-            completedCount = repository.getCompletedCount();
-            productiveCount = repository.getProductiveCount();
+            completedCount = repository.getCompletedCount().size();
+            productiveCount = repository.getProductiveCount().size();
             reportModel.setCounts(pjpCount,completedCount,productiveCount);
             summaryMutable.postValue(reportModel);
 
@@ -94,8 +94,9 @@ public class ReportsViewModel extends AndroidViewModel {
                             if(orderDetailList.contains(orderItem)){
                                 int pos = orderDetailList.indexOf(orderItem);
                                 OrderDetail savedItem = orderDetailList.get(pos);
-                                int cartons = savedItem.getCartonQuantity()+cQty;
-                                int units = savedItem.getUnitQuantity()+uQty;
+
+                                int cartons = savedItem.getCartonQuantity()!=null?savedItem.getCartonQuantity():0+cQty;
+                                int units = savedItem.getUnitQuantity()!=null?savedItem.getUnitQuantity():0+uQty;
 
                               OrderManager.OrderQuantity quantity =   OrderManager.instance().calculateOrderQty(orderItem.getCartonSize(),units,cartons);
                                 orderDetailList.get(pos).setCartonQuantity(quantity.getCarton());

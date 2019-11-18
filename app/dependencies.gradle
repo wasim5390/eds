@@ -24,8 +24,7 @@ dependencies {
     // explicitly depend on RxJava's latest version for bug fixes and new features.
     implementation deps.rxjava.main
 
-    implementation deps.okhttp.main
-    implementation deps.okhttp.logging_interceptor
+
 
     // Glide
     implementation deps.glide.runtime
@@ -35,6 +34,7 @@ dependencies {
     implementation deps.retrofit.main
     implementation deps.retrofit.gson
     implementation deps.retrofit.rxjava
+    implementation deps.okhttp.main
     implementation deps.okhttp.logging_interceptor
 
     //implementation deps.persistentcookiejar

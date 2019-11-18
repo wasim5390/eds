@@ -12,6 +12,7 @@ import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.CustomerDao;
 import com.optimus.eds.db.dao.MerchandiseDao;
 import com.optimus.eds.db.dao.OrderDao;
+import com.optimus.eds.db.dao.OrderStatusDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 
@@ -54,6 +55,7 @@ public class HomeRepository {
     private static HomeRepository repository;
     private final PreferenceUtil preferenceUtil;
     private final OrderDao orderDao;
+    private final OrderStatusDao statusDao;
     private CustomerDao customerDao;
     private MerchandiseDao merchandiseDao;
     private ProductsDao productsDao;
@@ -79,6 +81,7 @@ public class HomeRepository {
         productsDao = appDatabase.productsDao();
         orderDao = appDatabase.orderDao();
         routeDao = appDatabase.routeDao();
+        statusDao = appDatabase.orderStatusDao();
         merchandiseDao = appDatabase.merchandiseDao();
         customerDao = appDatabase.customerDao();
         isLoading = new MutableLiveData<>();
@@ -134,6 +137,7 @@ public class HomeRepository {
                                     routeDao.deleteAllMerchandise();
                                     customerDao.deleteAllCustomerInput();
                                     routeDao.deleteAllOutlets();
+                                    statusDao.deleteAllStatus();
                                 }
                             })).andThen(Completable.fromAction(() -> {
                         routeDao.insertRoutes(response.body().getRouteList());
@@ -171,6 +175,7 @@ public class HomeRepository {
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e(TAG,e.getMessage());
+                msg.postValue(Constant.GENERIC_ERROR);
             }
 
 

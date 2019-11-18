@@ -22,6 +22,7 @@ import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
+import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.MasterModel;
@@ -34,6 +35,7 @@ import com.optimus.eds.source.MasterDataUploadService;
 import com.optimus.eds.source.ProductUpdateService;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.source.MerchandiseUploadService;
+import com.optimus.eds.source.StatusRepository;
 import com.optimus.eds.source.UploadOrdersService;
 import com.optimus.eds.ui.merchandize.MerchandiseRepository;
 import com.optimus.eds.ui.order.OrderBookingRepository;
@@ -64,6 +66,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
     private final OrderBookingRepository orderRepository;
     private CustomerInputRepository customerInputRepository;
     private OutletDetailRepository outletDetailRepository;
+    private StatusRepository statusRepository;
     private final CompositeDisposable disposable;
     private Long outletId;
     private MutableLiveData<OrderModel> orderModelLiveData;
@@ -78,6 +81,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
         orderSaved = new MutableLiveData<>();
         customerInputRepository = new CustomerInputRepository(application);
         outletDetailRepository = new OutletDetailRepository(application);
+        statusRepository=StatusRepository.singleInstance(application);
         orderRepository = OrderBookingRepository.singleInstance(application);
     }
 
@@ -128,7 +132,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
     }
 
     public void postData(OrderModel orderModel,Long deliveryDate,CustomerInput customerInput){
-        updateOutletTaskStatus(outletId,Constant.STATUS_PENDING_TO_SYNC,0);
+        updateOutletTaskStatus(outletId,Constant.STATUS_PENDING_TO_SYNC,0,orderModel.getOrder().getPayable());
         outletDetailRepository.updateOutletCnic(outletId,customerInput.getMobileNumber(),customerInput.getCnic(),customerInput.getStrn());
         NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {
             if (!aBoolean){
@@ -192,15 +196,16 @@ public class CustomerInputViewModel extends AndroidViewModel {
                     .updateOrder(order)).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
                         Log.i("UploadOrdersService", "Order Status Updated");
-                        updateOutletTaskStatus(orderResponseModel.getOutletId(),Constant.STATUS_COMPLETED,1);
+                        updateOutletTaskStatus(orderResponseModel.getOutletId(),Constant.STATUS_COMPLETED,1,orderResponseModel.getOrderModel().getPayable());
                     },this::error);
         msg.postValue("Order Uploaded Successfully!");
         orderSavedSuccess(orderResponseModel);
 
     }
 
-    private void updateOutletTaskStatus(Long outletId,int status,int sync){
+    private void updateOutletTaskStatus(Long outletId,int status,int sync,Double amount){
         outletDetailRepository.updateOutletVisitStatus(outletId,status,sync); // 7 for completed task
+        statusRepository.updateStatus(new OrderStatus(outletId,status,sync,amount));
     }
 
 
