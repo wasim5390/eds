@@ -25,10 +25,9 @@ import java.util.Objects;
                         childColumns = "fk_oid",
                         onDelete = ForeignKey.CASCADE),
 
-        }, indices = { @Index(value = "fk_oid")
-})
+        }, indices = { @Index(value = "fk_oid")})
 
-public class OrderDetail {
+public class OrderDetail implements Cloneable{
 
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "pk_modid")
     @SerializedName("mobileOrderDetailId")
@@ -77,6 +76,28 @@ public class OrderDetail {
     public Integer avlUnitQuantity;
     @SerializedName("avlCartonQuantity")
     public Integer avlCartonQuantity;
+
+    @Ignore
+    public int productTempDefinitionId; // this definitionId sets on PriceCalculation
+
+    @Ignore
+    public int productTempQuantity;
+
+    public int getProductTempDefId() {
+        return productTempDefinitionId;
+    }
+
+    public void setProductTempDefId(int productDefinitionId) {
+        this.productTempDefinitionId = productDefinitionId;
+    }
+
+    public int getProductTempQuantity() {
+        return productTempQuantity;
+    }
+
+    public void setProductTempQuantity(int productTempQuantity) {
+        this.productTempQuantity = productTempQuantity;
+    }
 
     public Integer getUnitDefinitionId() {
         return unitDefinitionId;
@@ -492,5 +513,11 @@ public class OrderDetail {
     @Override
     public int hashCode() {
         return Objects.hash(mProductId, mProductGroupId);
+    }
+
+    public Object clone() throws
+            CloneNotSupportedException
+    {
+        return super.clone();
     }
 }

@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 public class PriceConditionAvailed {
 
     @PrimaryKey @NonNull
-    private int priceConditionAvailedId;
+    private Integer priceConditionAvailedId;
     @NonNull
     private int outletId;
     @NonNull
@@ -18,11 +18,11 @@ public class PriceConditionAvailed {
     private Double amount;
     private Integer quantity;
 
-    public int getPriceConditionAvailedId() {
+    public Integer getPriceConditionAvailedId() {
         return priceConditionAvailedId;
     }
 
-    public void setPriceConditionAvailedId(int priceConditionAvailedId) {
+    public void setPriceConditionAvailedId(Integer priceConditionAvailedId) {
         this.priceConditionAvailedId = priceConditionAvailedId;
     }
 

@@ -23,6 +23,7 @@ import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.model.PackageProductResponseModel;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
+import com.optimus.eds.ui.order.pricing.PricingManager;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 import com.optimus.eds.utils.NetworkManager;
 import com.optimus.eds.utils.Util;
@@ -342,6 +343,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
                 if (order != null) {
                     isSaving.postValue(true);
+
                     Order mOrder = new Order(order.getOrder().getOutletId());
                     mOrder.setRouteId(order.getOutlet().getRouteId());
                     mOrder.setVisitDayId(order.getOutlet().getVisitDay());
@@ -356,8 +358,11 @@ public class OrderBookingViewModel extends AndroidViewModel {
                     String json = gson.toJson(mOrder);
                     OrderResponseModel responseModel = gson.fromJson(json, OrderResponseModel.class);
                     responseModel.setOrderDetails(order.getOrderDetails());
+                   // PricingManager.getInstance(getApplication()).calculatePrice(responseModel);
+
                     disposable
-                            .add(webservice.calculatePricing(responseModel).map(orderResponseModel -> {
+                            .add(webservice.calculatePricing(responseModel)
+                                    .map(orderResponseModel -> {
                                 OrderModel orderModel = new OrderModel();
                                 String orderString = new Gson().toJson(orderResponseModel);
                                 Order order = new Gson().fromJson(orderString, Order.class);

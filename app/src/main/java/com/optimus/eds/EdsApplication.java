@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.FirebaseApp;
 
 import java.lang.reflect.Method;

@@ -1,24 +1,20 @@
 package com.optimus.eds.db.entities.pricing;
 
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity( foreignKeys = {
-        @ForeignKey(
-                entity = PricingLevels.class,
-                parentColumns = "pricingLevelId",
-                childColumns = "pricingLevelId",
-                onDelete = ForeignKey.CASCADE),
-}, indices = { @Index(value = "pricingLevelId")})
+@Entity( indices = { @Index(value = "pricingLevelId")})
 
 public class PriceConditionClass {
 
     @PrimaryKey
-    @NonNull
     private int priceConditionClassId;
     private String name;
     @NonNull
@@ -27,15 +23,10 @@ public class PriceConditionClass {
     private int severityLevel;
     private String severityLevelMessage;
 
-    private int pricingLevelId;
-    @NonNull
-    private boolean isActive;
-    private Boolean canLimit;
-    private Boolean isPeriodic;
-    private Integer pricingType;
-    private Integer organizationId;
-    private Integer distributionId;
+    @Ignore
+    private List<PriceConditionType> priceConditionTypes = null;
 
+    @NonNull
     public int getPriceConditionClassId() {
         return priceConditionClassId;
     }
@@ -77,62 +68,28 @@ public class PriceConditionClass {
         this.severityLevelMessage = severityLevelMessage;
     }
 
-    public int getPricingLevelId() {
+    public Integer getPricingLevelId() {
         return pricingLevelId;
     }
 
-    public void setPricingLevelId(int pricingLevelId) {
+    public void setPricingLevelId(Integer pricingLevelId) {
         this.pricingLevelId = pricingLevelId;
     }
 
-    public boolean isActive() {
-        return isActive;
+    public List<PriceConditionType> getPriceConditionTypes() {
+        return priceConditionTypes;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public Boolean getCanLimit() {
-        return canLimit;
-    }
-
-    public void setCanLimit(Boolean canLimit) {
-        this.canLimit = canLimit;
-    }
-
-    public Boolean getPeriodic() {
-        return isPeriodic;
-    }
-
-    public void setPeriodic(Boolean periodic) {
-        isPeriodic = periodic;
-    }
-
-    public Integer getPricingType() {
-        return pricingType;
-    }
-
-    public void setPricingType(Integer pricingType) {
-        this.pricingType = pricingType;
-    }
-
-    public Integer getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(Integer organizationId) {
-        this.organizationId = organizationId;
-    }
-
-    public Integer getDistributionId() {
-        return distributionId;
-    }
-
-    public void setDistributionId(Integer distributionId) {
-        this.distributionId = distributionId;
+    public void setPriceConditionTypes(List<PriceConditionType> priceConditionTypes) {
+        this.priceConditionTypes = priceConditionTypes;
     }
 
 
+   /* @ForeignKey(
+            entity = PricingLevels.class,
+            parentColumns = "pricingLevelId",
+            childColumns = "pricingLevelId",
+            onDelete = ForeignKey.CASCADE)*/
+    private Integer pricingLevelId;
 
 }

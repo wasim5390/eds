@@ -1,42 +1,47 @@
 package com.optimus.eds.db.entities.pricing;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = {@ForeignKey(
-        entity = PriceScaleBasis.class,
-        parentColumns = "priceScaleBasisId",
-        childColumns = "priceScaleBasisId",
-        onDelete = ForeignKey.CASCADE),
+@Entity(
+        foreignKeys =
+                {
+                        @ForeignKey(
+                                entity = PriceConditionClass.class,
+                                parentColumns = "priceConditionClassId",
+                                childColumns = "priceConditionClassId",
+                                onUpdate = ForeignKey.CASCADE,
+                                onDelete = ForeignKey.CASCADE)
 
-},indices = { @Index(value = {"priceScaleBasisId","priceConditionTypeId"})})
+                },
+        indices = { @Index(value = {"priceScaleBasisId","priceConditionTypeId"}), @Index("priceConditionClassId")})
 public class PriceConditionType {
 
     @PrimaryKey
-    @NonNull
     private int priceConditionTypeId;
-    private String code;
     private String name;
-    @NonNull
-    private int conditionClassId;
+
+    private int priceConditionClassId;
     @NonNull
     private int operationType;
     @NonNull
     private int calculationType;
     @NonNull
     private int roundingRule;
-    private Integer processingOrder;
 
-    @NonNull
-    private int priceScaleBasisId;
 
-    private Integer pricingType;
+    private Integer priceScaleBasisId;
 
-    private Integer organizationId;
-    private Integer distributionId;
+
+    @Ignore
+    private List<PriceCondition> priceConditions;
 
     public int getPriceConditionTypeId() {
         return priceConditionTypeId;
@@ -46,13 +51,6 @@ public class PriceConditionType {
         this.priceConditionTypeId = priceConditionTypeId;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public String getName() {
         return name;
@@ -62,12 +60,12 @@ public class PriceConditionType {
         this.name = name;
     }
 
-    public int getConditionClassId() {
-        return conditionClassId;
+    public int getPriceConditionClassId() {
+        return priceConditionClassId;
     }
 
-    public void setConditionClassId(int conditionClassId) {
-        this.conditionClassId = conditionClassId;
+    public void setPriceConditionClassId(int conditionClassId) {
+        this.priceConditionClassId = conditionClassId;
     }
 
     public int getOperationType() {
@@ -94,44 +92,19 @@ public class PriceConditionType {
         this.roundingRule = roundingRule;
     }
 
-    public Integer getProcessingOrder() {
-        return processingOrder;
-    }
-
-    public void setProcessingOrder(Integer processingOrder) {
-        this.processingOrder = processingOrder;
-    }
-    public int getPriceScaleBasisId() {
+    public Integer getPriceScaleBasisId() {
         return priceScaleBasisId;
     }
 
-    public void setPriceScaleBasisId(int priceScaleBasisId) {
+    public void setPriceScaleBasisId(Integer priceScaleBasisId) {
         this.priceScaleBasisId = priceScaleBasisId;
     }
-
-    public Integer getPricingType() {
-        return pricingType;
+    public List<PriceCondition> getPriceConditions() {
+        return priceConditions;
     }
 
-    public void setPricingType(Integer pricingType) {
-        this.pricingType = pricingType;
+    public void setPriceConditions(List<PriceCondition> priceConditions) {
+        this.priceConditions = priceConditions;
     }
-
-    public Integer getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(Integer organizationId) {
-        this.organizationId = organizationId;
-    }
-
-    public Integer getDistributionId() {
-        return distributionId;
-    }
-
-    public void setDistributionId(Integer distributionId) {
-        this.distributionId = distributionId;
-    }
-
 
 }

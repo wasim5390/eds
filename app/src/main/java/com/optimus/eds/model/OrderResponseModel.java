@@ -15,7 +15,7 @@ public class OrderResponseModel extends BaseResponse{
     @Expose
     private Long deliveryDate;
     @Expose
-    private Long distributionId;
+    private Integer distributionId;
     @Expose
     private Double latitude;
     @Expose
@@ -36,11 +36,11 @@ public class OrderResponseModel extends BaseResponse{
     @Expose
     private String orderStatusText;
     @Expose
-    private Long outletId;
+    private Integer outletId;
     @Expose
     private Double payable;
     @Expose
-    private Long routeId;
+    private Integer routeId;
     @Expose
     private Long salesmanId;
     @Expose
@@ -76,11 +76,11 @@ public class OrderResponseModel extends BaseResponse{
         this.deliveryDate = deliveryDate;
     }
 
-    public Long getDistributionId() {
+    public Integer getDistributionId() {
         return distributionId;
     }
 
-    public void setDistributionId(Long distributionId) {
+    public void setDistributionId(Integer distributionId) {
         this.distributionId = distributionId;
     }
 
@@ -148,11 +148,11 @@ public class OrderResponseModel extends BaseResponse{
         this.orderStatusText = orderStatusText;
     }
 
-    public Long getOutletId() {
+    public Integer getOutletId() {
         return outletId;
     }
 
-    public void setOutletId(Long outletId) {
+    public void setOutletId(Integer outletId) {
         this.outletId = outletId;
     }
 
@@ -164,11 +164,11 @@ public class OrderResponseModel extends BaseResponse{
         this.payable = payable;
     }
 
-    public Long getRouteId() {
+    public Integer getRouteId() {
         return routeId;
     }
 
-    public void setRouteId(Long routeId) {
+    public void setRouteId(Integer routeId) {
         this.routeId = routeId;
     }
 

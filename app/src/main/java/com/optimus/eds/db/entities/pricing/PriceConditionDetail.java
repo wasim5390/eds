@@ -1,19 +1,39 @@
 package com.optimus.eds.db.entities.pricing;
 
 
+import com.optimus.eds.db.converters.DecimalConverter;
+
+import java.math.BigDecimal;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
+
+import static androidx.room.ForeignKey.CASCADE;
 
 
-@Entity
+@Entity( foreignKeys = {  @ForeignKey(entity = PriceCondition.class
+        ,parentColumns = "priceConditionId",
+        childColumns = "priceConditionId",onDelete = CASCADE),
+
+        @ForeignKey(entity = PriceBundle.class
+                ,parentColumns = "bundleId",
+                childColumns = "bundleId",onDelete = CASCADE)
+
+},indices = {@Index("priceConditionId"),@Index("bundleId")})
+
 public class PriceConditionDetail {
 
     @PrimaryKey
     @NonNull
-    private int priceConditionDetailId;
+    private Integer priceConditionDetailId;
     @NonNull
-    private Double amount;
+    @TypeConverters(DecimalConverter.class)
+    private BigDecimal amount;
     @NonNull
     private Boolean isScale;
 
@@ -22,8 +42,7 @@ public class PriceConditionDetail {
 
     @NonNull
     private int type;
-    @NonNull
-    private int priceConditionId;
+
 
     private Boolean isDeleted;
     private Integer productId;
@@ -32,24 +51,24 @@ public class PriceConditionDetail {
     private Integer routeId;
     private Integer distributionId;
     private Integer minimumQuantity;
-    private Integer bundleId;
-    private Double maximumLimit;
+    @TypeConverters(DecimalConverter.class)
+    private BigDecimal maximumLimit;
     private Integer limitBy;
 
-    public int getPriceConditionDetailId() {
+    public Integer getPriceConditionDetailId() {
         return priceConditionDetailId;
     }
 
-    public void setPriceConditionDetailId(int priceConditionDetailId) {
+    public void setPriceConditionDetailId(Integer priceConditionDetailId) {
         this.priceConditionDetailId = priceConditionDetailId;
     }
 
     @NonNull
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(@NonNull Double amount) {
+    public void setAmount(@NonNull BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -158,11 +177,11 @@ public class PriceConditionDetail {
         this.bundleId = bundleId;
     }
 
-    public Double getMaximumLimit() {
+    public BigDecimal getMaximumLimit() {
         return maximumLimit;
     }
 
-    public void setMaximumLimit(Double maximumLimit) {
+    public void setMaximumLimit(BigDecimal maximumLimit) {
         this.maximumLimit = maximumLimit;
     }
 
@@ -176,5 +195,17 @@ public class PriceConditionDetail {
 
 
 
+    /*ForeignKeys*/
 
+/*
+    @ForeignKey(entity = PriceCondition.class
+            ,parentColumns = "priceConditionId",
+            childColumns = "priceConditionId",onDelete = CASCADE)*/
+    @NonNull
+    private int priceConditionId;
+/*
+    @ForeignKey(entity = PriceBundle.class
+            ,parentColumns = "bundleId",
+            childColumns = "bundleId",onDelete = CASCADE)*/
+    private Integer bundleId;
 }

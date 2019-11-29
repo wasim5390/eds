@@ -10,6 +10,8 @@ import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.Patterns;
 
+import com.optimus.eds.Constant;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -334,4 +336,19 @@ public class Util {
 
     }
 
+    public static String loadJSONFromAsset(Context context, String fileName) {
+        String json = null;
+        try {
+            InputStream is = context.getAssets().open(fileName);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    }
 }

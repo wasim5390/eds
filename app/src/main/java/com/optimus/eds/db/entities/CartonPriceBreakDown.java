@@ -40,9 +40,9 @@ public class CartonPriceBreakDown {
     @SerializedName("accessSequence")
     public String mAccessSequence;
     @SerializedName("unitPrice")
-    public Float mUnitPrice;
+    public Double mUnitPrice;
     @SerializedName("blockPrice")
-    public Float mBlockPrice;
+    public Double mBlockPrice;
     @SerializedName("totalPrice")
     public Float  mTotalPrice;
     @SerializedName("calculationType")
@@ -79,11 +79,11 @@ public class CartonPriceBreakDown {
         return mPriceCondition;
     }
 
-    public Float getUnitPrice() {
+    public Double getUnitPrice() {
         return mUnitPrice;
     }
 
-    public Float getBlockPrice() {
+    public Double getBlockPrice() {
         return mBlockPrice;
     }
 

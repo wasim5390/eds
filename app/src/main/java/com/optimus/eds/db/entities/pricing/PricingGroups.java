@@ -9,17 +9,17 @@ public class PricingGroups {
 
     @PrimaryKey
     @NonNull
-    private int pricingGroupId;
+    private Integer pricingGroupId;
     private String pricingGroupName;
     @NonNull
     private Boolean status;
 
 
-    public int getPricingGroupId() {
+    public Integer getPricingGroupId() {
         return pricingGroupId;
     }
 
-    public void setPricingGroupId(int pricingGroupId) {
+    public void setPricingGroupId(Integer pricingGroupId) {
         this.pricingGroupId = pricingGroupId;
     }
 

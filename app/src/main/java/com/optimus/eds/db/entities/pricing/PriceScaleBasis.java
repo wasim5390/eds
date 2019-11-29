@@ -10,14 +10,14 @@ public class PriceScaleBasis {
 
     @PrimaryKey
     @NonNull
-    private int priceScaleBasisId;
+    private Integer priceScaleBasisId;
     private String value;
 
-    public int getPriceScaleBasisId() {
+    public Integer getPriceScaleBasisId() {
         return priceScaleBasisId;
     }
 
-    public void setPriceScaleBasisId(int priceScaleBasisId) {
+    public void setPriceScaleBasisId(Integer priceScaleBasisId) {
         this.priceScaleBasisId = priceScaleBasisId;
     }
 

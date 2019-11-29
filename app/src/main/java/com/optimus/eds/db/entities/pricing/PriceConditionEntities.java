@@ -3,6 +3,7 @@ package com.optimus.eds.db.entities.pricing;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(
@@ -10,15 +11,20 @@ import androidx.room.PrimaryKey;
                 @ForeignKey(entity = PriceCondition.class,
                         parentColumns = "priceConditionId",
                         childColumns = "priceConditionId",
+                        onDelete = ForeignKey.CASCADE),
+
+                @ForeignKey(entity = PriceBundle.class,
+                        parentColumns = "bundleId",
+                        childColumns = "bundleId",
                         onDelete = ForeignKey.CASCADE)
-        }
+        },indices = {@Index(value = "priceConditionId"),@Index(value = "bundleId")}
 )
 public class PriceConditionEntities {
 
     @PrimaryKey
     @NonNull
-    private int priceConditionEntityId;
-    @NonNull
+    private Integer priceConditionEntityId;
+
     private int priceConditionId;
 
     private Integer outletId;
@@ -27,11 +33,11 @@ public class PriceConditionEntities {
     private Integer bundleId;
     private Boolean isDeleted;
 
-    public int getPriceConditionEntityId() {
+    public Integer getPriceConditionEntityId() {
         return priceConditionEntityId;
     }
 
-    public void setPriceConditionEntityId(int priceConditionEntityId) {
+    public void setPriceConditionEntityId(Integer priceConditionEntityId) {
         this.priceConditionEntityId = priceConditionEntityId;
     }
 

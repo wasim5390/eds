@@ -1,41 +1,42 @@
 package com.optimus.eds.db.entities.pricing;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = {
-        @ForeignKey(entity = PriceAccessSequence.class
-                ,parentColumns = "priceAccessSequenceId",
-                childColumns = "accessSequenceId",
+@Entity(
+        foreignKeys = {   @ForeignKey(entity = PriceConditionType.class
+                ,parentColumns = "priceConditionTypeId",
+                childColumns = "priceConditionTypeId",
                 onDelete=ForeignKey.CASCADE),
 
-        @ForeignKey(entity = PriceConditionType.class
-                ,parentColumns = "priceConditionTypeId",
-                childColumns = "conditionTypeId",
-                onDelete=ForeignKey.CASCADE)
-},indices = @Index({"accessSequenceId","conditionTypeId"}))
+        @ForeignKey(entity = PriceAccessSequence.class
+                ,parentColumns = "priceAccessSequenceId",
+                childColumns = "accessSequenceId",onDelete=ForeignKey.CASCADE)},
+        indices = {@Index("accessSequenceId"),@Index( "priceConditionTypeId")})
 public class PriceCondition {
 
     @PrimaryKey
-    @NonNull
     private int priceConditionId;
-    @NonNull
-    private int conditionTypeId;
-    @NonNull
-    private int accessSequenceId;
     private String name;
-    @NonNull
-    private Boolean isActive;
+
     private Boolean isBundle;
-    private Integer entityGroupById;
     private Integer pricingType;
     private String validFrom;
     private String validTo;
-    private Integer organizationId;
-    private Integer distributionId;
+
+
+    @Ignore
+    private List<PriceConditionEntities> priceConditionEntities;
+
+    @Ignore
+    private List<PriceConditionDetail> priceConditionDetails;
+
 
     public int getPriceConditionId() {
         return priceConditionId;
@@ -45,12 +46,12 @@ public class PriceCondition {
         this.priceConditionId = priceConditionId;
     }
 
-    public int getConditionTypeId() {
-        return conditionTypeId;
+    public int getPriceConditionTypeId() {
+        return priceConditionTypeId;
     }
 
-    public void setConditionTypeId(int conditionTypeId) {
-        this.conditionTypeId = conditionTypeId;
+    public void setPriceConditionTypeId(int conditionTypeId) {
+        this.priceConditionTypeId = conditionTypeId;
     }
 
     public int getAccessSequenceId() {
@@ -69,14 +70,6 @@ public class PriceCondition {
         this.name = name;
     }
 
-    @NonNull
-    public Boolean getActive() {
-        return isActive;
-    }
-
-    public void setActive(@NonNull Boolean active) {
-        isActive = active;
-    }
 
     public Boolean getBundle() {
         return isBundle;
@@ -84,14 +77,6 @@ public class PriceCondition {
 
     public void setBundle(Boolean bundle) {
         isBundle = bundle;
-    }
-
-    public Integer getEntityGroupById() {
-        return entityGroupById;
-    }
-
-    public void setEntityGroupById(Integer entityGroupById) {
-        this.entityGroupById = entityGroupById;
     }
 
     public Integer getPricingType() {
@@ -118,23 +103,34 @@ public class PriceCondition {
         this.validTo = validTo;
     }
 
-    public Integer getOrganizationId() {
-        return organizationId;
+    public List<PriceConditionEntities> getPriceConditionEntities() {
+        return priceConditionEntities;
     }
 
-    public void setOrganizationId(Integer organizationId) {
-        this.organizationId = organizationId;
+    public void setPriceConditionEntities(List<PriceConditionEntities> priceConditionEntities) {
+        this.priceConditionEntities = priceConditionEntities;
     }
 
-    public Integer getDistributionId() {
-        return distributionId;
+    public List<PriceConditionDetail> getPriceConditionDetails() {
+        return priceConditionDetails;
     }
 
-    public void setDistributionId(Integer distributionId) {
-        this.distributionId = distributionId;
+    public void setPriceConditionDetails(List<PriceConditionDetail> priceConditionDetails) {
+        this.priceConditionDetails = priceConditionDetails;
     }
 
+    /*ForeignKeys*/
+
+ /*   @ForeignKey(entity = PriceConditionType.class
+            ,parentColumns = "priceConditionTypeId",
+            childColumns = "priceConditionTypeId",
+            onDelete=ForeignKey.CASCADE)*/
+    private int priceConditionTypeId;
 
 
+/*    @ForeignKey(entity = PriceAccessSequence.class
+            ,parentColumns = "priceAccessSequenceId",
+            childColumns = "accessSequenceId",onDelete=ForeignKey.CASCADE)*/
+    private int accessSequenceId;
 
 }

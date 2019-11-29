@@ -43,9 +43,9 @@ public class UnitPriceBreakDown {
     @SerializedName("unitPrice")
     public Float mUnitPrice;
     @SerializedName("blockPrice")
-    public Float mBlockPrice;
+    public Double mBlockPrice;
     @SerializedName("totalPrice")
-    public Float  mTotalPrice;
+    public Double  mTotalPrice;
     @SerializedName("calculationType")
     public Integer mCalculationType;
     @SerializedName("outletId")
@@ -57,13 +57,15 @@ public class UnitPriceBreakDown {
     @SerializedName("isMaxLimitReached")
     public Boolean isMaxLimitReached;
     @SerializedName("maximumLimit")
-    public Float maximumLimit;
+    public Double maximumLimit;
     @SerializedName("alreadyAvailed")
-    public Float mAlreadyAvailed;
+    public Double mAlreadyAvailed;
     @SerializedName("limitBy")
     public Integer mLimitBy;
 
-
+    public Double getMaximumLimit() {
+        return maximumLimit;
+    }
     public Integer getId() {
         return mId;
     }
@@ -84,11 +86,11 @@ public class UnitPriceBreakDown {
         return mUnitPrice;
     }
 
-    public Float getBlockPrice() {
+    public Double getBlockPrice() {
         return mBlockPrice;
     }
 
-    public Float getTotalPrice() {
+    public Double getTotalPrice() {
         return mTotalPrice;
     }
 
@@ -100,5 +102,30 @@ public class UnitPriceBreakDown {
         return mPriceConditionId;
     }
 
+    public Integer getLimitBy() {
+        return mLimitBy;
+    }
+
+    public void setMaximumLimit(Double maximumLimit) {
+        this.maximumLimit = maximumLimit;
+    }
+
+    public void setAlreadyAvailed(Double mAlreadyAvailed) {
+        this.mAlreadyAvailed = mAlreadyAvailed;
+    }
+
+    public void setLimitBy(Integer mLimitBy) {
+        this.mLimitBy = mLimitBy;
+    }
+    public Double getAlreadyAvailed() {
+        return mAlreadyAvailed;
+    }
+    public void setPriceConditionDetailId(Integer mPriceConditionDetailId) {
+        this.mPriceConditionDetailId = mPriceConditionDetailId;
+    }
+
+    public Integer getPriceConditionDetailId() {
+        return mPriceConditionDetailId;
+    }
 
 }

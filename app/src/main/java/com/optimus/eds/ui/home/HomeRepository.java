@@ -13,15 +13,26 @@ import com.optimus.eds.db.dao.CustomerDao;
 import com.optimus.eds.db.dao.MerchandiseDao;
 import com.optimus.eds.db.dao.OrderDao;
 import com.optimus.eds.db.dao.OrderStatusDao;
+import com.optimus.eds.db.dao.PriceConditionEntitiesDao;
+import com.optimus.eds.db.dao.PricingDao;
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.db.entities.pricing.PriceAccessSequence;
+import com.optimus.eds.db.entities.pricing.PriceBundle;
+import com.optimus.eds.db.entities.pricing.PriceCondition;
+import com.optimus.eds.db.entities.pricing.PriceConditionClass;
+import com.optimus.eds.db.entities.pricing.PriceConditionDetail;
+import com.optimus.eds.db.entities.pricing.PriceConditionEntities;
+import com.optimus.eds.db.entities.pricing.PriceConditionScale;
+import com.optimus.eds.db.entities.pricing.PriceConditionType;
 import com.optimus.eds.model.AppUpdateModel;
 import com.optimus.eds.model.BaseResponse;
 import com.optimus.eds.model.LogModel;
 import com.optimus.eds.model.PackageProductResponseModel;
+import com.optimus.eds.model.PricingModel;
 import com.optimus.eds.model.RouteOutletResponseModel;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.API;
@@ -35,6 +46,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
@@ -60,6 +72,7 @@ public class HomeRepository {
     private MerchandiseDao merchandiseDao;
     private ProductsDao productsDao;
     private RouteDao routeDao;
+    private PriceConditionEntitiesDao pricingDao;
 
 
     private MutableLiveData<Boolean> isLoading;
@@ -82,6 +95,7 @@ public class HomeRepository {
         orderDao = appDatabase.orderDao();
         routeDao = appDatabase.routeDao();
         statusDao = appDatabase.orderStatusDao();
+        pricingDao = appDatabase.priceConditionEntitiesDao();
         merchandiseDao = appDatabase.merchandiseDao();
         customerDao = appDatabase.customerDao();
         isLoading = new MutableLiveData<>();
@@ -152,7 +166,8 @@ public class HomeRepository {
 
                         @Override
                         public void onComplete() {
-
+                            // if(onDayStart)
+                            //     loadPricing();
                         }
 
                         @Override
@@ -161,11 +176,6 @@ public class HomeRepository {
                             e.printStackTrace();
                         }
                     });
-
-
-
-
-
 
                 }
                 else{
@@ -209,9 +219,63 @@ public class HomeRepository {
 
 
         });
-
+       // loadPricing();
 
     }
+
+
+
+
+    public void loadPricing() {
+        executor.execute(() -> {
+            try {
+                Response<PricingModel> response = webService.loadPricing().execute();
+                if(response.isSuccessful()){
+                    PricingModel pricingModel = response.body();
+                    deleteAllPricing()
+                            .andThen(insertPriceConditionClasses(pricingModel.getPriceConditionClasses()))
+                            .andThen(insertConditionTypes(pricingModel.getPriceConditionTypes()).delay(200, TimeUnit.MILLISECONDS))
+                            .andThen(insertAccessSequence(pricingModel.getPriceAccessSequences()).delay(200, TimeUnit.MILLISECONDS))
+                            .andThen(insertConditions(pricingModel.getPriceConditions()))
+                            .andThen(insertPriceBundle(pricingModel.getPriceBundles()))
+                            .andThen(insertConditionDetails(pricingModel.getPriceConditionDetails()))
+                            .andThen(insertPriceConditionEntities(pricingModel.getPriceConditionEntities()))
+                            .andThen(insertPriceConditionScale(pricingModel.getPriceConditionScales()))
+                            .observeOn(Schedulers.io())
+                            .subscribeOn(Schedulers.io())
+                            .subscribe(new CompletableObserver() {
+                                @Override
+                                public void onSubscribe(Disposable d) {
+
+                                }
+
+                                @Override
+                                public void onComplete() {
+                                    msg.postValue("Pricing Loaded Successfully!");
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Log.e(TAG,e.getMessage());
+                                    msg.postValue(Constant.GENERIC_ERROR);
+                                }
+                            });
+
+                }
+                else{
+                    msg.postValue(response.errorBody().string());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG,e.getMessage());
+                msg.postValue(Constant.GENERIC_ERROR);
+            }finally {
+                isLoading.postValue(false);
+            }
+
+        });
+    }
+
 
     public Completable deleteAllRoutesAssets(){
         return Completable.fromAction(()->{
@@ -220,6 +284,12 @@ public class HomeRepository {
 
         });
     }
+    public Completable deleteAllPricing(){
+        return   Completable.fromAction(()-> pricingDao.deleteAllPriceConditionClasses());
+               // .andThen(Completable.fromAction(()->pricingDao.deleteAllPriceConditionEntities()));
+
+    }
+
     public Completable deleteAllOutlets(){
         return Completable.fromAction(()->routeDao.deleteAllOutlets());
     }
@@ -231,6 +301,57 @@ public class HomeRepository {
     public Completable deleteAllCustomerInput(){
         return Completable.fromAction(() -> customerDao.deleteAllCustomerInput());
     }
+
+    /**
+     * Pricing Start
+     */
+    Completable insertPriceConditionClasses(List<PriceConditionClass> priceConditionClasses){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceConditionClasses(priceConditionClasses);
+        });
+    }
+    Completable insertConditionTypes(List<PriceConditionType> priceConditionTypes){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceConditionType(priceConditionTypes);
+        });
+    }
+
+    Completable insertConditions(List<PriceCondition> priceConditions){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceCondition(priceConditions);
+        });
+    }
+
+    Completable insertAccessSequence(List<PriceAccessSequence> priceAccessSequences){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceAccessSequence(priceAccessSequences);
+        });
+    }
+
+    Completable insertConditionDetails(List<PriceConditionDetail> priceConditionDetails){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceConditionDetail(priceConditionDetails);
+        });
+    }
+
+    Completable insertPriceBundle(List<PriceBundle> bundles){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceBundles(bundles);
+        });
+    }
+
+    Completable insertPriceConditionEntities(List<PriceConditionEntities> entities){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceConditionEntities(entities);
+        });
+    }
+
+    Completable insertPriceConditionScale(List<PriceConditionScale> scales){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceConditionScales(scales);
+        });
+    }
+    /**** End Pricing ***/
 
     /**
      * Save Work status on server {Day started/ Day end}
@@ -273,7 +394,7 @@ public class HomeRepository {
     }
 
     public Single<AppUpdateModel> updateApp(){
-       return webService.checkAppUpdate();
+        return webService.checkAppUpdate();
     }
 
 

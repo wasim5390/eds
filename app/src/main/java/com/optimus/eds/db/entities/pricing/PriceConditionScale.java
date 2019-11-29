@@ -1,10 +1,15 @@
 package com.optimus.eds.db.entities.pricing;
 
+import com.optimus.eds.db.converters.DecimalConverter;
+
+import java.math.BigDecimal;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 @Entity(foreignKeys = {
         @ForeignKey(entity = PriceConditionDetail.class,
@@ -15,37 +20,38 @@ import androidx.room.PrimaryKey;
 public class PriceConditionScale {
 
     @PrimaryKey @NonNull
-    private int priceConditionScaleId;
+    private Integer priceConditionScaleId;
     @NonNull
-    private Double from;
+    private Integer from;
     @NonNull
-    private Double amount;
+    @TypeConverters(DecimalConverter.class)
+    private BigDecimal amount;
     @NonNull
     private int priceConditionDetailId;
 
-    public int getPriceConditionScaleId() {
+    public Integer getPriceConditionScaleId() {
         return priceConditionScaleId;
     }
 
-    public void setPriceConditionScaleId(int priceConditionScaleId) {
+    public void setPriceConditionScaleId(Integer priceConditionScaleId) {
         this.priceConditionScaleId = priceConditionScaleId;
     }
 
     @NonNull
-    public Double getFrom() {
+    public Integer getFrom() {
         return from;
     }
 
-    public void setFrom(@NonNull Double from) {
+    public void setFrom(@NonNull Integer from) {
         this.from = from;
     }
 
     @NonNull
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(@NonNull Double amount) {
+    public void setAmount(@NonNull BigDecimal amount) {
         this.amount = amount;
     }
 

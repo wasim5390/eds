@@ -6,31 +6,37 @@ import java.io.Serializable;
 
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class PricingLevels implements Serializable {
+public class PricingLevels {
 
     @SerializedName("pricingLevelId")
     @PrimaryKey
-    private int pricingLevelId;
+    private Integer pricingLevelId;
     @SerializedName("value")
     @Nullable
     private String value;
 
     public PricingLevels() {
     }
-    public PricingLevels(int pricingLevelId, @Nullable String value) {
+    @Ignore
+    public PricingLevels(Integer pricingLevelId, @Nullable String value) {
         this.pricingLevelId = pricingLevelId;
         this.value = value;
     }
 
 
-    public int getPricingLevelId() {
+    public Integer getPricingLevelId() {
         return pricingLevelId;
     }
 
-    public void setPricingLevelId(int pricingLevelId) {
+    public boolean isPricingNull(){
+        return pricingLevelId==null;
+    }
+
+    public void setPricingLevelId(Integer pricingLevelId) {
         this.pricingLevelId = pricingLevelId;
     }
 

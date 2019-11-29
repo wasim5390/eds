@@ -13,6 +13,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.annotation.NonNull;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
 import io.reactivex.Flowable;
 
 import io.reactivex.Observable;
@@ -24,11 +26,24 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 import retrofit2.Response;
 
+import com.google.gson.Gson;
 import com.optimus.eds.Constant;
+import com.optimus.eds.db.AppDatabase;
+import com.optimus.eds.db.dao.PricingDao;
 import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.db.entities.pricing.PriceAccessSequence;
+import com.optimus.eds.db.entities.pricing.PriceBundle;
+import com.optimus.eds.db.entities.pricing.PriceCondition;
+import com.optimus.eds.db.entities.pricing.PriceConditionClass;
+import com.optimus.eds.db.entities.pricing.PriceConditionDetail;
+import com.optimus.eds.db.entities.pricing.PriceConditionEntities;
+import com.optimus.eds.db.entities.pricing.PriceConditionScale;
+import com.optimus.eds.db.entities.pricing.PriceConditionType;
+import com.optimus.eds.db.entities.pricing_models.PcClassWithPcType;
 import com.optimus.eds.model.AppUpdateModel;
 import com.optimus.eds.model.OrderModel;
+import com.optimus.eds.model.PricingModel;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.JobIdManager;
 import com.optimus.eds.source.MasterDataUploadService;
@@ -53,16 +68,18 @@ public class HomeViewModel extends AndroidViewModel {
     private final String TAG = HomeViewModel.class.getSimpleName();
     private final HomeRepository repository;
     private final CompositeDisposable disposable;
-    private PreferenceUtil preferenceUtil;
+
     private MutableLiveData<Boolean> endDayLiveData;
     private MutableLiveData<AppUpdateModel> appUpdateLiveData;
+
+    private PricingDao pricingDao;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
         ExecutorService executors = Executors.newSingleThreadExecutor();
         repository = HomeRepository.singleInstance(application,RetrofitHelper.getInstance().getApi(),executors);
         disposable = new CompositeDisposable();
-        preferenceUtil = PreferenceUtil.getInstance(application);
+        pricingDao = AppDatabase.getDatabase(application).pricingDao();
         endDayLiveData = new MutableLiveData<>();
         appUpdateLiveData = new MutableLiveData<>();
 
@@ -212,7 +229,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public LiveData<AppUpdateModel> appUpdateLiveData(){
-       return appUpdateLiveData;
+        return appUpdateLiveData;
     }
 
     public void checkDayEnd(){
@@ -229,8 +246,8 @@ public class HomeViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .subscribe(appUpdateModel -> {
                     if(appUpdateModel.getSuccess()){
-                    appUpdateLiveData.postValue(appUpdateModel);
-                   // isLoading().postValue(false);
+                        appUpdateLiveData.postValue(appUpdateModel);
+                        // isLoading().postValue(false);
                     }else{
                         getErrorMsg().postValue(appUpdateModel.getMsg());
                     }
@@ -252,5 +269,112 @@ public class HomeViewModel extends AndroidViewModel {
         getErrorMsg().postValue(errorBody);
         isLoading().postValue(false);
 
+    }
+
+
+
+    public void deleteAllPricing(){
+        repository.deleteAllPricing()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(() -> {
+                    getErrorMsg().postValue("All pricing Deleted Successfully");
+                });
+    }
+
+    public void loadPricingFromAssets() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                String data= Util.loadJSONFromAsset(getApplication(),"PricingJson.TXT");
+                Gson gson = new Gson();
+                PricingModel pricingModel = gson.fromJson(data, PricingModel.class);
+                if(pricingModel==null)
+                    return;
+
+                insertPriceConditionClasses(pricingModel.getPriceConditionClasses())
+                        .andThen(insertConditionTypes(pricingModel.getPriceConditionTypes()))
+                        .andThen(insertAccessSequence(pricingModel.getPriceAccessSequences()))
+                        .andThen(insertConditions(pricingModel.getPriceConditions()))
+                        .andThen(insertPriceBundle(pricingModel.getPriceBundles()))
+                        .andThen(insertConditionDetails(pricingModel.getPriceConditionDetails()))
+                        .andThen(insertPriceConditionEntities(pricingModel.getPriceConditionEntities()))
+                        .andThen(insertPriceConditionScale(pricingModel.getPriceConditionScales()))
+
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new CompletableObserver() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                getErrorMsg().postValue("Inserted Successfully!");
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e(TAG, e.getMessage());
+                                getErrorMsg().postValue("Insert db Error");
+                                e.printStackTrace();
+                            }
+                        });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e(TAG, e.getMessage());
+                getErrorMsg().postValue("Parse Error");
+
+            }
+
+        });
+    }
+
+    Completable insertPriceConditionClasses(List<PriceConditionClass> priceConditionClasses){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceConditionClasses(priceConditionClasses);
+        });
+    }
+    Completable insertConditionTypes(List<PriceConditionType> priceConditionTypes){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceConditionType(priceConditionTypes);
+        });
+    }
+
+    Completable insertConditions(List<PriceCondition> priceConditions){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceCondition(priceConditions);
+        });
+    }
+
+    Completable insertAccessSequence(List<PriceAccessSequence> priceAccessSequences){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceAccessSequence(priceAccessSequences);
+        });
+    }
+
+    Completable insertConditionDetails(List<PriceConditionDetail> priceConditionDetails){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceConditionDetail(priceConditionDetails);
+        });
+    }
+
+    Completable insertPriceBundle(List<PriceBundle> bundles){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceBundles(bundles);
+        });
+    }
+
+    Completable insertPriceConditionEntities(List<PriceConditionEntities> entities){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceConditionEntities(entities);
+        });
+    }
+
+    Completable insertPriceConditionScale(List<PriceConditionScale> scales){
+        return   Completable.fromAction(() -> {
+            pricingDao.insertPriceConditionScales(scales);
+        });
     }
 }

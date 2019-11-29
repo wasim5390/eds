@@ -9,19 +9,19 @@ import androidx.room.PrimaryKey;
 public class PriceAccessSequence {
     @PrimaryKey
     @NonNull
-    private int priceAccessSequenceId;
+    private Integer priceAccessSequenceId;
     private String sequenceCode;
     private String sequenceName;
     @NonNull
-    private int order;
+    private Integer order;
     @Nullable
-    private Integer pricingLevelId,pricingTypeId;
+    private Integer pricingLevelId;
 
-    public int getPriceAccessSequenceId() {
+    public Integer getPriceAccessSequenceId() {
         return priceAccessSequenceId;
     }
 
-    public void setPriceAccessSequenceId(int priceAccessSequenceId) {
+    public void setPriceAccessSequenceId(Integer priceAccessSequenceId) {
         this.priceAccessSequenceId = priceAccessSequenceId;
     }
 
@@ -41,11 +41,11 @@ public class PriceAccessSequence {
         this.sequenceName = sequenceName;
     }
 
-    public int getOrder() {
+    public Integer getOrder() {
         return order;
     }
 
-    public void setOrder(int order) {
+    public void setOrder(Integer order) {
         this.order = order;
     }
 
@@ -57,17 +57,4 @@ public class PriceAccessSequence {
     public void setPricingLevelId(@Nullable Integer pricingLevelId) {
         this.pricingLevelId = pricingLevelId;
     }
-
-    @Nullable
-    public Integer getPricingTypeId() {
-        return pricingTypeId;
-    }
-
-    public void setPricingTypeId(@Nullable Integer pricingTypeId) {
-        this.pricingTypeId = pricingTypeId;
-    }
-
-
-
-
 }

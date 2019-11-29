@@ -11,6 +11,7 @@ import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.model.MerchandiseModel;
 import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.model.PackageProductResponseModel;
+import com.optimus.eds.model.PricingModel;
 import com.optimus.eds.model.RouteOutletResponseModel;
 
 
@@ -67,6 +68,9 @@ public interface API {
     @FormUrlEncoded
     @POST("api/AppOpertion/LogStartEnd")
     Single<LogModel> updateStartEndStatus(@FieldMap Map<String, Integer> params);
+
+    @GET("api/pricing/get")
+    Call<PricingModel> loadPricing();
 
     @GET("api/AppOpertion/GetLatestAPKInfo")
     Single<AppUpdateModel> checkAppUpdate();

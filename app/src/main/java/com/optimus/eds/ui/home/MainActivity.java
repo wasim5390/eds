@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -98,6 +99,8 @@ public class MainActivity extends BaseActivity {
             switch (id) {
                 case R.id.account:
                     Toast.makeText(MainActivity.this, getString(R.string.profile_will_avl_soon), Toast.LENGTH_SHORT).show();
+                   // viewModel.loadPricingFromAssets();
+                   // viewModel.deleteAllPricing();
                     break;
                 case R.id.update:
                     PermissionUtil.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -141,7 +144,8 @@ public class MainActivity extends BaseActivity {
         });
 
         registerReceiver(downloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-        viewModel.checkDayEnd();
+
+       // viewModel.checkDayEnd(); //TODO enable this in production
 
     }
 

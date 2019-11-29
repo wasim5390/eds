@@ -18,6 +18,9 @@ import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.ui.ProgressFragmentDialog;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 
 /**
  * Created by sidhu on 4/10/2019.

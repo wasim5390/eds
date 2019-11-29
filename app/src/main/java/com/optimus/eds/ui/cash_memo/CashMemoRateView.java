@@ -54,7 +54,7 @@ public class CashMemoRateView extends LinearLayout {
             LinearLayout rateView = (LinearLayout) inflater.inflate(R.layout.rate_child_layout,null);
             TextView title = rateView.findViewById(R.id.productRate);
             TextView rate = rateView.findViewById(R.id.tvProductRate);
-            Float unitPrice=0f,cartonPrice=0f;
+            Double unitPrice=0.0,cartonPrice=0.0;
             String type="";
             for(Object breakDown:entry.getValue()) {
 

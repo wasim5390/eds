@@ -3,6 +3,7 @@ package com.optimus.eds.db.dao;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.RoomWarnings;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
@@ -36,6 +37,7 @@ public interface OrderDao {
 
     @Query("SELECT * FROM 'Order' WHERE c_outletId IN (SELECT mOutletId From Outlet where mVisitStatus in (7,8))")
     @Transaction
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     Single<List<OrderModel>> findAllOrders();
 
     @Query("SELECT * FROM `Order`,Outlet" +
@@ -45,8 +47,10 @@ public interface OrderDao {
 
     @Query("SELECT * FROM `Order` where orderStatus=:orderStatus")
     @Transaction
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     Flowable<List<OrderModel>> getPendingOrders(int orderStatus);
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM `Order` where orderStatus=:orderStatus")
     @Transaction
     Single<List<OrderModel>> getPendingOrdersToUpload(int orderStatus);
