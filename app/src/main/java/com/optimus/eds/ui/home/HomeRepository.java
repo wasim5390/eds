@@ -219,7 +219,7 @@ public class HomeRepository {
 
 
         });
-       // loadPricing();
+        loadPricing();
 
     }
 

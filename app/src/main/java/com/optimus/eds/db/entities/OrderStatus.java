@@ -23,6 +23,9 @@ public class OrderStatus {
     private long outletId;
 
     private Long orderId;
+
+    private Long outletVisitEndTime;
+    private Long outletVisitStartTime;
     private int status;
     private Double orderAmount;
     @ColumnInfo(name = "sync")
@@ -84,5 +87,19 @@ public class OrderStatus {
         this.orderAmount = orderAmount;
     }
 
+    public Long getOutletVisitStartTime() {
+        return outletVisitStartTime;
+    }
 
+    public void setOutletVisitStartTime(Long outletVisitStartTime) {
+        this.outletVisitStartTime = outletVisitStartTime;
+    }
+
+    public Long getOutletVisitEndTime() {
+        return outletVisitEndTime;
+    }
+
+    public void setOutletVisitEndTime(Long outletVisitEndTime) {
+        this.outletVisitEndTime = outletVisitEndTime;
+    }
 }

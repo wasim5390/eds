@@ -20,8 +20,15 @@ public interface OrderStatusDao {
     @Insert(onConflict = REPLACE)
     void insertStatus(OrderStatus status);
 
-    @Query("Update OrderStatus Set status=:status, sync=:sync,orderAmount=:amount WHERE outletId=:outletId")
+    @Query("UPDATE OrderStatus Set status=:status, sync=:sync,orderAmount=:amount WHERE outletId=:outletId")
     void updateStatus(Integer status, Long outletId,int sync,Double amount);
+
+
+    @Query("UPDATE OrderStatus Set outletVisitEndTime=:time WHERE outletId=:outletId")
+    void updateStatusVisitEndTime(Long time, Long outletId);
+
+    @Query("Update OrderStatus Set outletVisitStartTime=:time WHERE outletId=:outletId")
+    void updateStatusVisitStartTime(Long time, Long outletId);
 
     @Query("DELETE FROM OrderStatus")
     void deleteAllStatus();

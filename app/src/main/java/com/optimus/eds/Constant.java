@@ -37,6 +37,7 @@ public interface Constant {
     String EXTRA_PARAM_OUTLET_STATUS_ID = "param_outlet_status_id" ;
     String EXTRA_PARAM_OUTLET_REASON_N_ORDER = "param_outlet_reason_no_order" ;
     String EXTRA_PARAM_OUTLET_VISIT_TIME = "param_outlet_visit_date_time" ;
+    String EXTRA_PARAM_OUTLET_VISIT_END_TIME = "param_outlet_visit_end_date_time" ;
     String EXTRA_PARAM_PRESELLER_LAT = "param_preseller_lat" ;
     String EXTRA_PARAM_PRESELLER_LNG = "param_preseller_lng" ;
     String EXTRA_PARAM_NO_ORDER_FROM_BOOKING="no_order";

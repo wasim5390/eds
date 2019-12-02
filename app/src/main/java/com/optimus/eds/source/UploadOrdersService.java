@@ -42,6 +42,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 
 import static com.optimus.eds.Constant.EXTRA_PARAM_OUTLET_ID;
+import static com.optimus.eds.Constant.EXTRA_PARAM_OUTLET_VISIT_END_TIME;
 import static com.optimus.eds.Constant.TOKEN;
 
 public class UploadOrdersService extends JobService {
@@ -49,7 +50,6 @@ public class UploadOrdersService extends JobService {
     private final String iTAG = UploadOrdersService.class.getSimpleName();
     String token;
     private int jobId;
-
 
     private OutletDetailRepository outletDetailRepository;
     private StatusRepository repository;
@@ -101,18 +101,26 @@ public class UploadOrdersService extends JobService {
         Maybe<MasterModel> masterModelSingle = Maybe.zip(orderSingle,customerInputSingle,
                 (orderModel, customerInput) -> {
 
+
                     Order order = orderModel.getOrder();
                     Gson gson  = new Gson();
                     String json = gson.toJson(order);
                     OrderResponseModel responseModel = gson.fromJson(json,OrderResponseModel.class);
                     responseModel.setOrderDetails(orderModel.getOrderDetails());
-
                     masterModel.setCustomerInput(customerInput);
                     masterModel.setOrderModel(responseModel);
                     masterModel.setLocation(orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng());
                     masterModel.setOutletId(order.getOutletId());
                     masterModel.setOutletStatus(Constant.STATUS_CONTINUE); // 1 for order complete
-                    masterModel.setOutletVisitTime(orderModel.getOutlet().getVisitDateTime()>0?orderModel.getOutlet().getVisitDateTime():null);
+
+                    OrderStatus status = repository.findOrderStatus(outletId)
+                            .observeOn(Schedulers.io())
+                            .subscribeOn(Schedulers.io())
+                            .blockingGet();
+                    if(status!=null){
+                        masterModel.setOutletVisitTime(status.getOutletVisitStartTime()==null?null:status.getOutletVisitStartTime());
+                        masterModel.setOutletEndTime(status.getOutletVisitEndTime()==null?null:status.getOutletVisitEndTime());
+                    }
                     return masterModel;
                 }) ;
 

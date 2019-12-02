@@ -19,7 +19,10 @@ public class MasterModel extends BaseResponse {
     private String reason;
 
     @Expose
-    public Long outletVisitTime;
+    public Long outletVisitTime; // when user opens outlet
+
+    @Expose
+    public Long outletEndTime; // when user completes order for that outlet
 
 
     @Expose
@@ -84,6 +87,15 @@ public class MasterModel extends BaseResponse {
     public void setOutletVisitTime(Long outletVisitTime) {
         this.outletVisitTime = outletVisitTime;
     }
+
+    public Long getOutletEndTime() {
+        return outletEndTime;
+    }
+
+    public void setOutletEndTime(Long outletEndTime) {
+        this.outletEndTime = outletEndTime;
+    }
+
 
 
     public Double getLongitude() {

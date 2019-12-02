@@ -13,6 +13,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
+import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 
 import com.optimus.eds.Constant;
 import com.optimus.eds.db.entities.Order;
@@ -66,11 +68,13 @@ public class OutletDetailViewModel extends AndroidViewModel {
 
 
     // schedule
-    public void scheduleMasterJob(Context context, Long outletId,Location location, Long visitDateTime,String reason,String token) {
+    public void scheduleMasterJob(Context context, Long outletId,Location location, Long visitDateTime,Long visitEndTime,String reason,String token) {
+
         PersistableBundle extras = new PersistableBundle();
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outletId);
         extras.putInt(Constant.EXTRA_PARAM_OUTLET_STATUS_ID,outletStatus);
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_VISIT_TIME,visitDateTime);
+        extras.putLong(Constant.EXTRA_PARAM_OUTLET_VISIT_END_TIME,visitEndTime);
         extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LAT,location.getLatitude());
         extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LNG,location.getLongitude());
         extras.putString(Constant.EXTRA_PARAM_OUTLET_REASON_N_ORDER,reason);
@@ -92,12 +96,17 @@ public class OutletDetailViewModel extends AndroidViewModel {
         statusLiveData.postValue(code);
     }
 
+    public void updateOutletVisitEndTime(Long outletId,Long time){
+
+        statusRepository.updateStatusOutletEndTime(time,outletId);
+    }
+
     public LiveData<Integer> getStatusLiveData() {
         return statusLiveData;
     }
 
-    public void onNextClick(Location currentLocation) {
-        outlet.setVisitDateTime(Calendar.getInstance().getTimeInMillis());
+    public void onNextClick(Location currentLocation,Long outletVisitStartTime) {
+
         Location outletLocation = new Location("Outlet Location");
         outletLocation.setLatitude(outlet.getLatitude());
         outletLocation.setLongitude(outlet.getLongitude());
@@ -111,23 +120,29 @@ public class OutletDetailViewModel extends AndroidViewModel {
             outlet.setVisitTimeLng(currentLocation.getLongitude());
             outlet.setVisitStatus(outletStatus);
             outlet.setSynced(0);
-            if(statusLiveData.getValue()!=null)
-            uploadStatus.postValue(statusLiveData.getValue() != 1);
+            if(statusLiveData.getValue()!=null) {
+                OrderStatus orderStatus = new OrderStatus(outlet.getOutletId(),outletStatus,0,0.0);
+                orderStatus.setOutletVisitStartTime(outletVisitStartTime);
+                statusRepository.insertStatus(orderStatus);
+                repository.updateOutlet(outlet);
+                uploadStatus.postValue(statusLiveData.getValue() != 1);
+            }
         }
 
-        statusRepository.insertStatus(new OrderStatus(outlet.getOutletId(),outletStatus,0,0.0));
-        repository.updateOutlet(outlet);
 
     }
 
-    public void postEmptyCheckout(boolean noOrderFromBooking){
+    public void postEmptyCheckout(boolean noOrderFromBooking,Long outletVisitStartTime,Long outletVisitEndTime){
         if(noOrderFromBooking) {
             outletStatus = Constant.STATUS_NO_ORDER_FROM_BOOKING; // 6 means no order from booking view
             outlet.setSynced(0);
-            uploadStatus.postValue(true);
             outlet.setVisitStatus(outletStatus);
             repository.updateOutlet(outlet); // TODO remove this if below successful
-            statusRepository.insertStatus(new OrderStatus(outlet.getOutletId(),outletStatus,0,0.0));
+            OrderStatus status = new OrderStatus(outlet.getOutletId(),outletStatus,0,0.0);
+            status.setOutletVisitStartTime(outletVisitStartTime);
+            status.setOutletVisitEndTime(outletVisitEndTime);
+            statusRepository.insertStatus(status);
+            uploadStatus.postValue(true);
 
         }
     }

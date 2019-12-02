@@ -37,4 +37,12 @@ public class StatusRepository extends OrderBookingRepository {
     public void updateStatus(OrderStatus status){
         AsyncTask.execute(() -> orderStatusDao.updateStatus(status.getStatus(),status.getOutletId(),status.getSynced(),status.getOrderAmount()));
     }
+
+    public void updateStatusOutletEndTime(Long endTime,Long outletId){
+        AsyncTask.execute(() -> orderStatusDao.updateStatusVisitEndTime(endTime,outletId));
+    }
+
+    public void updateStatusOutletStartTime(Long startTime,Long outletId){
+        AsyncTask.execute(() -> orderStatusDao.updateStatusVisitStartTime(startTime,outletId));
+    }
 }

@@ -30,6 +30,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.R;
 
+import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Outlet;
 
 import com.optimus.eds.location_services.GpsUtils;
@@ -83,6 +84,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
     OutletDetailViewModel viewModel;
     private String reasonForNoSale="";
     private boolean isGPS=false;
+    private Long outletVisitStartTime = Calendar.getInstance().getTimeInMillis();
     private Location currentLocation = new Location("CurrentLocation");
 
     public static void start(Context context, Long outletId,Long routeId,int code) {
@@ -115,7 +117,8 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         });
         viewModel.getUploadStatus().observe(this,aBoolean -> {
             if(aBoolean){
-                viewModel.scheduleMasterJob(this,outletId,currentLocation, Calendar.getInstance().getTimeInMillis(),reasonForNoSale, PreferenceUtil.getInstance(getApplication()).getToken());
+                viewModel.updateOutletVisitEndTime(outletId,Calendar.getInstance().getTimeInMillis());
+                viewModel.scheduleMasterJob(this,outletId,currentLocation,outletVisitStartTime ,Calendar.getInstance().getTimeInMillis(),reasonForNoSale, PreferenceUtil.getInstance(getApplication()).getToken());
                 finish(); // finish activity after sending status
             }else{
                // OutletMerchandiseActivity.start(this,outletId,REQUEST_CODE);
@@ -247,7 +250,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
 
     @OnClick(R.id.btnOk)
     public void onOkClick(){
-            viewModel.onNextClick(currentLocation);
+            viewModel.onNextClick(currentLocation,outletVisitStartTime);
     }
 
     @Override
@@ -270,7 +273,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
                 case REQUEST_CODE:
                 boolean noOrderFromOrderBooking = data.getBooleanExtra(EXTRA_PARAM_NO_ORDER_FROM_BOOKING,false);
                 reasonForNoSale = String.valueOf(data.getLongExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER,1L));
-                viewModel.postEmptyCheckout(noOrderFromOrderBooking);
+                viewModel.postEmptyCheckout(noOrderFromOrderBooking,outletVisitStartTime,Calendar.getInstance().getTimeInMillis());
                 break;
             }
         }

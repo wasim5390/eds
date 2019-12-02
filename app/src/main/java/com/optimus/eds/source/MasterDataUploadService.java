@@ -42,13 +42,12 @@ public class MasterDataUploadService extends JobService implements Constant {
             final String reason = bundle.getString(EXTRA_PARAM_OUTLET_REASON_N_ORDER,"");
             final Double latitude = bundle.getDouble(EXTRA_PARAM_PRESELLER_LAT,0);
             final Double longitude = bundle.getDouble(EXTRA_PARAM_PRESELLER_LNG,0);
-            final Long visitTime = bundle.getLong(EXTRA_PARAM_OUTLET_VISIT_TIME);
+
             token = bundle.getString(TOKEN);
             MasterModel masterModel = new MasterModel();
             masterModel.setOutletId(outletId);
             masterModel.setOutletStatus(statusId);
             masterModel.setReason(reason);
-            masterModel.setOutletVisitTime(visitTime>0?visitTime:null);
             masterModel.setLocation(latitude,longitude);
             uploadMasterData(masterModel);
         }
@@ -80,18 +79,26 @@ public class MasterDataUploadService extends JobService implements Constant {
      */
     private void uploadMasterData(MasterModel masterModel) {
         Log.i(iTAG,"JobId: "+jobId);
-
+       OrderStatus status= statusRepository.findOrderStatus(masterModel.getOutletId())
+               .observeOn(Schedulers.io())
+               .subscribeOn(Schedulers.io()).blockingGet();
+       if(status!=null) {
+           masterModel.setOutletVisitTime(status.getOutletVisitStartTime());
+           masterModel.setOutletEndTime(status.getOutletVisitEndTime());
+       }
         RetrofitHelper.getInstance().getApi().saveOrder(masterModel,token)
                 .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(masterModel1 -> {
-            onUpload(masterModel1,masterModel.getOutletId(),masterModel.getOutletStatus());
+            onUpload(masterModel1,masterModel.getOutletId(),masterModel.getOutletStatus(),masterModel.getOutletVisitTime(),masterModel.getOutletEndTime());
         },this::error);
     }
 
-    private void onUpload(BaseResponse baseResponse,Long outletId,Integer status) {
+    private void onUpload(BaseResponse baseResponse,Long outletId,Integer status,Long visitStartTime,Long visitEndTime) {
         if(baseResponse.isSuccess()) {
             Log.i(iTAG, "File Uploaded");
             outletDetailRepository.updateOutletVisitStatus(outletId,status,1);
             statusRepository.updateStatus(new OrderStatus(outletId,status,1,0.0));
+            statusRepository.updateStatusOutletStartTime(visitStartTime,outletId);
+            statusRepository.updateStatusOutletEndTime(visitEndTime,outletId);
             Intent intent = new Intent();
             intent.setAction(Constant.ACTION_ORDER_UPLOAD);
             intent.putExtra("Response", baseResponse);

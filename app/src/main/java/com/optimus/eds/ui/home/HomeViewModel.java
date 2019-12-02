@@ -187,7 +187,6 @@ public class HomeViewModel extends AndroidViewModel {
         PersistableBundle extras = new PersistableBundle();
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outlet.getOutletId());
         extras.putInt(Constant.EXTRA_PARAM_OUTLET_STATUS_ID,outlet.getVisitStatus());
-        extras.putLong(Constant.EXTRA_PARAM_OUTLET_VISIT_TIME,outlet.getVisitDateTime());
         extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LAT,outlet.getVisitTimeLat());
         extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LNG,outlet.getVisitTimeLng());
         extras.putString(Constant.TOKEN, token);

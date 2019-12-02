@@ -46,10 +46,12 @@ import com.optimus.eds.utils.PreferenceUtil;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -112,7 +114,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
     }
 
 
-    public void saveOrder(String mobileNumber,String remarks,String cnic,String strn,String base64Sign,long deliveryDate){
+    public void saveOrder(String mobileNumber,String remarks,String cnic,String strn,String base64Sign,long outletVisitTime){
         isSaving.postValue(true);
         OrderModel orderModel = orderModelLiveData.getValue();
         Order order = orderModel.getOrder();
@@ -123,7 +125,7 @@ public class CustomerInputViewModel extends AndroidViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(() -> {
-                    postData(orderModel,deliveryDate,customerInput);
+                    postData(orderModel,customerInput);
                     scheduleMerchandiseJob(getApplication(),outletId, PreferenceUtil.getInstance(getApplication()).getToken());
                     updateStock(getApplication(),outletId);
                 });
@@ -131,13 +133,16 @@ public class CustomerInputViewModel extends AndroidViewModel {
 
     }
 
-    public void postData(OrderModel orderModel,Long deliveryDate,CustomerInput customerInput){
+
+
+    public void postData(OrderModel orderModel,CustomerInput customerInput){
+        statusRepository.updateStatusOutletEndTime(Calendar.getInstance().getTimeInMillis(),outletId);
         updateOutletTaskStatus(outletId,Constant.STATUS_PENDING_TO_SYNC,0,orderModel.getOrder().getPayable());
         outletDetailRepository.updateOutletCnic(outletId,customerInput.getMobileNumber(),customerInput.getCnic(),customerInput.getStrn());
         NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {
             if (!aBoolean){
                  scheduleMasterJob(getApplication(),outletId,Constant.STATUS_COMPLETED,orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng(),
-                         deliveryDate,"",PreferenceUtil.getInstance(getApplication()).getToken());
+                         "",PreferenceUtil.getInstance(getApplication()).getToken());
                 isSaving.postValue(false);
                 orderSaved.postValue(true);
             }else {
@@ -148,6 +153,8 @@ public class CustomerInputViewModel extends AndroidViewModel {
 
     //**************** Post Order ****************/
     public MasterModel generateOrder(OrderModel orderModel,CustomerInput customerInput){
+
+       OrderStatus status= statusRepository.findOrderStatus(outletId).subscribeOn(Schedulers.io()).blockingGet();
 
         MasterModel masterModel = new MasterModel();
 
@@ -162,7 +169,9 @@ public class CustomerInputViewModel extends AndroidViewModel {
         masterModel.setLocation(orderModel.getOutlet().getVisitTimeLat(),orderModel.getOutlet().getVisitTimeLng());
         masterModel.setOutletId(order.getOutletId());
         masterModel.setOutletStatus(Constant.STATUS_CONTINUE); // 8 for order complete
-        masterModel.setOutletVisitTime(orderModel.getOutlet().getVisitDateTime()>0?orderModel.getOutlet().getVisitDateTime():null);
+        if(status!=null)
+        masterModel.setOutletVisitTime(status.getOutletVisitStartTime()>0?status.getOutletVisitStartTime():null);
+        masterModel.setOutletEndTime(Calendar.getInstance().getTimeInMillis());
         return masterModel;
 
     }
@@ -214,11 +223,10 @@ public class CustomerInputViewModel extends AndroidViewModel {
 
 
     // schedule
-    public void scheduleMasterJob(Context context, Long outletId,Integer outletStatus, Double latitude,Double longitude,Long visitDateTime, String reason, String token) {
+    public void scheduleMasterJob(Context context, Long outletId,Integer outletStatus, Double latitude,Double longitude, String reason, String token) {
         PersistableBundle extras = new PersistableBundle();
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outletId);
         extras.putInt(Constant.EXTRA_PARAM_OUTLET_STATUS_ID,outletStatus);
-        extras.putLong(Constant.EXTRA_PARAM_OUTLET_VISIT_TIME,visitDateTime);
         extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LAT,latitude);
         extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LNG,longitude);
         extras.putString(Constant.EXTRA_PARAM_OUTLET_REASON_N_ORDER,reason);
