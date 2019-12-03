@@ -31,7 +31,7 @@ public class OrderDetail implements Cloneable{
 
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "pk_modid")
     @SerializedName("mobileOrderDetailId")
-    public Long orderDetailId;
+    public int orderDetailId;
 
     @SerializedName("productId")
     public Long mProductId;
@@ -216,7 +216,7 @@ public class OrderDetail implements Cloneable{
     public Long getLocalOrderId() {
         return mLocalOrderId;
     }
-    public Long getMobileOrderDetailId() {
+    public int getMobileOrderDetailId() {
         return orderDetailId;
     }
     public Long getOrderId() {

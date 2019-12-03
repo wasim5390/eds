@@ -25,6 +25,7 @@ public class UnitPriceBreakDown {
     public Integer mId;
     @SerializedName("orderId")
     public Integer mOrderId;
+
     @ColumnInfo(name = "fk_modid")
     @SerializedName("mobileOrderDetailId")
     public Integer mOrderDetailId;
@@ -34,6 +35,8 @@ public class UnitPriceBreakDown {
     public String mPriceConditionType;
     @SerializedName("priceConditionClass")
     public String mPriceConditionClass;
+    @SerializedName("priceConditionClassOrder")
+    public Integer mPriceConditionClassOrder;
     @SerializedName("priceConditionId")
     public Integer mPriceConditionId;
     @SerializedName("priceConditionDetailId")
@@ -62,6 +65,15 @@ public class UnitPriceBreakDown {
     public Double mAlreadyAvailed;
     @SerializedName("limitBy")
     public Integer mLimitBy;
+
+
+    public void setOrderId(Integer mOrderId) {
+        this.mOrderId = mOrderId;
+    }
+
+    public void setOrderDetailId(Integer mOrderDetailId) {
+        this.mOrderDetailId = mOrderDetailId;
+    }
 
     public Double getMaximumLimit() {
         return maximumLimit;
@@ -127,5 +139,14 @@ public class UnitPriceBreakDown {
     public Integer getPriceConditionDetailId() {
         return mPriceConditionDetailId;
     }
+
+    public Integer getPriceConditionClassOrder() {
+        return mPriceConditionClassOrder;
+    }
+
+    public void setPriceConditionClassOrder(Integer mPriceConditionClassOrder) {
+        this.mPriceConditionClassOrder = mPriceConditionClassOrder;
+    }
+
 
 }

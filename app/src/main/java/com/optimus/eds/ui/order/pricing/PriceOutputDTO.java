@@ -11,8 +11,6 @@ public class PriceOutputDTO {
    private BigDecimal TotalPrice;
     private Collection<UnitPriceBreakDown> PriceBreakdown;
 
-
-
     public Collection<Message> Messages;
 
     public PriceOutputDTO() {

@@ -13,6 +13,7 @@ import com.optimus.eds.db.entities.UnitPriceBreakDown;
 import com.optimus.eds.utils.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,17 +46,23 @@ public class CashMemoRateView extends LinearLayout {
     public void setRates(OrderDetail orderDetail){
         if(Util.isListEmpty(orderDetail.getUnitPriceBreakDown()) && Util.isListEmpty(orderDetail.getCartonPriceBreakDown()))
             return;
+        List<CartonPriceBreakDown> cartonPriceBreakDowns = orderDetail.getCartonPriceBreakDown();
+        List<UnitPriceBreakDown> unitPriceBreakDowns = orderDetail.getUnitPriceBreakDown();
+
         LayoutInflater inflater =  LayoutInflater.from(getContext());
 
-        HashMap<Integer,List<Object>> listHashMap =calculate(orderDetail.getCartonPriceBreakDown(),orderDetail.getUnitPriceBreakDown());
+        HashMap<Integer,List<Object>> listHashMap =calculate(cartonPriceBreakDowns,unitPriceBreakDowns);
 
         for (Map.Entry<Integer, List<Object>> entry : listHashMap.entrySet())
         {
+
             LinearLayout rateView = (LinearLayout) inflater.inflate(R.layout.rate_child_layout,null);
             TextView title = rateView.findViewById(R.id.productRate);
             TextView rate = rateView.findViewById(R.id.tvProductRate);
             Double unitPrice=0.0,cartonPrice=0.0;
             String type="";
+
+
             for(Object breakDown:entry.getValue()) {
 
                 if(breakDown instanceof CartonPriceBreakDown) {
@@ -77,6 +84,12 @@ public class CashMemoRateView extends LinearLayout {
 
 
     public HashMap<Integer,List<Object>> calculate(List<CartonPriceBreakDown> cartonPriceBreakDownList,List<UnitPriceBreakDown> unitPriceBreakDownList){
+        if(!Util.isListEmpty(cartonPriceBreakDownList))
+            Collections.sort(cartonPriceBreakDownList,(o1, o2) -> o1.getPriceConditionClassOrder().compareTo(o2.getPriceConditionClassOrder()));
+        if(!Util.isListEmpty(unitPriceBreakDownList))
+            Collections.sort(unitPriceBreakDownList,(o1, o2) ->  o1.getPriceConditionClassOrder().compareTo(o2.getPriceConditionClassOrder()));
+
+
         List<Object> breakDowns = new ArrayList<>();
         breakDowns.addAll(cartonPriceBreakDownList==null?new ArrayList<>():cartonPriceBreakDownList);
         breakDowns.addAll(unitPriceBreakDownList==null?new ArrayList<>():unitPriceBreakDownList);

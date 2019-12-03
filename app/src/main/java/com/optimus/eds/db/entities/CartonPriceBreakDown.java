@@ -33,6 +33,9 @@ public class CartonPriceBreakDown {
     public String mPriceConditionType;
     @SerializedName("priceConditionClass")
     public String mPriceConditionClass;
+
+    @SerializedName("priceConditionClassOrder")
+    public Integer mPriceConditionClassOrder;
     @SerializedName("priceConditionId")
     public Integer mPriceConditionId;
     @SerializedName("priceConditionDetailId")
@@ -98,6 +101,14 @@ public class CartonPriceBreakDown {
     public Integer getPriceConditionId() {
         return mPriceConditionId;
     }
+    public Integer getPriceConditionClassOrder() {
+        return mPriceConditionClassOrder;
+    }
+
+    public void setPriceConditionClassOrder(Integer mPriceConditionClassOrder) {
+        this.mPriceConditionClassOrder = mPriceConditionClassOrder;
+    }
+
 
 
 }

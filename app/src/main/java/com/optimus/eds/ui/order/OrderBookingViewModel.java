@@ -10,7 +10,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.optimus.eds.Constant;
+
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
@@ -20,9 +22,9 @@ import com.optimus.eds.db.entities.ProductGroup;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.model.PackageModel;
-import com.optimus.eds.model.PackageProductResponseModel;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
+
 import com.optimus.eds.ui.order.pricing.PricingManager;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 import com.optimus.eds.utils.NetworkManager;
@@ -31,6 +33,7 @@ import com.optimus.eds.utils.Util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -334,49 +337,68 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
 
     private void composeOrderForServer() {
-        NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {
-            if (!aBoolean){
-                isSaving.postValue(false);
-                //  orderSaved.postValue(true); // pricing is not implemented in mobile so should'nt move to cash memo
-                return;
-            }else {
 
-                if (order != null) {
-                    isSaving.postValue(true);
 
-                    Order mOrder = new Order(order.getOrder().getOutletId());
-                    mOrder.setRouteId(order.getOutlet().getRouteId());
-                    mOrder.setVisitDayId(order.getOutlet().getVisitDay());
-                    mOrder.setOrderStatus(Constant.ORDER_CREATED); //2 created
-                    mOrder.setLocalOrderId(order.getOrder().getLocalOrderId());
-                    mOrder.setLatitude(order.getOutlet().getLatitude());
-                    mOrder.setLongitude(order.getOutlet().getLongitude());
+        if (order != null) {
+            isSaving.postValue(true);
 
-                    order.setOrder(mOrder);
+            Order mOrder = new Order(order.getOrder().getOutletId());
+            mOrder.setRouteId(order.getOutlet().getRouteId());
+            mOrder.setVisitDayId(order.getOutlet().getVisitDay());
+            mOrder.setOrderStatus(Constant.ORDER_CREATED); //2 created
+            mOrder.setLocalOrderId(order.getOrder().getLocalOrderId());
+            mOrder.setLatitude(order.getOutlet().getLatitude());
+            mOrder.setLongitude(order.getOutlet().getLongitude());
 
-                    Gson gson = new Gson();
-                    String json = gson.toJson(mOrder);
-                    OrderResponseModel responseModel = gson.fromJson(json, OrderResponseModel.class);
-                    responseModel.setOrderDetails(order.getOrderDetails());
-                   // PricingManager.getInstance(getApplication()).calculatePrice(responseModel);
+            order.setOrder(mOrder);
 
-                    disposable
-                            .add(webservice.calculatePricing(responseModel)
-                                    .map(orderResponseModel -> {
-                                OrderModel orderModel = new OrderModel();
-                                String orderString = new Gson().toJson(orderResponseModel);
-                                Order order = new Gson().fromJson(orderString, Order.class);
-                                orderModel.setOrderDetails(orderResponseModel.getOrderDetails());
-                                orderModel.setOrder(order);
-                                orderModel.setOutlet(this.order.getOutlet());
-                                orderModel.setSuccess(orderResponseModel.isSuccess());
-                                return orderModel;
-                            }).observeOn(AndroidSchedulers.mainThread())
-                                    .subscribeOn(Schedulers.io())
-                                    .subscribe(this::updateOrder, this::onError));
+            Gson gson = new Gson();
+            String json = gson.toJson(mOrder);
+            OrderResponseModel responseModel = gson.fromJson(json, OrderResponseModel.class);
+            responseModel.setOrderDetails(order.getOrderDetails());
+            NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {
+                if (!aBoolean) {
+                    disposable.add(calculateLocally(responseModel));
+                } else {
+                    disposable.add(calculateFromServer(responseModel));
                 }
-            }
-        }) ;
+            });
+        }
+
+    }
+
+    private Disposable calculateFromServer(OrderResponseModel responseModel) {
+        return   webservice.calculatePricing(responseModel)
+                .map(orderResponseModel -> {
+                    OrderModel orderModel = new OrderModel();
+                    String orderString = new Gson().toJson(orderResponseModel);
+                    Order order = new Gson().fromJson(orderString, Order.class);
+                    orderModel.setOrderDetails(orderResponseModel.getOrderDetails());
+                    orderModel.setOrder(order);
+                    orderModel.setOutlet(this.order.getOutlet());
+                    orderModel.setSuccess(orderResponseModel.isSuccess());
+                    return orderModel;
+                }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::updateOrder, this::onError);
+    }
+
+    private Disposable calculateLocally(OrderResponseModel responseModel) {
+        return PricingManager.getInstance(getApplication())
+                .loadPricing()
+                .map(pcClassWithPcTypes -> PricingManager.getInstance(getApplication()).calculatePriceBreakdown(pcClassWithPcTypes,responseModel))
+                .map(orderResponseModel -> {
+                    OrderModel orderModel = new OrderModel();
+                    String orderString = new Gson().toJson(orderResponseModel);
+                    Order order = new Gson().fromJson(orderString, Order.class);
+                    orderModel.setOrderDetails(orderResponseModel.getOrderDetails());
+                    orderModel.setOrder(order);
+                    orderModel.setOutlet(this.order.getOutlet());
+                    orderModel.setSuccess(orderResponseModel.isSuccess());
+                    return orderModel;
+                }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::updateOrder, this::onError);
     }
 
 
