@@ -7,6 +7,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.OrderDetail;
+import com.optimus.eds.db.entities.UnitPriceBreakDown;
 
 public class OrderResponseModel extends BaseResponse{
 
@@ -28,7 +29,7 @@ public class OrderResponseModel extends BaseResponse{
     private List<OrderDetail> orderDetails;
 
     @Expose
-    private List<CartonPriceBreakDown> priceBreakDown;
+    private List<UnitPriceBreakDown> priceBreakDown; // invoice level breakdown
     @Expose
     private Long orderId;
     @Expose
@@ -171,7 +172,9 @@ public class OrderResponseModel extends BaseResponse{
     public void setRouteId(Integer routeId) {
         this.routeId = routeId;
     }
-
+    public void setPriceBreakDown(List<UnitPriceBreakDown> priceBreakDown) {
+        this.priceBreakDown = priceBreakDown;
+    }
     public Long getSalesmanId() {
         return salesmanId;
     }
@@ -196,7 +199,7 @@ public class OrderResponseModel extends BaseResponse{
         this.visitDayId = visitDayId;
     }
 
-    public List<CartonPriceBreakDown> getPriceBreakDown() {
+    public List<UnitPriceBreakDown> getPriceBreakDown() {
         return priceBreakDown;
     }
 

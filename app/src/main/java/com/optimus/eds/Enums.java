@@ -57,4 +57,11 @@ public class Enums {
         public static Integer Total_Quantity=3;
     }
 
+    public enum MessageSeverityLevel
+    {;
+        public static Integer    ERROR = 1;
+        public static Integer   WARNING = 2;
+        public static Integer   MESSAGE = 3;
+    }
+
 }

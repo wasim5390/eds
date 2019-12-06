@@ -12,12 +12,13 @@ import java.io.Serializable;
 @Entity
 public class Asset implements Serializable {
 
-    @SerializedName("outletId")
-    private Long outletId;
-
     @SerializedName("assetId")
     @PrimaryKey
     private Long mAssetId;
+
+    @SerializedName("outletId")
+    private Long outletId;
+
     @SerializedName("assetModel")
     private String mAssetModel;
     @SerializedName("assetModelId")

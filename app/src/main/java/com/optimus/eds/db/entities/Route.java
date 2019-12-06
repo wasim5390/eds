@@ -1,6 +1,7 @@
 
 package com.optimus.eds.db.entities;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -14,6 +15,7 @@ public class Route implements Serializable {
 
     @SerializedName("routeId")
     @PrimaryKey
+    @ColumnInfo(name = "routeId")
     public Long mRouteId;
 
     @SerializedName("routeName")

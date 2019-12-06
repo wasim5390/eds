@@ -11,13 +11,14 @@ import androidx.room.TypeConverters;
 import com.google.gson.annotations.SerializedName;
 import com.optimus.eds.db.converters.PriceBreakdownConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity (foreignKeys =
 @ForeignKey(
         entity = Outlet.class,
         parentColumns = "mOutletId",
-        childColumns = "c_outletId"), indices = {@Index(value = "c_outletId")})
+        childColumns = "c_outletId", onDelete = ForeignKey.CASCADE), indices = {@Index(value = "c_outletId")})
 
 public class Order {
 
@@ -62,7 +63,7 @@ public class Order {
 
     @SerializedName("priceBreakDown")
     @TypeConverters(PriceBreakdownConverter.class)
-    public List<CartonPriceBreakDown> priceBreakDown;
+    public List<UnitPriceBreakDown> priceBreakDown; // invoice level breakdown
 
 
     public Long getDistributionId() {
@@ -73,11 +74,11 @@ public class Order {
         this.distributionId = distributionId;
     }
 
-    public List<CartonPriceBreakDown> getPriceBreakDown() {
-        return priceBreakDown;
+    public List<UnitPriceBreakDown> getPriceBreakDown() {
+        return priceBreakDown==null?new ArrayList<>():priceBreakDown;
     }
 
-    public void setPriceBreakDown(List<CartonPriceBreakDown> priceBreakDown) {
+    public void setPriceBreakDown(List<UnitPriceBreakDown> priceBreakDown) {
         this.priceBreakDown = priceBreakDown;
     }
 

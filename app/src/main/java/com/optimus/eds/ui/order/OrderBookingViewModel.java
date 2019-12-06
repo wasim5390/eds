@@ -13,18 +13,21 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.optimus.eds.Constant;
 
+import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Package;
 import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.ProductGroup;
+import com.optimus.eds.db.entities.UnitPriceBreakDown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.model.OrderResponseModel;
 import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
 
+import com.optimus.eds.ui.order.pricing.PriceOutputDTO;
 import com.optimus.eds.ui.order.pricing.PricingManager;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailRepository;
 import com.optimus.eds.utils.NetworkManager;
@@ -32,6 +35,7 @@ import com.optimus.eds.utils.Util;
 
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -387,6 +391,18 @@ public class OrderBookingViewModel extends AndroidViewModel {
         return PricingManager.getInstance(getApplication())
                 .loadPricing()
                 .map(pcClassWithPcTypes -> PricingManager.getInstance(getApplication()).calculatePriceBreakdown(pcClassWithPcTypes,responseModel))
+               .map(orderResponseModel -> {
+                   Gson gson = new Gson();
+                   BigDecimal orderTotalAmount = BigDecimal.valueOf(orderResponseModel.getPayable());
+                   int totalQty = getOrderTotalQty(orderResponseModel.getOrderDetails());
+                   PriceOutputDTO priceOutputDTO = PricingManager.getInstance(getApplication()).getOrderPrice(orderTotalAmount,totalQty,orderResponseModel.getOutletId()
+                           ,orderResponseModel.getRouteId(),orderResponseModel.getDistributionId());
+                   String gsonText = gson.toJson(priceOutputDTO.getPriceBreakdown());
+                   List<UnitPriceBreakDown> priceBreakDown =  gson.fromJson(gsonText, new TypeToken<List<UnitPriceBreakDown>>(){}.getType());
+                    orderResponseModel.setPriceBreakDown(priceBreakDown);
+                   orderResponseModel.setPayable(priceOutputDTO.getTotalPrice().doubleValue());
+                   return orderResponseModel;
+                })
                 .map(orderResponseModel -> {
                     OrderModel orderModel = new OrderModel();
                     String orderString = new Gson().toJson(orderResponseModel);
@@ -399,6 +415,16 @@ public class OrderBookingViewModel extends AndroidViewModel {
                 }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::updateOrder, this::onError);
+    }
+
+    private int getOrderTotalQty(List<OrderDetail> orderDetails) {
+        int totalQuantity=0;
+        for(OrderDetail orderDetail:orderDetails){
+            int cartonQty = orderDetail.getCartonQuantity()==null?0:orderDetail.getCartonQuantity();
+            int unitQty = orderDetail.getUnitQuantity()==null?0:orderDetail.getUnitQuantity();
+            totalQuantity+=(cartonQty+unitQty);
+        }
+        return totalQuantity;
     }
 
 

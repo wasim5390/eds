@@ -49,6 +49,7 @@ import com.optimus.eds.source.JobIdManager;
 import com.optimus.eds.source.MasterDataUploadService;
 import com.optimus.eds.source.RetrofitHelper;
 import com.optimus.eds.source.UploadOrdersService;
+import com.optimus.eds.ui.AppUpdater;
 import com.optimus.eds.ui.order.OrderBookingRepository;
 import com.optimus.eds.ui.route.outlet.OutletListActivity;
 import com.optimus.eds.ui.route.outlet.OutletListRepository;
@@ -245,10 +246,14 @@ public class HomeViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .subscribe(appUpdateModel -> {
                     if(appUpdateModel.getSuccess()){
+                        boolean newVersionFound =AppUpdater.getInstance().apkChanged(appUpdateModel);
+                        if(!newVersionFound)
+                            isLoading().postValue(false);
                         appUpdateLiveData.postValue(appUpdateModel);
                         // isLoading().postValue(false);
                     }else{
                         getErrorMsg().postValue(appUpdateModel.getMsg());
+                        isLoading().postValue(false);
                     }
                 },this::onError);
 

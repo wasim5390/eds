@@ -55,7 +55,7 @@ public interface MerchandiseDao {
     @Query("DELETE FROM Merchandise")
     void deleteAllMerchandise();
 
-    @Query("DELETE FROM MERCHANDISE where outletId=:merchandiseId")
+    @Query("DELETE FROM Merchandise where outletId=:merchandiseId")
     void deleteMerchandise(Long merchandiseId);
 
 }

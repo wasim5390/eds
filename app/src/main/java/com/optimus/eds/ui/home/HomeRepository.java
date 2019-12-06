@@ -144,16 +144,16 @@ public class HomeRepository {
                 if(response.isSuccessful()){
                     //
                     deleteAllRoutesAssets()
+                            .andThen(deleteAllOutlets(onDayStart))
                             .andThen(Completable.fromAction(() -> {
                                 if(onDayStart)
                                 {
-                                    orderDao.deleteAllOrders();
                                     routeDao.deleteAllMerchandise();
                                     customerDao.deleteAllCustomerInput();
-                                    routeDao.deleteAllOutlets();
-                                    statusDao.deleteAllStatus();
                                 }
-                            })).andThen(Completable.fromAction(() -> {
+                            }))
+
+                            .andThen(Completable.fromAction(() -> {
                         routeDao.insertRoutes(response.body().getRouteList());
                     })).andThen(Completable.fromAction(() ->  routeDao.insertOutlets(response.body().getOutletList())))
                             .andThen(Completable.fromAction(() -> { routeDao.insertAssets(response.body().getAssetList());}))
@@ -290,8 +290,10 @@ public class HomeRepository {
 
     }
 
-    public Completable deleteAllOutlets(){
+    public Completable deleteAllOutlets(boolean onStartDay){
+        if(onStartDay)
         return Completable.fromAction(()->routeDao.deleteAllOutlets());
+        return Completable.complete();
     }
 
     public Completable deleteAllMerchandise(){

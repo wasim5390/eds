@@ -32,7 +32,7 @@ public interface RouteDao extends MerchandiseDao{
     @Query("SELECT * FROM Route")
     Single<List<Route>> getAllRoutes();
 
-    @Query("SELECT * FROM Route WHERE mRouteId=:id")
+    @Query("SELECT * FROM Route WHERE routeId=:id")
     LiveData<Route> findRouteById(Long id);
 
     @Query("SELECT * FROM Outlet ORDER BY mOutletName ASC")

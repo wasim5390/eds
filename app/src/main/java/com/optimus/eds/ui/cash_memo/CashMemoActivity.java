@@ -2,6 +2,7 @@ package com.optimus.eds.ui.cash_memo;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Activity;
@@ -11,18 +12,23 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.Constant;
 import com.optimus.eds.R;
+import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.Outlet;
+import com.optimus.eds.db.entities.UnitPriceBreakDown;
 import com.optimus.eds.model.OrderDetailAndPriceBreakdown;
 import com.optimus.eds.model.OrderModel;
 import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.customer_input.CustomerInputActivity;
-import com.optimus.eds.ui.route.outlet.OutletListActivity;
 
 import java.util.List;
 
@@ -30,6 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.optimus.eds.EdsApplication.getContext;
 import static com.optimus.eds.utils.Util.formatCurrency;
 
 public class CashMemoActivity extends BaseActivity {
@@ -58,9 +65,11 @@ public class CashMemoActivity extends BaseActivity {
     AppCompatButton btnNext;
     @BindView(R.id.btnEditOrder)
     AppCompatButton btnEditOrder;
+
     private CashMemoAdapter cartAdapter;
     private CashMemoViewModel viewModel;
     private boolean cashMemoEditable;
+    BottomSheetDialog bottomSheetDialog;
     public static void start(Context context, Long outletId,int resCode) {
         Intent starter = new Intent(context, CashMemoActivity.class);
         starter.putExtra("OutletId",outletId);
@@ -95,6 +104,7 @@ public class CashMemoActivity extends BaseActivity {
         viewModel.loadOutlet(outletId).observe(this, this::onOutletLoaded);
         viewModel.getOrder(outletId).observe(this, orderModel -> {
             cashMemoEditable= orderModel.getOrder().getOrderStatus() != 1;
+
             updateCart(orderModel.getOrderDetailAndCPriceBreakdowns());
             updatePricesOnUi(orderModel);
             configUi();
@@ -104,9 +114,35 @@ public class CashMemoActivity extends BaseActivity {
     private void onOutletLoaded(Outlet outlet) {
         tvOutletName.setText(outlet.getOutletName().concat(" - "+ outlet.getLocation()));
     }
+    private void createBreakDownDialogSheet(List<UnitPriceBreakDown> breakDowns,Double subTotal,Double grandTotal){
+        // using BottomSheetDialog
+        View dialogView = getLayoutInflater().inflate(R.layout.breakdown_bottom_sheet, null);
 
+        LinearLayout parent = dialogView.findViewById(R.id.invoice_breakdown_view);
+        TextView tvSubTotal = dialogView.findViewById(R.id.sub_total);
+        TextView tvTotal = dialogView.findViewById(R.id.total);
+        LayoutInflater inflater =  LayoutInflater.from(getContext());
+        for(UnitPriceBreakDown priceBreakDown:breakDowns) {
+            Double unitPrice;
+            LinearLayout rateView = (LinearLayout) inflater.inflate(R.layout.rate_child_layout, null);
+            TextView title = rateView.findViewById(R.id.productRate);
+            TextView rate = rateView.findViewById(R.id.tvProductRate);
+            unitPrice = priceBreakDown.getBlockPrice();
+
+            rate.setText(formatCurrency(unitPrice.doubleValue()));
+            title.setText(priceBreakDown.getPriceConditionType());
+            parent.addView(rateView);
+        }
+        tvSubTotal.setText(formatCurrency(subTotal));
+        tvTotal.setText(formatCurrency(grandTotal,0));
+        bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(dialogView);
+    }
     private void updatePricesOnUi(OrderModel order){
-        tvGrandTotal.setText(formatCurrency(order.getOrder().getPayable()));
+        if(!order.getOrder().getPriceBreakDown().isEmpty()){
+            createBreakDownDialogSheet(order.getOrder().getPriceBreakDown(),order.getOrder().getSubTotal(),order.getOrder().getPayable());
+        }
+        tvGrandTotal.setText(formatCurrency(order.getOrder().getPayable(),0));
         Long carton=0l,units=0l;
         for(OrderDetailAndPriceBreakdown detailAndPriceBreakdown:order.getOrderDetailAndCPriceBreakdowns())
         {
@@ -119,6 +155,7 @@ public class CashMemoActivity extends BaseActivity {
         tvFreeQty.setText(String.valueOf(order.getFreeAvailableQty()));
 
     }
+
 
     private void initAdapter(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -170,4 +207,12 @@ public class CashMemoActivity extends BaseActivity {
     public void upNavigate(){
         onBackPressed();
     }
+
+    @OnClick(R.id.header)
+    public void breakDownBottomSheet(){
+        if(bottomSheetDialog!=null)
+        bottomSheetDialog.show();
+    }
+
+
 }

@@ -127,6 +127,7 @@
     <string name="access_to_update">Need Permission to update!</string>
     <string name="loading">Loading...</string>
     <string name="download_cancel">Download Cancelled</string>
+    <string name="sub_total">Sub-Total:</string>
 
 
 </resources>

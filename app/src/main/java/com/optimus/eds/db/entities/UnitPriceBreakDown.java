@@ -29,24 +29,69 @@ public class UnitPriceBreakDown {
     @ColumnInfo(name = "fk_modid")
     @SerializedName("mobileOrderDetailId")
     public Integer mOrderDetailId;
+
+
     @SerializedName("priceCondition")
     public String mPriceCondition;
+
     @SerializedName("priceConditionType") //Will contain label of pricing like Retail Price, Discount
     public String mPriceConditionType;
+    public void setPriceCondition(String mPriceCondition) {
+        this.mPriceCondition = mPriceCondition;
+    }
+
+    public void setPriceConditionClass(String mPriceConditionClass) {
+        this.mPriceConditionClass = mPriceConditionClass;
+    }
+
     @SerializedName("priceConditionClass")
     public String mPriceConditionClass;
     @SerializedName("priceConditionClassOrder")
     public Integer mPriceConditionClassOrder;
+
+
+
     @SerializedName("priceConditionId")
     public Integer mPriceConditionId;
     @SerializedName("priceConditionDetailId")
     public Integer mPriceConditionDetailId;
+
+
+
     @SerializedName("accessSequence")
     public String mAccessSequence;
+
+
+
     @SerializedName("unitPrice")
     public Float mUnitPrice;
+
+
+
     @SerializedName("blockPrice")
     public Double mBlockPrice;
+
+    public void setAccessSequence(String mAccessSequence) {
+        this.mAccessSequence = mAccessSequence;
+    }
+    public void setPriceConditionId(Integer mPriceConditionId) {
+        this.mPriceConditionId = mPriceConditionId;
+    }
+
+    public void setUnitPrice(Float mUnitPrice) {
+        this.mUnitPrice = mUnitPrice;
+    }
+    public void setTotalPrice(Double mTotalPrice) {
+        this.mTotalPrice = mTotalPrice;
+    }
+
+    public void setCalculationType(Integer mCalculationType) {
+        this.mCalculationType = mCalculationType;
+    }
+    public void setBlockPrice(Double mBlockPrice) {
+        this.mBlockPrice = mBlockPrice;
+    }
+
     @SerializedName("totalPrice")
     public Double  mTotalPrice;
     @SerializedName("calculationType")
@@ -75,6 +120,9 @@ public class UnitPriceBreakDown {
         this.mOrderDetailId = mOrderDetailId;
     }
 
+    public void setPriceConditionType(String mPriceConditionType) {
+        this.mPriceConditionType = mPriceConditionType;
+    }
     public Double getMaximumLimit() {
         return maximumLimit;
     }
@@ -141,12 +189,20 @@ public class UnitPriceBreakDown {
     }
 
     public Integer getPriceConditionClassOrder() {
-        return mPriceConditionClassOrder;
+        return mPriceConditionClassOrder==null?0:mPriceConditionClassOrder;
     }
 
     public void setPriceConditionClassOrder(Integer mPriceConditionClassOrder) {
         this.mPriceConditionClassOrder = mPriceConditionClassOrder;
     }
 
-
+    /**
+     * Two PriceBreakdowns are equal if their priceConditionId is same.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof  UnitPriceBreakDown)
+            return (this.mPriceConditionId.equals(((UnitPriceBreakDown) obj).mPriceConditionId));
+        return (this.mPriceConditionId.equals(((CartonPriceBreakDown) obj).mPriceConditionId));
+    }
 }

@@ -13,8 +13,7 @@ import androidx.room.PrimaryKey;
                 @ForeignKey(
                         entity = Outlet.class,
                         parentColumns = "mOutletId",
-                        childColumns = "outletId"),
-
+                        childColumns = "outletId",onDelete = ForeignKey.CASCADE),
         }, indices = { @Index(value = "outletId")
 })
 public class OrderStatus {

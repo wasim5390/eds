@@ -79,6 +79,95 @@ public class PricingManager {
                 .subscribeOn(Schedulers.single());
     }
 
+    //region "Public Functions"
+
+    public PriceOutputDTO getOrderPrice(BigDecimal orderTotalAmount, int quantity, int outletId, int routeId, Integer distributionId)
+    {
+        PriceOutputDTO objPriceOutputDTO = new PriceOutputDTO();
+
+       // AccessSequenceDTO appliedAccessSequence = new AccessSequenceDTO();
+        //decimal totalPrice = 0; //input price for every condition class
+         totalPrice = orderTotalAmount; //input price for every condition class
+         isPriceFound = false;
+        List<PriceConditionClass> conditionClasses = pricingDao.findPriceConditionClasses().subscribeOn(Schedulers.io()).blockingGet();
+        for (PriceConditionClass conditionClass : conditionClasses)
+        {
+            isPriceFound = false;
+            List<PriceConditionType> conditionTypes = pricingDao.findPriceConditionTypes(conditionClass.getPriceConditionClassId()).subscribeOn(Schedulers.io()).blockingGet();
+            for (PriceConditionType conditionType: conditionTypes)
+            {
+                List<PriceConditionWithAccessSequence> priceConditions = pricingDao
+                        .getPriceConditionAndAccessSequenceByTypeId(conditionType.getPriceConditionTypeId()).subscribeOn(Schedulers.io()).blockingGet();
+                for (PriceConditionWithAccessSequence priceCondition: priceConditions)
+                {
+                    PromoLimitDTO limit = GetPriceAgainstPriceConditionForInvoice(priceCondition.getPriceConditionId(), priceCondition.getSequenceCode(),
+                            outletId, quantity, totalPrice, conditionType.getPriceScaleBasisId(), routeId, distributionId);
+                    if (limit != null && limit.getUnitPrice().doubleValue() > -1)
+                    {
+                        isPriceFound = true;
+
+                        //Block output in price
+                        UnitPriceBreakDown objSingleBlock = new UnitPriceBreakDown();
+
+                        if (limit.getLimitBy() != null)
+                        {
+                            objSingleBlock.setMaximumLimit(limit.getMaximumLimit().doubleValue());
+                            objSingleBlock.setLimitBy(limit.getLimitBy());
+                      /*      var alreadyAvailed = _outletAvailedPromotionDataHandler.GetAlreadyAvailedValue(objSingleBlock.PriceConditionDetailId);
+                            if (alreadyAvailed != null)
+                            {
+                                if (objSingleBlock.LimitBy == (int)Enums.LimitBy.Amount)
+                                {
+                                    objSingleBlock.AlreadyAvailed = alreadyAvailed.Amount;
+                                }
+                                else
+                                {
+                                    objSingleBlock.AlreadyAvailed = alreadyAvailed.Quantity;
+                                }
+                            }*/
+                        }
+
+                        ItemAmountDTO blockPrice = CalculateBlockPrice(totalPrice.doubleValue(), limit.getUnitPrice().doubleValue(), quantity, conditionType.getPriceScaleBasisId(), conditionType.getOperationType(), conditionType.getCalculationType(), conditionType.getRoundingRule(), objSingleBlock.getLimitBy(), objSingleBlock.getMaximumLimit(), objSingleBlock.getAlreadyAvailed());
+
+                        totalPrice = BigDecimal.valueOf(blockPrice.getTotalPrice());
+                        objSingleBlock.setPriceConditionType(conditionType.getName());
+                        objSingleBlock.setPriceConditionClass(conditionClass.getName());
+                        objSingleBlock.setPriceCondition(priceCondition.getName());
+                        objSingleBlock.setAccessSequence(priceCondition.getSequenceName());
+                        objSingleBlock.setCalculationType(conditionType.getCalculationType());
+                        objSingleBlock.setUnitPrice(limit.getUnitPrice().floatValue());
+                        objSingleBlock.setBlockPrice(blockPrice.getBlockPrice());
+                        objSingleBlock.setPriceConditionDetailId(limit.getPriceConditionDetailId());
+                        objSingleBlock.setPriceConditionId(priceCondition.getPriceConditionId());
+
+                        objSingleBlock.setTotalPrice(totalPrice.doubleValue());
+                        objPriceOutputDTO.getPriceBreakdown().add(objSingleBlock);
+                        if (blockPrice.isMaxLimitReached())
+                        {
+                            Message message = new Message();
+
+                                message.setMessageSeverityLevel(conditionClass.getSeverityLevel());
+                                message.setMessageText("Max limit crossed for " + objSingleBlock.getPriceCondition());
+
+                            objPriceOutputDTO.getMessages().add(message);
+                        }
+                        break;
+                    }
+                }
+            }
+            if (!isPriceFound && !TextUtils.isEmpty(conditionClass.getSeverityLevelMessage())
+                    && conditionClass.getSeverityLevel() != Enums.MessageSeverityLevel.MESSAGE)
+            {
+                Message message = new Message();
+                message.setMessageSeverityLevel(conditionClass.getSeverityLevel());
+                message.MessageText = conditionClass.getSeverityLevelMessage();
+                objPriceOutputDTO.getMessages().add(message);
+            }
+        }
+        objPriceOutputDTO.setTotalPrice(BigDecimal.valueOf(Math.round(totalPrice.doubleValue())));
+        return objPriceOutputDTO;
+    }
+
 
     public OrderResponseModel calculatePriceBreakdown(List<PcClassWithPcType> pcClassWithPcTypes,OrderResponseModel orderModel){
         if(pcClassWithPcTypes==null || pcClassWithPcTypes.isEmpty()) {
@@ -124,7 +213,6 @@ public class PricingManager {
             orderModel.setSubtotal(DecimalFormatter.round(payable,2));
         }
         orderModel.setOrderDetails(finalOrderDetailList);
-
         orderModel.setSuccess(true);
         return orderModel;
     }
@@ -160,6 +248,24 @@ public class PricingManager {
 
     }
 
+        // region "Access Sequence Amount"
+    private PromoLimitDTO GetPriceAgainstPriceConditionForInvoice(int priceConditionId, String accessSequence, int outletId, int quantity, BigDecimal totalPrice, int scaleBasisId, int routeId, Integer distributionId)
+    {
+        PromoLimitDTO promoLimitDTO = new PromoLimitDTO();
+        if (accessSequence.equalsIgnoreCase( Enums.AccessSequenceCode.OUTLET.toString()))
+        {
+            promoLimitDTO = this.GetPriceAgainstOutlet(priceConditionId, outletId, quantity, totalPrice, scaleBasisId);
+        }
+        else if (accessSequence.equalsIgnoreCase(Enums.AccessSequenceCode.ROUTE.toString()))
+        {
+            promoLimitDTO = this.GetPriceAgainstRoute(priceConditionId, routeId, quantity, totalPrice, scaleBasisId);
+        }
+        else if (accessSequence.equalsIgnoreCase(Enums.AccessSequenceCode.DISTRIBUTION.toString()))
+        {
+            promoLimitDTO = this.GetPriceAgainstDistribution(priceConditionId, distributionId, quantity, totalPrice, scaleBasisId);
+        }
+        return promoLimitDTO;
+    }
 
     private PromoLimitDTO GetPriceAgainstPriceCondition(int priceConditionId, String accessSequence, int outletId, int productDefinitionId, int quantity, BigDecimal totalPrice, int scaleBasisId, int routeId, Integer distributionId, Integer bundleId,IPromoLimitDTO iPromoLimitDTO)
     {
@@ -418,7 +524,7 @@ public class PricingManager {
         }
         else if (scaleBasisId == Enums.ScaleBasis.Value)
         {
-            Collections.sort(scaleList, (o1, o2) -> o1.getAmount().compareTo(o2.getAmount()));
+            Collections.sort(scaleList, (o1, o2) -> o2.getAmount().compareTo(o1.getAmount()));
             for(PriceConditionScale conditionScale:scaleList){
                 if(conditionScale.getPriceConditionDetailId()==priceConditionDetailId && conditionScale.getAmount().doubleValue()<=totalPrice.doubleValue()){
                     returnAmount = conditionScale.getAmount();

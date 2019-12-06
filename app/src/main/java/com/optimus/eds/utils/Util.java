@@ -336,6 +336,23 @@ public class Util {
 
     }
 
+    public static String formatCurrency(Double price,int fractionDigit){
+        if(price==null)
+            price=0d;
+
+        DecimalFormat fmt = (DecimalFormat) NumberFormat.getInstance();
+        Locale locale = new Locale("en", "pk");
+        String symbol = Currency.getInstance(locale).getSymbol(locale);
+        fmt.setGroupingUsed(true);
+        fmt.setPositivePrefix(symbol + " ");
+        fmt.setNegativePrefix("-" + symbol + " ");
+        fmt.setMinimumFractionDigits(fractionDigit);
+        fmt.setMaximumFractionDigits(fractionDigit);
+        return fmt.format(price);
+
+
+    }
+
     public static String loadJSONFromAsset(Context context, String fileName) {
         String json = null;
         try {

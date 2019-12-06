@@ -102,13 +102,12 @@ public class CartonPriceBreakDown {
         return mPriceConditionId;
     }
     public Integer getPriceConditionClassOrder() {
-        return mPriceConditionClassOrder;
+        return mPriceConditionClassOrder==null?0:mPriceConditionClassOrder;
     }
 
     public void setPriceConditionClassOrder(Integer mPriceConditionClassOrder) {
         this.mPriceConditionClassOrder = mPriceConditionClassOrder;
     }
-
 
 
 }
