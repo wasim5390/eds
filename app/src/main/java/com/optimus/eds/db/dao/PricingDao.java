@@ -30,8 +30,8 @@ public interface PricingDao {
     @Transaction
     Single<List<PcClassWithPcType>> findPriceConditionClassWithTypes();
 
-    @Query("SELECT * FROM PriceConditionClass Where PriceConditionClass.pricingLevelId=2 Order By `order`")
-    Single<List<PriceConditionClass>> findPriceConditionClasses();
+    @Query("SELECT * FROM PriceConditionClass Where PriceConditionClass.pricingLevelId=:pricingLevel Order By `order`")
+    Single<List<PriceConditionClass>> findPriceConditionClasses(int pricingLevel);
 
     @Query("SELECT * FROM PriceConditionType Where priceConditionClassId=:priceConditionClassId")
     Single<List<PriceConditionType>> findPriceConditionTypes(int priceConditionClassId);

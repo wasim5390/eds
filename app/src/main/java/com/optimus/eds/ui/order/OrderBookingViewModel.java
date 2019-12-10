@@ -389,8 +389,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
     private Disposable calculateLocally(OrderResponseModel responseModel) {
         return PricingManager.getInstance(getApplication())
-                .loadPricing()
-                .map(pcClassWithPcTypes -> PricingManager.getInstance(getApplication()).calculatePriceBreakdown(pcClassWithPcTypes,responseModel))
+                .calculatePriceBreakdown(responseModel)
                .map(orderResponseModel -> {
                    Gson gson = new Gson();
                    BigDecimal orderTotalAmount = BigDecimal.valueOf(orderResponseModel.getPayable());
