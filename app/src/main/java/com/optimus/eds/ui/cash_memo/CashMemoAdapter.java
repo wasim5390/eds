@@ -37,6 +37,10 @@ public class CashMemoAdapter extends
         notifyDataSetChanged();
     }
 
+    public void unRegisterPriceListener(){
+        itemLevelPriceListener = null;
+    }
+
     public List<OrderDetailAndPriceBreakdown> getCartItems(){
         return products;
     }
@@ -72,7 +76,11 @@ public class CashMemoAdapter extends
                 else if (freeItem.getUnitQuantity() > 0)
                     removeUnitFreeItems(product, freeItem);
             }
-        }, isAvailable -> itemLevelPriceListener.onPriceAvailable(isAvailable));
+        }, isAvailable -> {
+            if(itemLevelPriceListener!=null)
+            itemLevelPriceListener.onPriceAvailable(isAvailable);
+
+        });
     }
 
 

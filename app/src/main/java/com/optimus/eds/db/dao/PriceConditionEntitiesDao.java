@@ -9,11 +9,11 @@ import io.reactivex.Maybe;
 
 @Dao
 public interface PriceConditionEntitiesDao extends PriceConditionDetailsDao {
-/*
-    @Query("SELECT * FROM PriceConditionEntities Where priceConditionId=:conditionId AND outletId=:outletId AND (bundleId =:bundleId or bundleId=0)")
+
+    @Query("SELECT * FROM PriceConditionEntities Where priceConditionId=:conditionId AND outletId=:outletId AND (bundleId NOT Null AND bundleId =:bundleId or bundleId=0)")
     Maybe<PriceConditionEntities> findPriceConditionEntityOutlet(int conditionId,int outletId, Integer bundleId);
 
-    @Query("SELECT * FROM PriceConditionEntities Where priceConditionId=:conditionId AND routeId=:routeId AND (bundleId =:bundleId or bundleId=0)")
+/*    @Query("SELECT * FROM PriceConditionEntities Where priceConditionId=:conditionId AND routeId=:routeId AND (bundleId =:bundleId or bundleId=0)")
     Maybe<PriceConditionEntities> findPriceConditionEntityRoute(int conditionId,int routeId, Integer bundleId);
 
     @Query("SELECT * FROM PriceConditionEntities Where priceConditionId=:conditionId AND distributionId=:distribution AND (bundleId =:bundleId or bundleId=0)")

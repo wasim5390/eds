@@ -24,6 +24,7 @@ public class MasterDataUploadService extends JobService implements Constant {
     private final String iTAG = MasterDataUploadService.class.getSimpleName();
     String token;
     private int jobId;
+    private JobParameters parameters;
     private OutletDetailRepository outletDetailRepository;
     private StatusRepository statusRepository;
     public MasterDataUploadService() {
@@ -32,11 +33,13 @@ public class MasterDataUploadService extends JobService implements Constant {
 
     @Override
     public boolean onStartJob(JobParameters params) {
+        parameters = params;
         if (params != null) {
             outletDetailRepository = new OutletDetailRepository(getApplication());
             statusRepository = StatusRepository.singleInstance(getApplication());
             PersistableBundle bundle = params.getExtras();
             jobId=params.getJobId();
+            Log.i(iTAG,"JobId: "+jobId);
             final Long outletId = bundle.getLong(EXTRA_PARAM_OUTLET_ID);
             final Integer statusId = bundle.getInt(EXTRA_PARAM_OUTLET_STATUS_ID);
             final String reason = bundle.getString(EXTRA_PARAM_OUTLET_REASON_N_ORDER,"");
@@ -78,7 +81,7 @@ public class MasterDataUploadService extends JobService implements Constant {
      * parameters.
      */
     private void uploadMasterData(MasterModel masterModel) {
-        Log.i(iTAG,"JobId: "+jobId);
+
        OrderStatus status= statusRepository.findOrderStatus(masterModel.getOutletId())
                .observeOn(Schedulers.io())
                .subscribeOn(Schedulers.io()).blockingGet();
@@ -106,6 +109,9 @@ public class MasterDataUploadService extends JobService implements Constant {
         }
         else
             Log.i(iTAG,baseResponse.getResponseMsg());
+
+        jobFinished(this.parameters,false);
+        MasterDataUploadService.this.stopSelf();
 
     }
 

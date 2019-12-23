@@ -14,10 +14,6 @@ import io.reactivex.Single;
 
 @Dao
 public interface PriceConditionDetailsDao extends PricingDao {
-    @Query("SELECT * FROM PriceConditionDetail Where priceConditionId=:conditionId AND productDefinitionId=:productDefinitionId AND (bundleId =:bundleId OR bundleId=0)")
-    @Transaction
-    Maybe<PriceConditionDetailsWithScale> findPriceConditionDetails(int conditionId, int productDefinitionId, Integer bundleId);
-
 
     @Query("SELECT * FROM PriceConditionDetail Where priceConditionId=:conditionId AND outletId=:outletId")
     @Transaction
@@ -35,6 +31,11 @@ public interface PriceConditionDetailsDao extends PricingDao {
     @Query("SELECT * FROM PriceConditionDetail Where priceConditionId=:conditionId AND productDefinitionId=:productDefinitionId")
     @Transaction
     Maybe<PriceConditionDetailsWithScale> findPriceConditionDetail(int conditionId, int productDefinitionId);
+
+    @Query("SELECT * FROM PriceConditionDetail Where priceConditionId=:conditionId AND productDefinitionId=:productDefinitionId" +
+            " AND ((:bundleId NOT Null AND (bundleId =:bundleId OR bundleId=0)) OR (:bundleId is Null AND bundleId is Null)) ")
+    @Transaction
+    Maybe<PriceConditionDetailsWithScale> findPriceConditionDetailWithBundle(int conditionId, int productDefinitionId,Integer bundleId);
 
 
 

@@ -232,14 +232,23 @@ public class CustomerInputViewModel extends AndroidViewModel {
         extras.putString(Constant.EXTRA_PARAM_OUTLET_REASON_N_ORDER,reason);
         extras.putString(Constant.TOKEN, "Bearer "+token);
         ComponentName serviceComponent = new ComponentName(context, UploadOrdersService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue()), serviceComponent);
+        int jobId = JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue());
+        boolean jobFound = false;
+        JobInfo.Builder builder = new JobInfo.Builder(jobId, serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
-
-        builder.setMinimumLatency(1);
-        builder.setOverrideDeadline(1);
+        builder.setMinimumLatency(2000);
         builder.setExtras(extras);
         builder.setPersisted(true);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
+        List<JobInfo> scheduledJobs =jobScheduler.getAllPendingJobs();
+        for(JobInfo jobInfo:scheduledJobs){
+            if (jobInfo.getId() != jobId) {
+                continue; }
+            jobFound=true;
+            break;
+        }
+        if(jobFound)
+            jobScheduler.cancel(jobId);
         jobScheduler.schedule(builder.build());
     }
 
@@ -251,8 +260,8 @@ public class CustomerInputViewModel extends AndroidViewModel {
         ComponentName serviceComponent = new ComponentName(context, MerchandiseUploadService.class);
         JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MERCHANDISE_UPLOAD,outletId.intValue()), serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
-        builder.setOverrideDeadline(1);
-        builder.setMinimumLatency(1);
+        builder.setOverrideDeadline(2000);
+        builder.setMinimumLatency(1000);
         builder.setExtras(extras);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
         jobScheduler.schedule(builder.build());

@@ -1,18 +1,11 @@
 package com.optimus.eds.ui.order.pricing;
 
 import android.app.Application;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.google.android.gms.common.util.Strings;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.google.zxing.common.StringUtils;
 import com.optimus.eds.Enums;
 import com.optimus.eds.db.AppDatabase;
 import com.optimus.eds.db.dao.PriceConditionEntitiesDao;
@@ -20,38 +13,26 @@ import com.optimus.eds.db.dao.PricingDao;
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.UnitPriceBreakDown;
-import com.optimus.eds.db.entities.pricing.PriceAccessSequence;
-import com.optimus.eds.db.entities.pricing.PriceCondition;
 import com.optimus.eds.db.entities.pricing.PriceConditionClass;
 import com.optimus.eds.db.entities.pricing.PriceConditionDetail;
 import com.optimus.eds.db.entities.pricing.PriceConditionEntities;
 import com.optimus.eds.db.entities.pricing.PriceConditionScale;
 import com.optimus.eds.db.entities.pricing.PriceConditionType;
 import com.optimus.eds.db.entities.pricing_models.PcClassWithPcType;
-import com.optimus.eds.db.entities.pricing_models.PcTypeWithPc;
-import com.optimus.eds.db.entities.pricing_models.PcWithAcessSeqAndPcDetails;
 import com.optimus.eds.db.entities.pricing_models.PriceConditionDetailsWithScale;
 import com.optimus.eds.model.OrderResponseModel;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
-import io.reactivex.SingleOnSubscribe;
-import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class PricingManager {
@@ -76,12 +57,6 @@ public class PricingManager {
     }
 
 
-    public Single<List<PcClassWithPcType>> loadPricing() {
-
-      return   pricingDao.findPriceConditionClassWithTypes()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.single());
-    }
 
     //region "Public Functions"
 
@@ -89,10 +64,10 @@ public class PricingManager {
     {
         PriceOutputDTO objPriceOutputDTO = new PriceOutputDTO();
 
-       // AccessSequenceDTO appliedAccessSequence = new AccessSequenceDTO();
+        // AccessSequenceDTO appliedAccessSequence = new AccessSequenceDTO();
         //decimal totalPrice = 0; //input price for every condition class
-         totalPrice = orderTotalAmount; //input price for every condition class
-         isPriceFound = false;
+        totalPrice = orderTotalAmount; //input price for every condition class
+        isPriceFound = false;
         List<PriceConditionClass> conditionClasses = pricingDao.findPriceConditionClasses(2).subscribeOn(Schedulers.io()).blockingGet();
         for (PriceConditionClass conditionClass : conditionClasses)
         {
@@ -151,8 +126,8 @@ public class PricingManager {
                         {
                             Message message = new Message();
 
-                                message.setMessageSeverityLevel(conditionClass.getSeverityLevel());
-                                message.setMessageText("Max limit crossed for " + objSingleBlock.getPriceCondition());
+                            message.setMessageSeverityLevel(conditionClass.getSeverityLevel());
+                            message.setMessageText("Max limit crossed for " + objSingleBlock.getPriceCondition());
 
                             objPriceOutputDTO.getMessages().add(message);
                         }
@@ -177,19 +152,32 @@ public class PricingManager {
     public Single<OrderResponseModel> calculatePriceBreakdown(OrderResponseModel orderModel){
 
 
-     return    Single.create( emitter -> {
-         Gson gson = new Gson();
+        return    Single.create( emitter -> {
+            Gson gson = new Gson();
             HashMap<OrderDetail,List<OrderDetail>> orderItems = ComposeNewOrderItemsListForCalc(orderModel.getOrderDetails());
+
             List<OrderDetail> finalOrderDetailList = new ArrayList<>();
             Double payable = 0.0;
             PriceOutputDTO priceOutputDTO=null;
+            List<ProductQuantity> productQuantityDTOList = new ArrayList<>();
+            for(Map.Entry<OrderDetail,List<OrderDetail>> orderDetailHashMap:orderItems.entrySet()){
+                for(OrderDetail orderDetail:orderDetailHashMap.getValue()){
+                    productQuantityDTOList.add(new ProductQuantity(orderDetail.getProductTempDefId(),orderDetail.getProductTempQuantity()));
+                }
+            }
+
+            Completable.create(e -> pricingDao.deleteAllTempQty()).andThen(addProductQty(productQuantityDTOList)).subscribeOn(Schedulers.io());
+
+
             for(Map.Entry<OrderDetail,List<OrderDetail>> orderDetailHashMap:orderItems.entrySet())
             {
                 OrderDetail orderDetailKey = orderDetailHashMap.getKey();
                 for(OrderDetail orderDetail:orderDetailHashMap.getValue()){
-                    priceOutputDTO = getOrderItemPrice( null,orderDetail.getMobileOrderDetailId(),orderModel.getOutletId()
+
+                    priceOutputDTO = getOrderItemPrice( orderDetail.getMobileOrderDetailId(),orderModel.getOutletId()
                             ,orderDetail.getProductTempDefId(),orderDetail.getProductTempQuantity()
-                            ,orderModel.getRouteId(),orderModel.getDistributionId() );
+                            ,orderModel.getRouteId(),orderModel.getDistributionId());
+
                     String gsonText = gson.toJson(priceOutputDTO.getPriceBreakdown());
                     if( orderDetail.getProductTempDefId()== orderDetail.getCartonDefinitionId()) {
                         List<CartonPriceBreakDown> priceBreakDown =  gson.fromJson(gsonText, new TypeToken<List<CartonPriceBreakDown>>(){}.getType());
@@ -211,9 +199,10 @@ public class PricingManager {
                 }
 
                 finalOrderDetailList.add(orderDetailKey);
-                orderModel.setPayable(DecimalFormatter.round(payable,0));
-                orderModel.setSubtotal(DecimalFormatter.round(payable,2));
+
             }
+            orderModel.setPayable(payable);//DecimalFormatter.round(payable,0));
+            orderModel.setSubtotal(payable);//DecimalFormatter.round(payable,2));
             orderModel.setOrderDetails(finalOrderDetailList);
             orderModel.setSuccess(true);
             emitter.onSuccess(orderModel);
@@ -254,7 +243,7 @@ public class PricingManager {
 
     }
 
-        // region "Access Sequence Amount"
+    // region "Access Sequence Amount"
     private PromoLimitDTO GetPriceAgainstPriceConditionForInvoice(int priceConditionId, String accessSequence, int outletId, int quantity, BigDecimal totalPrice, int scaleBasisId, int routeId, Integer distributionId)
     {
         PromoLimitDTO promoLimitDTO = new PromoLimitDTO();
@@ -273,17 +262,14 @@ public class PricingManager {
         return promoLimitDTO;
     }
 
-    private PromoLimitDTO GetPriceAgainstPriceCondition(int priceConditionId, String accessSequence, int outletId, int productDefinitionId, int quantity, BigDecimal totalPrice, int scaleBasisId, int routeId, Integer distributionId, Integer bundleId,IPromoLimitDTO iPromoLimitDTO)
+    private PromoLimitDTO GetPriceAgainstPriceCondition(int priceConditionId, String accessSequence, int outletId, int productDefinitionId, int quantity, BigDecimal totalPrice, int scaleBasisId, int routeId, Integer distributionId, Integer bundleId)
     {
         PromoLimitDTO promoLimitDTO = new PromoLimitDTO();
         if (accessSequence.equalsIgnoreCase(Enums.AccessSequenceCode.OUTLET_PRODUCT.toString()))
         {
-            promoLimitDTO= GetPriceAgainstOutletProduct(iPromoLimitDTO,priceConditionId, outletId, productDefinitionId, quantity, totalPrice, scaleBasisId, bundleId);
+            promoLimitDTO= GetPriceAgainstOutletProduct(priceConditionId, outletId, productDefinitionId, quantity, totalPrice, scaleBasisId, bundleId);
         }
-        else if (accessSequence.equalsIgnoreCase( Enums.AccessSequenceCode.PRODUCT.toString()))
-        {
-            promoLimitDTO= GetPriceAgainstProduct(iPromoLimitDTO,priceConditionId, productDefinitionId, quantity, totalPrice, scaleBasisId, bundleId);
-        }
+
         else if (accessSequence.equalsIgnoreCase(Enums.AccessSequenceCode.ROUTE_PRODUCT.toString()) || accessSequence.equalsIgnoreCase(Enums.AccessSequenceCode.REGION_PRODUCT.toString()))
         {
             promoLimitDTO = this.GetPriceAgainstRouteProduct(priceConditionId, routeId, productDefinitionId, quantity, totalPrice, scaleBasisId, bundleId);
@@ -291,6 +277,10 @@ public class PricingManager {
         else if (accessSequence.equalsIgnoreCase(Enums.AccessSequenceCode.DISTRIBUTION_PRODUCT.toString()))
         {
             promoLimitDTO = this.GetPriceAgainstDistributionProduct(priceConditionId, distributionId, productDefinitionId, quantity, totalPrice, scaleBasisId, bundleId);
+        }
+        else if (accessSequence.equalsIgnoreCase( Enums.AccessSequenceCode.PRODUCT.toString()))
+        {
+            promoLimitDTO= GetPriceAgainstProduct(priceConditionId, productDefinitionId, quantity, totalPrice, scaleBasisId, bundleId);
         }
 
         else if (accessSequence.equalsIgnoreCase( Enums.AccessSequenceCode.OUTLET.toString()))
@@ -308,11 +298,18 @@ public class PricingManager {
 
         return promoLimitDTO;
     }
-    private PromoLimitDTO GetPriceAgainstProduct(IPromoLimitDTO iPromoLimitDTO, int priceConditionId, int productDefinitionId, int quantity, BigDecimal totalPrice, int scaleBasisId, Integer bundleId)
+    private PromoLimitDTO GetPriceAgainstProduct( int priceConditionId, int productDefinitionId, int quantity, BigDecimal totalPrice, int scaleBasisId, Integer bundleId)
     {
 
         PromoLimitDTO maxLimitDTO = new PromoLimitDTO();
-        PriceConditionDetailsWithScale priceConditionDetailsWithScale =priceConditionEntitiesDao.findPriceConditionDetail(priceConditionId,productDefinitionId)
+       /* PriceConditionDetailsWithScale priceConditionDetailsWithScale = bundleId==null?priceConditionEntitiesDao
+                .findPriceConditionDetail(priceConditionId,productDefinitionId)
+                .subscribeOn(Schedulers.io()).blockingGet():priceConditionEntitiesDao
+                .findPriceConditionDetailWithBundle(priceConditionId,productDefinitionId,bundleId)
+                .subscribeOn(Schedulers.io()).blockingGet();*/
+
+        PriceConditionDetailsWithScale priceConditionDetailsWithScale = priceConditionEntitiesDao
+                .findPriceConditionDetailWithBundle(priceConditionId,productDefinitionId,bundleId)
                 .subscribeOn(Schedulers.io()).blockingGet();
         if(priceConditionDetailsWithScale==null)
             return null;
@@ -337,7 +334,7 @@ public class PricingManager {
 
     }
 
-    private PromoLimitDTO GetPriceAgainstOutletProduct(IPromoLimitDTO iPromoLimitDTO,int priceConditionId, int outletId, int productDefinitionId, int quantity, BigDecimal totalPrice, int scaleBasisId, Integer bundleId)
+    private PromoLimitDTO GetPriceAgainstOutletProduct(int priceConditionId, int outletId, int productDefinitionId, int quantity, BigDecimal totalPrice, int scaleBasisId, Integer bundleId)
     {
         PromoLimitDTO maxLimitDTO = new PromoLimitDTO();
         PriceConditionDetailsWithScale priceConditionDetailsWithScale =  priceConditionEntitiesDao.findPriceConditionEntityOutlet(priceConditionId,outletId)
@@ -507,9 +504,11 @@ public class PricingManager {
             , int priceConditionId, int productDefinitionId , Integer bundleId) {
         if(priceConditionEntity==null)
             return null;
-        return priceConditionEntitiesDao.findPriceConditionDetail(priceConditionId,
-                productDefinitionId )
+
+        return priceConditionEntitiesDao.findPriceConditionDetailWithBundle(priceConditionId,
+                productDefinitionId,bundleId)
                 .subscribeOn(Schedulers.single());
+
     }
 
 
@@ -549,9 +548,9 @@ public class PricingManager {
 
     boolean isPriceFound = false;
 
-    public PriceOutputDTO getOrderItemPrice(List<ProductQuantityDTO> productListDTO,
-                                           int mobileOrderDetailId,
-                                            int outletId, int productDefinitionId, int quantity, int routeId, Integer distributionId)
+    public PriceOutputDTO getOrderItemPrice(
+            int mobileOrderDetailId,
+            int outletId, int productDefinitionId, int quantity, int routeId, Integer distributionId)
     {
         objPriceOutputDTO = new PriceOutputDTO();
         totalPrice = BigDecimal.ZERO; //input price for every condition class
@@ -568,6 +567,9 @@ public class PricingManager {
 
             for (PriceConditionType conditionType :conditionTypes)
             {
+              //  List<Integer> bundleIds = getBundlesList(productDefinitionId,conditionType.getPriceConditionTypeId());
+              //  List<Integer> bundlesToApply = getBundlesToApply(bundleIds);
+
                 List<PriceConditionWithAccessSequence> priceConditions = pricingDao
                         .getPriceConditionAndAccessSequenceByTypeId(conditionType.getPriceConditionTypeId()).subscribeOn(Schedulers.io()).blockingGet();
 
@@ -577,7 +579,7 @@ public class PricingManager {
 
                     PromoLimitDTO limitDTO = GetPriceAgainstPriceCondition( prAccSeqDetail.getPriceConditionId(), prAccSeqDetail.getSequenceCode(),
                             outletId, productDefinitionId, quantity, totalPrice, conditionType.getPriceScaleBasisId(), routeId,
-                            distributionId, null, maxLimitDTO -> { });
+                            distributionId, null);
 
 
                     if (limitDTO != null && limitDTO.getUnitPrice().doubleValue() > -1) {
@@ -657,7 +659,35 @@ public class PricingManager {
     }
 
 
+    private Completable addProductQty(List<ProductQuantity> productQuantities){
+        return Completable.fromAction(() -> pricingDao.insertTempOrderQty(productQuantities));
+    }
 
+
+    // calculate bundle
+    private List<Integer> getBundlesList(int productDefId, int conditionTypeId){
+
+        return   pricingDao.getBundleIdsForConditionType(productDefId,conditionTypeId).subscribeOn(Schedulers.io()).blockingGet();
+
+    }
+
+    private List<Integer> getBundlesToApply(List<Integer> bundleIds){
+        List<Integer> bundlesHolder = new ArrayList<>();
+        for(Integer bundleId:bundleIds){
+            Integer minimumQty =  pricingDao.getBundleMinQty(bundleId).blockingGet();
+            int bundleProductCount= pricingDao.getBundleProductCount(bundleId).blockingGet();
+            int calculatedBundleProdCount= pricingDao.getCalculatedBundleProdCount(bundleId).blockingGet();
+            int bundleProdTotalQty = pricingDao.getBundleProdTotalQty(bundleId).blockingGet();
+            if((minimumQty==0 ||  minimumQty <= bundleProdTotalQty)
+                    && (calculatedBundleProdCount==bundleProductCount)
+                    && (calculatedBundleProdCount>0)){
+                bundlesHolder.add(bundleId);
+            }
+        }
+
+        return bundlesHolder;
+
+    }
 
 
 

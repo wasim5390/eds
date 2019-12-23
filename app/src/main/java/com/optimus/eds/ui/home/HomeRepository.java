@@ -184,7 +184,7 @@ public class HomeRepository {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.e(TAG,e.getMessage());
+                Log.e(TAG,e.getMessage()+"");
                 msg.postValue(Constant.GENERIC_ERROR);
             }
 
@@ -211,7 +211,7 @@ public class HomeRepository {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.e(TAG,e.getMessage());
+                Log.e(TAG,e.getMessage()+"");
                 msg.postValue(Constant.GENERIC_ERROR);
             }finally {
                 isLoading.postValue(false);
@@ -267,7 +267,7 @@ public class HomeRepository {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.e(TAG,e.getMessage());
+                Log.e(TAG,e.getMessage()+"");
                 msg.postValue(Constant.GENERIC_ERROR);
             }finally {
                 isLoading.postValue(false);

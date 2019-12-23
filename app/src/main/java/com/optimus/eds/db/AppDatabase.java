@@ -45,6 +45,7 @@ import com.optimus.eds.db.entities.pricing.PriceConditionType;
 import com.optimus.eds.db.entities.pricing.PriceScaleBasis;
 import com.optimus.eds.db.entities.pricing.PricingGroups;
 import com.optimus.eds.db.entities.pricing.PricingLevels;
+import com.optimus.eds.ui.order.pricing.ProductQuantity;
 
 
 @Database(entities = {Route.class, Outlet.class, Merchandise.class, Asset.class,ProductGroup.class,
@@ -55,8 +56,8 @@ import com.optimus.eds.db.entities.pricing.PricingLevels;
         PriceConditionClass.class, PriceConditionClassPriceAccessSequences.class,
         PriceConditionDetail.class, PriceConditionEntities.class,
         PriceConditionScale.class, PriceConditionType.class, PriceScaleBasis.class,
-        PricingLevels.class
-}, version =2, exportSchema = false)
+        PricingLevels.class, ProductQuantity.class
+}, version =3, exportSchema = false)
 @TypeConverters({MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
 
 public abstract class AppDatabase extends RoomDatabase {

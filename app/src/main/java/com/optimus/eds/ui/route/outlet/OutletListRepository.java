@@ -4,6 +4,7 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 import com.optimus.eds.Constant;
 import com.optimus.eds.db.AppDatabase;
@@ -48,10 +49,10 @@ public class OutletListRepository  extends OrderBookingRepository {
 
     public Flowable<List<OrderStatus>> getOrderStatus(){
         // get All planned outlet calls
-        return routeDao.findOutletsWithPendingOrderToSync(false);
+        return routeDao.findOutletsWithPendingOrderToSync(0);
     }
 
-    public Flowable<List<Outlet>> getUnsyncedOutlets(List<Long> outlets){
+    public Single<List<Outlet>> getUnsyncedOutlets(List<Long> outlets){
         // get All planned outlet calls
         return routeDao.findOutletsWithPendingOrderToSync(outlets);
     }

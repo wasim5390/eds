@@ -1,6 +1,7 @@
 package com.optimus.eds.db.dao;
 
 
+import com.optimus.eds.db.entities.Product;
 import com.optimus.eds.db.entities.pricing.PriceAccessSequence;
 import com.optimus.eds.db.entities.pricing.PriceBundle;
 import com.optimus.eds.db.entities.pricing.PriceCondition;
@@ -10,8 +11,8 @@ import com.optimus.eds.db.entities.pricing.PriceConditionEntities;
 import com.optimus.eds.db.entities.pricing.PriceConditionScale;
 import com.optimus.eds.db.entities.pricing.PriceConditionType;
 import com.optimus.eds.db.entities.pricing_models.PcClassWithPcType;
-import com.optimus.eds.db.entities.pricing_models.PcWithAcessSeqAndPcDetails;
 import com.optimus.eds.ui.order.pricing.PriceConditionWithAccessSequence;
+import com.optimus.eds.ui.order.pricing.ProductQuantity;
 
 import java.util.List;
 
@@ -40,6 +41,37 @@ public interface PricingDao {
             "Where PriceCondition.priceConditionTypeId=:priceConditionTypeId")
     Single<List<PriceConditionWithAccessSequence>> getPriceConditionAndAccessSequenceByTypeId(int priceConditionTypeId);
 
+    @Query("SELECT DISTINCT b.bundleId FROM  PriceCondition pc" +
+            "   INNER JOIN Bundle b ON pc.priceConditionId = b.priceConditionId " +
+            "   INNER JOIN PriceConditionDetail pcd ON b.bundleId = pcd.bundleId " +
+            "   AND pcd.productDefinitionId=:productDefinitionId " +
+            "  WHERE  pc.priceConditionTypeId =:conditionTypeId " +
+            "  AND pc.isBundle = 1 ")
+    Single<List<Integer>> getBundleIdsForConditionType(int productDefinitionId, int conditionTypeId);
+
+    @Query("SELECT  bundleMinimumQuantity  FROM Bundle WHERE BundleId =:bundleId")
+    Single<Integer> getBundleMinQty(int bundleId);
+
+    @Query(" SELECT COUNT(priceConditionDetailId) FROM PriceConditionDetail" +
+            "  WHERE bundleId =:bundleId")
+    Single<Integer> getBundleProductCount(int bundleId);
+
+    @Query("SELECT COUNT(pcd.PriceConditionDetailId)" +
+            "  FROM PriceConditionDetail pcd" +
+            "    INNER JOIN ProductQuantity pl " +
+            "    ON pl.ProductDefinitionId = pcd.productDefinitionId" +
+            "    AND pl.Quantity >= ifNull(pcd.minimumQuantity,1)" +
+            "  WHERE pcd.bundleId =:bundleId")
+    Single<Integer> getCalculatedBundleProdCount(int bundleId);
+
+    @Query("SELECT SUM(pl.Quantity)" +
+            "  FROM PriceConditionDetail pcd" +
+            "    INNER JOIN ProductQuantity pl " +
+            "    ON pl.ProductDefinitionId = pcd.productDefinitionId" +
+            "    AND pl.Quantity >= ifNull(pcd.minimumQuantity,1)" +
+            "  WHERE pcd.bundleId =:bundleId")
+    Single<Integer> getBundleProdTotalQty(int bundleId);
+
     @Insert(onConflict = REPLACE)
     void insertPriceConditionClasses(List<PriceConditionClass> priceConditionClasses);
 
@@ -47,7 +79,7 @@ public interface PricingDao {
     void insertPriceConditionType(List<PriceConditionType> priceConditionTypes);
 
     @Insert(onConflict = REPLACE)
-    void insertPriceCondition(List<PriceCondition> priceConditionType);
+    void insertTempOrderQty(List<ProductQuantity> productQuantityList);
 
     @Insert(onConflict = REPLACE)
     void insertPriceConditionDetail(List<PriceConditionDetail> priceConditionDetails);
@@ -64,6 +96,11 @@ public interface PricingDao {
     @Insert(onConflict = REPLACE)
     void insertPriceConditionScales(List<PriceConditionScale> scales);
 
+    @Insert(onConflict = REPLACE)
+    void insertPriceCondition(List<PriceCondition> priceConditionType);
+
     @Query("DELETE FROM PriceConditionClass")
     void deleteAllPriceConditionClasses();
+    @Query("DELETE FROM ProductQuantity")
+    void deleteAllTempQty();
 }

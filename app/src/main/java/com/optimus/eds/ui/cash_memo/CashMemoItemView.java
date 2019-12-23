@@ -84,9 +84,13 @@ public class CashMemoItemView extends MaterialCardView {
 
             Double cartonTotalPrice = order.getCartonTotalPrice();
             Double unitTotalPrice  = order.getUnitTotalPrice();
+            if(priceListener!=null) {
+                boolean priceFound=true;
+                if ((cartonQty > 0 && cartonTotalPrice <= 0) || (unitQty > 0 && unitTotalPrice <= 0))
+                    priceFound = false;
 
-            itemlevelPriceListener.onPriceAvailable((cartonQty>0 && cartonTotalPrice>0) || (unitQty>0 && unitTotalPrice>0));
-
+                itemlevelPriceListener.onPriceAvailable(priceFound);
+            }
             Double totalPrice = cartonTotalPrice+unitTotalPrice;
 
             String free = "";
@@ -122,7 +126,18 @@ public class CashMemoItemView extends MaterialCardView {
             for(OrderDetail freeItems:item.getUnitFreeGoods()){
                 freeItemsContainer.addView(addFreeItemsView(freeItems,2));
             }
+            this.setOnClickListener(v -> {
+                if(rateContainer.getVisibility()==VISIBLE)
+                    rateContainer.setVisibility(GONE);
+                else
+                    rateContainer.setVisibility(VISIBLE);
+
+            });
         }
+    }
+
+    public void unRegisterPriceListener(){
+        priceListener = null;
     }
 
 

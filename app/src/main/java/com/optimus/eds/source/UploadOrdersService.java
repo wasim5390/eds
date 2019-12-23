@@ -70,14 +70,15 @@ public class UploadOrdersService extends JobService {
         if (params != null) {
             PersistableBundle bundle = params.getExtras();
             jobId = params.getJobId();
+            Log.i(iTAG,"JobId: "+jobId);
             final Long outletId = bundle.getLong(EXTRA_PARAM_OUTLET_ID);
             token = bundle.getString(TOKEN);
-            findOrder(outletId);
+            findOrder(outletId,params);
         }
         return true;
     }
 
-    public void findOrder(Long outletId){
+    public void findOrder(Long outletId,JobParameters params){
 
         Maybe<OrderModel> orderSingle = repository.findOrder(outletId)
                 .map(orderModel -> {
@@ -126,23 +127,31 @@ public class UploadOrdersService extends JobService {
 
         masterModelSingle.
                 observeOn(AndroidSchedulers.mainThread()).
-                subscribeOn(Schedulers.io()).subscribe(this::uploadMasterData,this::error);
+                subscribeOn(Schedulers.io()).subscribe(masterModel1 -> {
+            uploadMasterData(masterModel1,params);
+        },throwable -> {
+            error(throwable,params);
+        });
 
 
 
 
     }
 
-    private void uploadMasterData(MasterModel masterModel) {
-        Log.i(iTAG,"JobId: "+jobId);
+    private void uploadMasterData(MasterModel masterModel,JobParameters params) {
+
 
         RetrofitHelper.getInstance().getApi().saveOrder(masterModel,token)
-                .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(this::onUpload,this::error);
+                .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(response->{
+            onUpload(response,params);
+        },throwable -> {
+            error(throwable,params);
+        });
     }
 
-    private void onUpload(MasterModel orderResponseModel) throws IOException{
+    private void onUpload(MasterModel orderResponseModel,JobParameters params) throws IOException{
         if(!orderResponseModel.isSuccess()){
-            error(orderResponseModel);
+            error(orderResponseModel,params);
             return;
         }
 
@@ -157,16 +166,18 @@ public class UploadOrdersService extends JobService {
             }).flatMapCompletable(order -> OrderBookingRepository.singleInstance(getApplication())
                     .updateOrder(order)).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
-                        Log.i("UploadOrdersService", "Order Status Updated");
-                        updateOutletTaskStatus(orderResponseModel.getOutletId(),orderResponseModel.getOrderModel().getPayable());
+                                Log.i("UploadOrdersService", "Order Status Updated");
+                                updateOutletTaskStatus(orderResponseModel.getOutletId(),orderResponseModel.getOrderModel().getPayable());
 
-                    }, this::error);
+                            },
+                            throwable -> {error(throwable,params);});
         }
         Intent intent = new Intent();
         intent.setAction(Constant.ACTION_ORDER_UPLOAD);
         intent.putExtra("Response", orderResponseModel);
         LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(intent);
 
+        jobFinished(params,false);
         this.stopSelf();
 
     }
@@ -176,7 +187,7 @@ public class UploadOrdersService extends JobService {
         repository.updateStatus(new OrderStatus(outletId,Constant.STATUS_COMPLETED,1,amount));
     }
 
-    private void error(Object throwable) throws IOException {
+    private void error(Object throwable,JobParameters params) throws IOException {
         String errorBody;
         if(throwable instanceof Throwable) {
             Throwable mThrowable = (Throwable) throwable;
@@ -187,7 +198,7 @@ public class UploadOrdersService extends JobService {
                 errorBody = error.response().errorBody().string();
             }
             if (throwable instanceof SocketTimeoutException
-            || throwable instanceof SocketException
+                    || throwable instanceof SocketException
             ) {
                 errorBody = Constant.NETWORK_ERROR;
             }
@@ -202,7 +213,7 @@ public class UploadOrdersService extends JobService {
         intent.setAction(Constant.ACTION_ORDER_UPLOAD);
         intent.putExtra("Response", baseResponse);
         LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(intent);
-        this.stopSelf();
+        jobFinished(params,false);
     }
 
     @Override

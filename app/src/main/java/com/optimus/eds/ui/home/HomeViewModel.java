@@ -18,10 +18,12 @@ import io.reactivex.CompletableObserver;
 import io.reactivex.Flowable;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 import retrofit2.Response;
@@ -127,18 +129,42 @@ public class HomeViewModel extends AndroidViewModel {
 // --Commented out by Inspection STOP (8/21/2019 12:04 PM)
 
     public void pushOrdersToServer(){
-
-
+        ContextCompat.getSystemService(getApplication(),JobScheduler.class).cancelAll();
         List<OrderStatus> count =  OutletListRepository.getInstance(getApplication()).getOrderStatus().blockingFirst();
         if(count.size()<1) {
             getErrorMsg().postValue("Updated!");
             return;
         }
 
-        disposable.add(findPendingOrders(count)
+        findPendingOrders(count)
+                .flatMapIterable(outlets -> outlets)
+                .map(outlet -> outlet)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.computation())
-                .subscribe(outlet -> {
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(new DisposableObserver<Outlet>() {
+                    @Override
+                    public void onNext(Outlet outlet) {
+                        Log.i(TAG,"OnNext");
+                        if(outlet.getVisitStatus()>=7)
+                            scheduleMasterJob(getApplication(),outlet,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken());
+                        else
+                            emptyCheckoutOrderJob(getApplication(),outlet,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken());
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG,"OnComplete");
+                        isLoading().postValue(false);
+                    }
+                });
+
+
+             /*   .subscribe(outlet -> {
                     Log.i(TAG,"OnNext");
                     if(outlet.getVisitStatus()>=7)
                         scheduleMasterJob(getApplication(),outlet,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken());
@@ -146,7 +172,7 @@ public class HomeViewModel extends AndroidViewModel {
                         emptyCheckoutOrderJob(getApplication(),outlet,"Bearer "+PreferenceUtil.getInstance(getApplication()).getToken());
                 },this::onError,()->{ Log.i(TAG,"OnComplete");
                     isLoading().postValue(false);
-                }));
+                });*/
 
     }
 
@@ -157,7 +183,7 @@ public class HomeViewModel extends AndroidViewModel {
         disposable.dispose();
     }
 
-    private Observable<Outlet> findPendingOrders(List<OrderStatus> nonSyncedOutlets) {
+    private Observable<List<Outlet>> findPendingOrders(List<OrderStatus> nonSyncedOutlets) {
         List<Long> outlets = new ArrayList(nonSyncedOutlets.size());
 
         for(OrderStatus status:nonSyncedOutlets){
@@ -165,7 +191,8 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         return OutletListRepository.getInstance(getApplication()).getUnsyncedOutlets(outlets)
-                .concatMap(Flowable::fromIterable).toObservable().subscribeOn(Schedulers.computation());
+                .toObservable()
+                .subscribeOn(Schedulers.io());
     }
 
     // schedule
@@ -174,13 +201,25 @@ public class HomeViewModel extends AndroidViewModel {
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outlet.getOutletId());
         extras.putString(Constant.TOKEN, token);
         ComponentName serviceComponent = new ComponentName(context, UploadOrdersService.class);
+        int jobId = JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outlet.getOutletId().intValue());
+        boolean jobFound = false;
         JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outlet.getOutletId().intValue()), serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
-        builder.setMinimumLatency(1);
-        builder.setOverrideDeadline(1);
+        builder.setMinimumLatency(1000);
+        builder.setOverrideDeadline(1000);
         builder.setExtras(extras);
         builder.setPersisted(false);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
+        List<JobInfo> scheduledJobs =jobScheduler.getAllPendingJobs();
+        for(JobInfo jobInfo:scheduledJobs){
+            if (jobInfo.getId() != jobId) {
+                continue;
+            }
+            jobFound=true;
+            break;
+        }
+        if(jobFound)
+            jobScheduler.cancel(jobId);
         Objects.requireNonNull(jobScheduler).schedule(builder.build());
     }
 
@@ -192,14 +231,22 @@ public class HomeViewModel extends AndroidViewModel {
         extras.putDouble(Constant.EXTRA_PARAM_PRESELLER_LNG,outlet.getVisitTimeLng());
         extras.putString(Constant.TOKEN, token);
         ComponentName serviceComponent = new ComponentName(context, MasterDataUploadService.class);
+        int jobId = JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outlet.getOutletId().intValue());
+        boolean jobFound = false;
         JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outlet.getOutletId().intValue()), serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
-        builder.setMinimumLatency(1);
-        builder.setOverrideDeadline(1);
+        builder.setMinimumLatency(1000);
+        builder.setOverrideDeadline(1000);
         builder.setExtras(extras);
         builder.setPersisted(false);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
-        Objects.requireNonNull(jobScheduler).schedule(builder.build());
+        List<JobInfo> scheduledJobs =jobScheduler.getAllPendingJobs();
+        for(JobInfo jobInfo:scheduledJobs){
+            jobFound=jobInfo.getId()==jobId;
+        }
+        if(jobFound)
+            jobScheduler.cancel(jobId);
+            Objects.requireNonNull(jobScheduler).schedule(builder.build());
     }
 
     public MutableLiveData<Boolean> isLoading() {

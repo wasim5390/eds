@@ -25,6 +25,7 @@ import com.optimus.eds.source.MasterDataUploadService;
 import com.optimus.eds.source.StatusRepository;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -80,13 +81,24 @@ public class OutletDetailViewModel extends AndroidViewModel {
         extras.putString(Constant.EXTRA_PARAM_OUTLET_REASON_N_ORDER,reason);
         extras.putString(Constant.TOKEN, "Bearer "+token);
         ComponentName serviceComponent = new ComponentName(context, MasterDataUploadService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue()), serviceComponent);
+        int jobId = JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue());
+        boolean jobFound = false;
+        JobInfo.Builder builder = new JobInfo.Builder(jobId, serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
         builder.setExtras(extras);
-        builder.setOverrideDeadline(1);
-        builder.setMinimumLatency(1);
+        builder.setMinimumLatency(1000);
+        builder.setOverrideDeadline(2000);
         builder.setPersisted(true);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
+        List<JobInfo> scheduledJobs =jobScheduler.getAllPendingJobs();
+        for(JobInfo jobInfo:scheduledJobs){
+            if (jobInfo.getId() != jobId) {
+                continue; }
+            jobFound=true;
+            break;
+        }
+        if(jobFound)
+            jobScheduler.cancel(jobId);
         Objects.requireNonNull(jobScheduler).schedule(builder.build());
     }
 

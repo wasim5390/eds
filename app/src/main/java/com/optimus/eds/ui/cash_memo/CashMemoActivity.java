@@ -104,10 +104,11 @@ public class CashMemoActivity extends BaseActivity {
         viewModel.loadOutlet(outletId).observe(this, this::onOutletLoaded);
         viewModel.getOrder(outletId).observe(this, orderModel -> {
             cashMemoEditable= orderModel.getOrder().getOrderStatus() != 1;
-
+            configUi();
             updateCart(orderModel.getOrderDetailAndCPriceBreakdowns());
             updatePricesOnUi(orderModel);
-            configUi();
+
+
         });
     }
 
@@ -175,13 +176,16 @@ public class CashMemoActivity extends BaseActivity {
         },isAvailable -> {
             if(cashMemoEditable) {
                 btnNext.setVisibility(isAvailable ? View.VISIBLE : View.GONE);
-                if(!isAvailable)
+                if(!isAvailable) {
                     AlertDialogManager.getInstance()
                             .showVerificationAlertDialog(this, "Oops!", Constant.PRICING_CASHMEMO_ERROR, verified -> {
-                                if(verified)
+                                if (verified)
                                     finish();
                             });
+                    cartAdapter.unRegisterPriceListener();
+                }
             }
+
         });
     }
 

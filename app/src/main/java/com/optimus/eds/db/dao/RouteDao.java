@@ -46,10 +46,10 @@ public interface RouteDao extends MerchandiseDao{
 
 
     @Query("SELECT * FROM Outlet WHERE mOutletId in (:outlets)")
-    Flowable<List<Outlet>> findOutletsWithPendingOrderToSync(List<Long> outlets);
+    Single<List<Outlet>> findOutletsWithPendingOrderToSync(List<Long> outlets);
 
     @Query("SELECT * FROM OrderStatus WHERE sync=:synced AND status between 2 AND 7 ")
-    Flowable<List<OrderStatus>> findOutletsWithPendingOrderToSync(boolean synced);
+    Flowable<List<OrderStatus>> findOutletsWithPendingOrderToSync(int synced);
 
     @Query("SELECT COUNT() FROM Outlet WHERE planned=1")
     int getPjpCount();

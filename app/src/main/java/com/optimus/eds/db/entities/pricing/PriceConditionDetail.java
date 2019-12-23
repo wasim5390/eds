@@ -50,7 +50,7 @@ public class PriceConditionDetail {
     private Integer outletId;
     private Integer routeId;
     private Integer distributionId;
-    private Integer minimumQuantity;
+    private Integer minimumQuantity=1;
     @TypeConverters(DecimalConverter.class)
     private BigDecimal maximumLimit;
     private Integer limitBy;
@@ -162,7 +162,7 @@ public class PriceConditionDetail {
     }
 
     public Integer getMinimumQuantity() {
-        return minimumQuantity;
+        return (minimumQuantity==null||minimumQuantity==0)?1:minimumQuantity;
     }
 
     public void setMinimumQuantity(Integer minimumQuantity) {

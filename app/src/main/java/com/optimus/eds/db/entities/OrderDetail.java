@@ -77,11 +77,10 @@ public class OrderDetail implements Cloneable{
     @SerializedName("avlCartonQuantity")
     public Integer avlCartonQuantity;
 
-    @Ignore
-    public int productTempDefinitionId; // this definitionId sets on PriceCalculation
 
-    @Ignore
-    public int productTempQuantity;
+    public Integer productTempDefinitionId; // this definitionId sets on PriceCalculation
+
+    public Integer productTempQuantity;
 
     public int getProductTempDefId() {
         return productTempDefinitionId;
