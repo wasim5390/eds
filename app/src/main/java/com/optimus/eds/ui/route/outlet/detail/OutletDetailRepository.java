@@ -17,6 +17,7 @@ import com.optimus.eds.source.RetrofitHelper;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import androidx.lifecycle.MutableLiveData;
@@ -55,13 +56,10 @@ public class OutletDetailRepository {
         AsyncTask.execute(() -> routeDao.updateOutlet(outlet));
     }
 
-
-
     public LiveData<Boolean> loadProductsFromServer(){
 
-        Executor executor =Executors.newSingleThreadExecutor();
         MutableLiveData<Boolean> loaded = new MutableLiveData<>();
-        executor.execute(() -> {
+        AsyncTask.execute(() -> {
         try {
 
             Response<PackageProductResponseModel> response = webservice.loadTodayPackageProduct().execute();
@@ -76,10 +74,11 @@ public class OutletDetailRepository {
 
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e(TAG,e.getMessage());
+
+            Log.e(TAG,e.getMessage()+"");
         }catch (Exception e){
             e.printStackTrace();
-            Log.e(TAG,e.getMessage());
+            Log.e(TAG,e.getMessage()+"");
         }
         finally {
             loaded.postValue(true);
@@ -88,7 +87,5 @@ public class OutletDetailRepository {
         });
         return loaded;
     }
-
-
 
 }

@@ -531,7 +531,8 @@ public class PricingManager {
         {
             Collections.sort(scaleList, (o1, o2) -> o2.getAmount().compareTo(o1.getAmount()));
             for(PriceConditionScale conditionScale:scaleList){
-                if(conditionScale.getPriceConditionDetailId()==priceConditionDetailId && conditionScale.getAmount().doubleValue()<=totalPrice.doubleValue()){
+
+                if(conditionScale.getPriceConditionDetailId()==priceConditionDetailId && conditionScale.getFrom()<=totalPrice.doubleValue()){
                     returnAmount = conditionScale.getAmount();
                     break;
                 }
@@ -560,19 +561,25 @@ public class PricingManager {
 
         for (PriceConditionClass conditionClass : conditionClasses)
         {
-            List<PriceConditionType> conditionTypes = pricingDao.findPriceConditionTypes(conditionClass.getPriceConditionClassId()).subscribeOn(Schedulers.io()).blockingGet();
+            List<PriceConditionType> conditionTypes = pricingDao.findPriceConditionTypes(conditionClass.getPriceConditionClassId())
+                    .subscribeOn(Schedulers.io()).blockingGet();
 
 
             isPriceFound = false;
 
             for (PriceConditionType conditionType :conditionTypes)
             {
-              //  List<Integer> bundleIds = getBundlesList(productDefinitionId,conditionType.getPriceConditionTypeId());
-              //  List<Integer> bundlesToApply = getBundlesToApply(bundleIds);
-
-                List<PriceConditionWithAccessSequence> priceConditions = pricingDao
-                        .getPriceConditionAndAccessSequenceByTypeId(conditionType.getPriceConditionTypeId()).subscribeOn(Schedulers.io()).blockingGet();
-
+                List<PriceConditionWithAccessSequence> priceConditions;
+                List<Integer> bundleIds = getBundlesList(productDefinitionId,conditionType.getPriceConditionTypeId());
+                List<Integer> bundlesToApply = getBundlesToApply(bundleIds);
+                if(bundlesToApply.isEmpty())
+                    priceConditions = pricingDao
+                            .getPriceConditionAndAccessSequenceByTypeId(conditionType.getPriceConditionTypeId()).subscribeOn(Schedulers.io()).blockingGet();
+                else
+                {
+                    priceConditions = pricingDao
+                            .getPriceConditionAndAccessSequenceByTypeIdWithBundle(conditionType.getPriceConditionTypeId(),bundlesToApply).subscribeOn(Schedulers.io()).blockingGet();
+                }
 
                 Collections.sort(priceConditions,(o1, o2) -> o1.getOrder().compareTo(o2.getOrder()));
                 for (PriceConditionWithAccessSequence prAccSeqDetail:priceConditions) {

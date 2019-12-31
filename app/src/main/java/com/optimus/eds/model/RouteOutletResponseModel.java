@@ -17,6 +17,11 @@ public class RouteOutletResponseModel extends BaseResponse{
     @SerializedName("assets")
     List<Asset> assetList;
 
+    @SerializedName("distributionId")
+    Integer distributionId;
+    @SerializedName("employeeName")
+    String employeeName;
+
     public List<Route> getRouteList() {
         return routeList==null?new ArrayList<>():routeList;
     }
@@ -27,5 +32,13 @@ public class RouteOutletResponseModel extends BaseResponse{
 
     public List<Asset> getAssetList() {
         return assetList;
+    }
+
+    public Integer getDistributionId() {
+        return distributionId;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
     }
 }

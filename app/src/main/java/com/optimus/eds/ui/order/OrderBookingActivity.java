@@ -29,6 +29,7 @@ import com.optimus.eds.model.PackageModel;
 import com.optimus.eds.source.JobIdManager;
 import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.cash_memo.CashMemoActivity;
+import com.optimus.eds.utils.PreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +78,7 @@ public class OrderBookingActivity extends BaseActivity  {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         viewModel = ViewModelProviders.of(this).get(OrderBookingViewModel.class);
         viewModel.setOutletId(outletId);
+        viewModel.setDistributionId(PreferenceUtil.getInstance(this).getDistributionId());
         createNoOrderReasonList();
         setObservers();
     }
@@ -186,6 +188,7 @@ public class OrderBookingActivity extends BaseActivity  {
 
     @OnClick(R.id.btnNext)
     public void onNextClick(){
+
         if(group!=null)
             onAdd(group.getProductGroupId(),true);
     }

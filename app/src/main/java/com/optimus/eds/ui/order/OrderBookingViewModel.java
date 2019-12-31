@@ -71,6 +71,7 @@ public class OrderBookingViewModel extends AndroidViewModel {
 
 
     private Long outletId;
+    private Integer distributionId;
     private OrderModel order =null;
     private final API webservice;
     private  final static String TAG=OrderBookingViewModel.class.getName();
@@ -105,6 +106,10 @@ public class OrderBookingViewModel extends AndroidViewModel {
     public void setOutletId(Long outletId) {
         this.outletId = outletId;
         findOrder(outletId);
+    }
+
+    public void setDistributionId(Integer distributionId){
+        this.distributionId = distributionId;
     }
 
     private void findOrder(Long outletId){
@@ -354,12 +359,14 @@ public class OrderBookingViewModel extends AndroidViewModel {
             mOrder.setLatitude(order.getOutlet().getLatitude());
             mOrder.setLongitude(order.getOutlet().getLongitude());
 
+
             order.setOrder(mOrder);
 
             Gson gson = new Gson();
             String json = gson.toJson(mOrder);
             OrderResponseModel responseModel = gson.fromJson(json, OrderResponseModel.class);
             responseModel.setOrderDetails(order.getOrderDetails());
+            responseModel.setDistributionId(distributionId);
             NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {
                 if (!aBoolean) {
                     disposable.add(calculateLocally(responseModel));

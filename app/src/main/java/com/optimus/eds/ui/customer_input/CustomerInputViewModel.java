@@ -232,23 +232,13 @@ public class CustomerInputViewModel extends AndroidViewModel {
         extras.putString(Constant.EXTRA_PARAM_OUTLET_REASON_N_ORDER,reason);
         extras.putString(Constant.TOKEN, "Bearer "+token);
         ComponentName serviceComponent = new ComponentName(context, UploadOrdersService.class);
-        int jobId = JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue());
-        boolean jobFound = false;
+        int jobId = outletId.intValue(); //JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue());
         JobInfo.Builder builder = new JobInfo.Builder(jobId, serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
-        builder.setMinimumLatency(2000);
+        builder.setMinimumLatency(1000);
         builder.setExtras(extras);
         builder.setPersisted(true);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
-        List<JobInfo> scheduledJobs =jobScheduler.getAllPendingJobs();
-        for(JobInfo jobInfo:scheduledJobs){
-            if (jobInfo.getId() != jobId) {
-                continue; }
-            jobFound=true;
-            break;
-        }
-        if(jobFound)
-            jobScheduler.cancel(jobId);
         jobScheduler.schedule(builder.build());
     }
 

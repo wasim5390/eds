@@ -143,6 +143,7 @@ public class HomeRepository {
                 Response<RouteOutletResponseModel> response = webService.loadTodayRouteOutlets().execute();
                 if(response.isSuccessful()){
                     //
+                    preferenceUtil.saveDistributionId(response.body().getDistributionId());
                     deleteAllRoutesAssets()
                             .andThen(deleteAllOutlets(onDayStart))
                             .andThen(Completable.fromAction(() -> {
@@ -285,7 +286,8 @@ public class HomeRepository {
         });
     }
     public Completable deleteAllPricing(){
-        return   Completable.fromAction(()-> pricingDao.deleteAllPriceConditionClasses());
+        return   Completable.fromAction(()-> pricingDao.deleteAllPriceConditionClasses())
+                .andThen(Completable.fromAction(()-> pricingDao.deleteAllPriceBundles()));
                // .andThen(Completable.fromAction(()->pricingDao.deleteAllPriceConditionEntities()));
 
     }

@@ -64,6 +64,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 public class HomeViewModel extends AndroidViewModel {
@@ -129,7 +130,7 @@ public class HomeViewModel extends AndroidViewModel {
 // --Commented out by Inspection STOP (8/21/2019 12:04 PM)
 
     public void pushOrdersToServer(){
-        ContextCompat.getSystemService(getApplication(),JobScheduler.class).cancelAll();
+        //ContextCompat.getSystemService(getApplication(),JobScheduler.class).cancelAll();
         List<OrderStatus> count =  OutletListRepository.getInstance(getApplication()).getOrderStatus().blockingFirst();
         if(count.size()<1) {
             getErrorMsg().postValue("Updated!");
@@ -139,6 +140,7 @@ public class HomeViewModel extends AndroidViewModel {
         findPendingOrders(count)
                 .flatMapIterable(outlets -> outlets)
                 .map(outlet -> outlet)
+                .delay(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(new DisposableObserver<Outlet>() {
@@ -201,12 +203,12 @@ public class HomeViewModel extends AndroidViewModel {
         extras.putLong(Constant.EXTRA_PARAM_OUTLET_ID,outlet.getOutletId());
         extras.putString(Constant.TOKEN, token);
         ComponentName serviceComponent = new ComponentName(context, UploadOrdersService.class);
-        int jobId = JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outlet.getOutletId().intValue());
+        int jobId = outlet.getOutletId().intValue();//JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outlet.getOutletId().intValue());
         boolean jobFound = false;
-        JobInfo.Builder builder = new JobInfo.Builder(JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outlet.getOutletId().intValue()), serviceComponent);
+        JobInfo.Builder builder = new JobInfo.Builder(jobId, serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
         builder.setMinimumLatency(1000);
-        builder.setOverrideDeadline(1000);
+        builder.setOverrideDeadline(2000);
         builder.setExtras(extras);
         builder.setPersisted(false);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);

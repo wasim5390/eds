@@ -41,6 +41,12 @@ public interface PricingDao {
             "Where PriceCondition.priceConditionTypeId=:priceConditionTypeId")
     Single<List<PriceConditionWithAccessSequence>> getPriceConditionAndAccessSequenceByTypeId(int priceConditionTypeId);
 
+    @Query("SELECT * from PriceCondition pc " +
+            "INNER JOIN PriceAccessSequence ON pc.accessSequenceId=PriceAccessSequence.priceAccessSequenceId\n" +
+            "INNER JOIN Bundle b ON b.PriceConditionId = pc.PriceConditionId  \n"+
+            "Where pc.priceConditionTypeId=:priceConditionTypeId AND b.bundleId in (:applyingBundleIds)")
+    Single<List<PriceConditionWithAccessSequence>> getPriceConditionAndAccessSequenceByTypeIdWithBundle(int priceConditionTypeId,List<Integer> applyingBundleIds);
+
     @Query("SELECT DISTINCT b.bundleId FROM  PriceCondition pc" +
             "   INNER JOIN Bundle b ON pc.priceConditionId = b.priceConditionId " +
             "   INNER JOIN PriceConditionDetail pcd ON b.bundleId = pcd.bundleId " +
@@ -85,7 +91,7 @@ public interface PricingDao {
     void insertPriceConditionDetail(List<PriceConditionDetail> priceConditionDetails);
 
     @Insert(onConflict = REPLACE)
-    void insertPriceBundles(List<PriceBundle> priceAccessSequences);
+    void insertPriceBundles(List<PriceBundle> priceBundles);
 
     @Insert(onConflict = REPLACE)
     void insertPriceConditionEntities(List<PriceConditionEntities> priceConditionEntities);
@@ -101,6 +107,9 @@ public interface PricingDao {
 
     @Query("DELETE FROM PriceConditionClass")
     void deleteAllPriceConditionClasses();
+
+    @Query("DELETE FROM Bundle")
+    void deleteAllPriceBundles();
     @Query("DELETE FROM ProductQuantity")
     void deleteAllTempQty();
 }

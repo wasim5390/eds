@@ -178,7 +178,7 @@ public class UploadOrdersService extends JobService {
         LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(intent);
 
         jobFinished(params,false);
-        this.stopSelf();
+        //this.stopSelf();
 
     }
 

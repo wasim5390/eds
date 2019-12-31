@@ -38,6 +38,7 @@ import com.optimus.eds.location_services.LocationService;
 import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.merchandize.OutletMerchandiseActivity;
 import com.optimus.eds.ui.order.OrderBookingActivity;
+import com.optimus.eds.utils.NetworkManager;
 import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 

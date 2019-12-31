@@ -14,6 +14,7 @@ import androidx.lifecycle.LiveData;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import com.optimus.eds.Constant;
@@ -23,6 +24,7 @@ import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.source.JobIdManager;
 import com.optimus.eds.source.MasterDataUploadService;
 import com.optimus.eds.source.StatusRepository;
+import com.optimus.eds.utils.NetworkManager;
 
 import java.util.Calendar;
 import java.util.List;
@@ -81,25 +83,22 @@ public class OutletDetailViewModel extends AndroidViewModel {
         extras.putString(Constant.EXTRA_PARAM_OUTLET_REASON_N_ORDER,reason);
         extras.putString(Constant.TOKEN, "Bearer "+token);
         ComponentName serviceComponent = new ComponentName(context, MasterDataUploadService.class);
-        int jobId = JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue());
-        boolean jobFound = false;
+        int jobId = outletId.intValue();//JobIdManager.getJobId(JobIdManager.JOB_TYPE_MASTER_UPLOAD,outletId.intValue());
         JobInfo.Builder builder = new JobInfo.Builder(jobId, serviceComponent);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY); // require any network
         builder.setExtras(extras);
         builder.setMinimumLatency(1000);
-        builder.setOverrideDeadline(2000);
         builder.setPersisted(true);
         JobScheduler jobScheduler = ContextCompat.getSystemService(context,JobScheduler.class);
-        List<JobInfo> scheduledJobs =jobScheduler.getAllPendingJobs();
-        for(JobInfo jobInfo:scheduledJobs){
-            if (jobInfo.getId() != jobId) {
-                continue; }
-            jobFound=true;
-            break;
-        }
-        if(jobFound)
-            jobScheduler.cancel(jobId);
-        Objects.requireNonNull(jobScheduler).schedule(builder.build());
+        jobScheduler.cancel(jobId);
+        NetworkManager.getInstance().isOnline().observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .subscribe((aBoolean, throwable) -> {
+                    if(aBoolean)
+                        builder.setOverrideDeadline(0);
+                    Objects.requireNonNull(jobScheduler).schedule(builder.build());
+                });
+
     }
 
 
@@ -127,7 +126,7 @@ public class OutletDetailViewModel extends AndroidViewModel {
         /*if(distance>30 && outletStatus<=2)
             outletNearbyPos.postValue(outletLocation);
         else*/
-            {
+        {
             outlet.setVisitTimeLat(currentLocation.getLatitude());
             outlet.setVisitTimeLng(currentLocation.getLongitude());
             outlet.setVisitStatus(outletStatus);

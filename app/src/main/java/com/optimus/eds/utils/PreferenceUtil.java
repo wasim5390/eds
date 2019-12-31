@@ -26,6 +26,7 @@ public class PreferenceUtil {
     public static final String KEY_TOKEN = "token";
     public static final String KEY_SYNC_DATE = "sync_date";
     public static final String KEY_USER = "user";
+    public static final String KEY_DIST_ID="dist_id";
 
     private static final String PREFERENCE_NAME = "send_signal_preference";
     private static final String KEY_APP_MODE ="app_mode" ;
@@ -68,6 +69,11 @@ public class PreferenceUtil {
         return sPref.getString(KEY_TOKEN, "");
     }
 
+    public Integer getDistributionId() {
+        int distId = sPref.getInt(KEY_DIST_ID,-1);
+        return distId==-1?null:distId;
+    }
+
     public WorkStatus getWorkSyncData() {
         String workStatus = sPref.getString(KEY_SYNC_DATE,"");
         if(workStatus.isEmpty())
@@ -85,6 +91,12 @@ public class PreferenceUtil {
     public void saveUserName(String username) {
         SharedPreferences.Editor editor = sPref.edit();
         editor.putString(KEY_USERNAME, username);
+        editor.apply();
+    }
+
+    public void saveDistributionId(Integer distId) {
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putInt(KEY_DIST_ID, distId);
         editor.apply();
     }
 
