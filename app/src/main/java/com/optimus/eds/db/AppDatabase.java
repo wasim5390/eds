@@ -21,6 +21,7 @@ import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Asset;
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
+import com.optimus.eds.db.entities.Configuration;
 import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.db.entities.Order;
@@ -57,7 +58,7 @@ import com.optimus.eds.ui.order.pricing.ProductQuantity;
         PriceConditionDetail.class, PriceConditionEntities.class,
         PriceConditionScale.class, PriceConditionType.class, PriceScaleBasis.class,
         PricingLevels.class, ProductQuantity.class
-}, version =3, exportSchema = false)
+}, version =4, exportSchema = false)
 @TypeConverters({MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
 
 public abstract class AppDatabase extends RoomDatabase {

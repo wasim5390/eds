@@ -38,7 +38,7 @@ public interface RouteDao extends MerchandiseDao{
     @Query("SELECT * FROM Outlet ORDER BY mOutletName ASC")
     LiveData<List<Outlet>> findAllOutlets();
 
-    @Query("SELECT * FROM Outlet WHERE mRouteId=:routeId AND planned=:planned")
+    @Query("SELECT * FROM Outlet WHERE mRouteId=:routeId AND planned=:planned ORDER BY sequenceNumber")
     Maybe<List<Outlet>> findAllOutletsForRoute(Long routeId,int planned);
 
     @Query("SELECT * FROM Outlet WHERE planned=:planned AND mVisitStatus<=1")

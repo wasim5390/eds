@@ -34,6 +34,9 @@ public class Outlet implements Serializable {
     private Integer mVisitDay;
     @SerializedName("planned")
     private Integer planned;
+
+    @SerializedName("sequenceNumber")
+    private Integer sequenceNumber;
     @SerializedName("address")
     private String mAddress;
     @SerializedName("latitude")
@@ -133,6 +136,10 @@ public class Outlet implements Serializable {
 
     public void setLastSaleQuantity(String mLastSaleQuantity) {
         this.mLastSaleQuantity = mLastSaleQuantity;
+    }
+
+    public void setSequenceNumber(Integer sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
     }
 
     public void setLatitude(Double mLatitude) {
@@ -270,6 +277,10 @@ public class Outlet implements Serializable {
 
     public void setPlanned(Integer planned) {
         this.planned = planned;
+    }
+
+    public Integer getSequenceNumber() {
+        return sequenceNumber==null?0:sequenceNumber;
     }
     @Override
     public boolean equals(Object obj) {

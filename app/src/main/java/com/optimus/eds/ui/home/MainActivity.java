@@ -83,7 +83,6 @@ public class MainActivity extends BaseActivity {
     @Override
     public void created(Bundle savedInstanceState) {
         ButterKnife.bind(this);
-       // retrieveFireBaseToken();
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         setObservers();
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
@@ -99,8 +98,6 @@ public class MainActivity extends BaseActivity {
             switch (id) {
                 case R.id.account:
                     Toast.makeText(MainActivity.this, getString(R.string.profile_will_avl_soon), Toast.LENGTH_SHORT).show();
-                   // viewModel.loadPricingFromAssets();
-                   // viewModel.deleteAllPricing();
                     break;
                 case R.id.update:
                     PermissionUtil.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -188,14 +185,15 @@ public class MainActivity extends BaseActivity {
                     return;
                 }
 
-                viewModel.getEndDayLiveData().postValue(true);
-             /*   viewModel.findOutletsWithPendingTasks().subscribe(outlets -> {
-                    if(outlets.size()>0){
+             //   viewModel.getEndDayLiveData().postValue(true);
+
+                viewModel.findOutletsWithPendingTasks().subscribe(outlets -> {
+                    if(outlets.size()>0 && PreferenceUtil.getInstance(this).getConfig().getEndDayOnPjpCompletion()){
                         viewModel.getErrorMsg().postValue("Please complete your tasks");
                     }else{
                         viewModel.getEndDayLiveData().postValue(true);
                     }
-                });*/
+                });
                 break;
         }
 

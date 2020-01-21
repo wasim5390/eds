@@ -123,7 +123,8 @@ public class OutletDetailViewModel extends AndroidViewModel {
         outletLocation.setLongitude(outlet.getLongitude());
         double distance = currentLocation.distanceTo(outletLocation);
         // TODO enable this distance calculation check for live build
-        /*if(distance>30 && outletStatus<=2)
+        Long minReqDistance = repository.getConfiguration().getGeoFenceMinRadius();
+        /*if(distance>=minReqDistance && outletStatus<=2)
             outletNearbyPos.postValue(outletLocation);
         else*/
         {

@@ -118,19 +118,9 @@ public class HomeViewModel extends AndroidViewModel {
         return OutletListRepository.getInstance(getApplication()).getOutletsWithNoVisits()
                 .toObservable().subscribeOn(Schedulers.computation());
     }
-// --Commented out by Inspection START (8/21/2019 12:04 PM):
-//    private List<Outlet> visitedOutlets(List<Outlet> allOutlets) {
-//        List<Outlet> visitedOutlets = new ArrayList<>(allOutlets.size());
-//        for (Outlet outlet : allOutlets) {
-//            if(outlet.getVisitStatus()==1)
-//                visitedOutlets.add(outlet);
-//        }
-//        return visitedOutlets;
-//    }
-// --Commented out by Inspection STOP (8/21/2019 12:04 PM)
 
     public void pushOrdersToServer(){
-        //ContextCompat.getSystemService(getApplication(),JobScheduler.class).cancelAll();
+
         List<OrderStatus> count =  OutletListRepository.getInstance(getApplication()).getOrderStatus().blockingFirst();
         if(count.size()<1) {
             getErrorMsg().postValue("Updated!");
@@ -156,6 +146,8 @@ public class HomeViewModel extends AndroidViewModel {
 
                     @Override
                     public void onError(Throwable e) {
+                        onErrorCallback(e);
+                        isLoading().postValue(false);
                     }
 
                     @Override
@@ -304,16 +296,20 @@ public class HomeViewModel extends AndroidViewModel {
                         getErrorMsg().postValue(appUpdateModel.getMsg());
                         isLoading().postValue(false);
                     }
-                },this::onError);
+                },this::onErrorCallback);
 
     }
 
-    private void onError(Throwable throwable) throws IOException {
+    private void onErrorCallback(Throwable throwable) {
         throwable.printStackTrace();
         String errorBody = throwable.getMessage();
         if (throwable instanceof HttpException){
             HttpException error = (HttpException)throwable;
-            errorBody = error.response().errorBody().string();
+            try {
+                errorBody = error.response().errorBody().string();
+            } catch (IOException e) {
+                errorBody = "Please check your internet connection";
+            }
         }
         if (throwable instanceof IOException){
             errorBody = "Please check your internet connection";

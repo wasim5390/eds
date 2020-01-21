@@ -37,14 +37,19 @@ public interface PricingDao {
     @Query("SELECT * FROM PriceConditionType Where priceConditionClassId=:priceConditionClassId")
     Single<List<PriceConditionType>> findPriceConditionTypes(int priceConditionClassId);
 
-    @Query("SELECT * from PriceCondition INNER JOIN PriceAccessSequence on PriceCondition.accessSequenceId=PriceAccessSequence.priceAccessSequenceId\n" +
-            "Where PriceCondition.priceConditionTypeId=:priceConditionTypeId")
+    @Query("SELECT * from PriceAccessSequence pc order by pc.`order` " )
+    Single<List<PriceAccessSequence>> getAccessSequence();
+
+
+    @Query("SELECT * from PriceCondition " +
+            "INNER JOIN PriceAccessSequence pas on PriceCondition.accessSequenceId=pas.priceAccessSequenceId\n" +
+            "Where PriceCondition.priceConditionTypeId=:priceConditionTypeId order by pas.`order`")
     Single<List<PriceConditionWithAccessSequence>> getPriceConditionAndAccessSequenceByTypeId(int priceConditionTypeId);
 
     @Query("SELECT * from PriceCondition pc " +
-            "INNER JOIN PriceAccessSequence ON pc.accessSequenceId=PriceAccessSequence.priceAccessSequenceId\n" +
+            "INNER JOIN PriceAccessSequence pas ON pc.accessSequenceId=pas.priceAccessSequenceId\n" +
             "INNER JOIN Bundle b ON b.PriceConditionId = pc.PriceConditionId  \n"+
-            "Where pc.priceConditionTypeId=:priceConditionTypeId AND b.bundleId in (:applyingBundleIds)")
+            "Where pc.priceConditionTypeId=:priceConditionTypeId AND b.bundleId IN (:applyingBundleIds) order by pas.`order` "  )
     Single<List<PriceConditionWithAccessSequence>> getPriceConditionAndAccessSequenceByTypeIdWithBundle(int priceConditionTypeId,List<Integer> applyingBundleIds);
 
     @Query("SELECT DISTINCT b.bundleId FROM  PriceCondition pc" +
@@ -110,6 +115,7 @@ public interface PricingDao {
 
     @Query("DELETE FROM Bundle")
     void deleteAllPriceBundles();
+
     @Query("DELETE FROM ProductQuantity")
     void deleteAllTempQty();
 }

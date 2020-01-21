@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.optimus.eds.db.entities.Configuration;
 import com.optimus.eds.model.AppUpdateModel;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.source.ApkDownloader;
@@ -26,6 +27,7 @@ public class PreferenceUtil {
     public static final String KEY_TOKEN = "token";
     public static final String KEY_SYNC_DATE = "sync_date";
     public static final String KEY_USER = "user";
+    public static final String KEY_CONFIG = "config";
     public static final String KEY_DIST_ID="dist_id";
 
     private static final String PREFERENCE_NAME = "send_signal_preference";
@@ -173,6 +175,24 @@ public class PreferenceUtil {
             user = new User();
         }
         return user;
+    }
+
+    public void saveConfig(Configuration configuration) {
+        Gson gson = new Gson();
+        String str = gson.toJson(configuration);
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putString(KEY_CONFIG, str);
+        editor.apply();
+    }
+
+    public Configuration getConfig() {
+        Gson gson = new Gson();
+        Configuration configuration = gson.fromJson(sPref.getString(KEY_CONFIG,""), Configuration.class);
+
+        if (configuration==null) {
+            configuration = new Configuration();
+        }
+        return configuration;
     }
 
     public void savePreference(String key, String value) {

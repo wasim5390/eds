@@ -144,6 +144,7 @@ public class HomeRepository {
                 if(response.isSuccessful()){
                     //
                     preferenceUtil.saveDistributionId(response.body().getDistributionId());
+                    preferenceUtil.saveConfig(response.body().getConfiguration());
                     deleteAllRoutesAssets()
                             .andThen(deleteAllOutlets(onDayStart))
                             .andThen(Completable.fromAction(() -> {
@@ -286,8 +287,7 @@ public class HomeRepository {
         });
     }
     public Completable deleteAllPricing(){
-        return   Completable.fromAction(()-> pricingDao.deleteAllPriceConditionClasses())
-                .andThen(Completable.fromAction(()-> pricingDao.deleteAllPriceBundles()));
+        return   Completable.fromAction(()-> pricingDao.deleteAllPriceConditionClasses());
                // .andThen(Completable.fromAction(()->pricingDao.deleteAllPriceConditionEntities()));
 
     }

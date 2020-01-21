@@ -166,6 +166,8 @@ public class OrderBookingActivity extends BaseActivity  {
 
 
     private void setSectionedAdapter(List<PackageModel> packages){
+        if(packages==null)
+            return;
         sectionAdapter = new SectionedRecyclerViewAdapter();
         for(PackageModel pkg:packages){
             sectionAdapter.addSection(pkg.getPackageName(),new PackageSection(pkg,

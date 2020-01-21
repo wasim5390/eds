@@ -28,7 +28,6 @@ public class OutletListViewModel extends AndroidViewModel {
     private final OutletListRepository repository;
     private final StatusRepository statusRepository;
     private final MutableLiveData<List<Outlet>> outletList;
-    private final MutableLiveData<List<Route>> routeList;
     private final MutableLiveData<Boolean> isLoading;
     private final MutableLiveData<String> errorMsg;
     private final List<Outlet> allOutlets;
@@ -40,19 +39,22 @@ public class OutletListViewModel extends AndroidViewModel {
         repository = OutletListRepository.getInstance(application);
         statusRepository = StatusRepository.singleInstance(application);
         outletList = new MutableLiveData<>();
-        routeList = new MutableLiveData<>();
         disposable = new CompositeDisposable();
         errorMsg = new MutableLiveData<>();
         isLoading = new MutableLiveData<>();
         allOutlets = new ArrayList<>();
-        loadRoutesFromDb();
+
 
     }
 
 
 
-    private void loadRoutesFromDb() {
-        repository.getRoutes().observeForever(routes -> routeList.setValue(routes));
+    public LiveData<List<Route>> getRoutes() {
+       return repository.getRoutes();
+    }
+
+    public boolean nonPjpExist(Long routeId){
+       return  !repository.getOutlets(routeId,0).subscribeOn(Schedulers.io()).blockingGet().isEmpty();
     }
 
 
@@ -62,7 +64,7 @@ public class OutletListViewModel extends AndroidViewModel {
         disposable.add(
                 outletObservable
                         .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .observeOn(Schedulers.newThread())
                         .subscribeWith(new DisposableObserver<List<Outlet>>() {
 
                             @Override
@@ -165,10 +167,6 @@ public class OutletListViewModel extends AndroidViewModel {
         return outletList;
     }
 
-    public LiveData<List<Route>> getRouteList(){
-
-        return routeList;
-    }
 
     public MutableLiveData<Boolean> isLoading() {
         return isLoading;

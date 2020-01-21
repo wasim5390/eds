@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        android:paddingBottom="5dp"
         >
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -75,15 +76,19 @@
             app:tabBackground="@color/colorAccent"
             app:tabTextAppearance="@style/TextAppearance.AppCompat.Menu"
             app:tabIndicatorColor="@color/colorPrimary"
+            app:tabMaxWidth="1500dp"
+            android:fillViewport="true"
             android:id="@+id/tabLayout"
             >
             <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabPjp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="PJP"
 
                 />
             <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabOthers"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="OTHERS"

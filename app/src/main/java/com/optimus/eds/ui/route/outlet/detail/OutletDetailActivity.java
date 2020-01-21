@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,14 +13,21 @@ import android.location.Location;
 import android.os.Bundle;
 import androidx.appcompat.widget.AppCompatSpinner;
 
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -34,7 +40,6 @@ import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Outlet;
 
 import com.optimus.eds.location_services.GpsUtils;
-import com.optimus.eds.location_services.LocationService;
 import com.optimus.eds.ui.AlertDialogManager;
 import com.optimus.eds.ui.merchandize.OutletMerchandiseActivity;
 import com.optimus.eds.ui.order.OrderBookingActivity;
@@ -46,21 +51,21 @@ import com.optimus.eds.utils.Util;
 import java.util.Calendar;
 import java.util.List;
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.optimus.eds.location_services.GpsUtils.GPS_REQUEST;
-import static com.optimus.eds.location_services.LocationService.ACTION;
-import static com.optimus.eds.location_services.LocationService.LOCATION;
 
-public class OutletDetailActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
+public class OutletDetailActivity extends BaseActivity implements
+        AdapterView.OnItemSelectedListener
+{
 
 
     private static final String TAG = OutletDetailActivity.class.getName();
     private static final int REQUEST_CODE = 0x1001;
-
+    private LocationRequest locationRequest;
+    private FusedLocationProviderClient locationProviderClient;
     private Long outletId;
     @BindView(R.id.tvName)
     TextView outletName;
@@ -112,7 +117,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         popSpinner.setAdapter(adapter);
         popSpinner.setOnItemSelectedListener(this);
         viewModel.findOutlet(outletId).observe(this, outlet -> updateUI(outlet));
-        viewModel.getStatusLiveData().observe(this,integer -> updateBtn(true));
+       // viewModel.getStatusLiveData().observe(this,integer -> updateBtn(true));
         viewModel.getOutletNearbyPos().observe(this,outletLocation -> {
             AlertDialogManager.getInstance().showLocationMissMatchAlertDialog(OutletDetailActivity.this,currentLocation,outletLocation);
         });
@@ -122,7 +127,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
                 viewModel.scheduleMasterJob(this,outletId,currentLocation,outletVisitStartTime ,Calendar.getInstance().getTimeInMillis(),reasonForNoSale, PreferenceUtil.getInstance(getApplication()).getToken());
                 finish(); // finish activity after sending status
             }else{
-               // OutletMerchandiseActivity.start(this,outletId,REQUEST_CODE);
+                // OutletMerchandiseActivity.start(this,outletId,REQUEST_CODE);
                 OrderBookingActivity.start(this,outletId,REQUEST_CODE);
             }
         });
@@ -131,41 +136,55 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
             if (!loaded) showProgress();
             else hideProgress();
         });
-
+        updateBtn(false);
+        createLocationRequest();
         enableLocationServices();
 
     }
-    BroadcastReceiver locationBroadcastReceiver = new BroadcastReceiver(){
-        @Override
-        public void onReceive(Context context, Intent intent) {
 
-            if (null != intent && intent.getAction().equals(ACTION)) {
 
-                Location locationData = intent.getParcelableExtra(LOCATION);
-                currentLocation  = locationData;
-
-            }
-        }
-    };
     public void enableLocationServices() {
         new GpsUtils(this, LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY))
                 .turnGPSOn(isGPSEnable -> {
                     // turn on GPS
                     isGPS = isGPSEnable;
                     if(isGPS) {
-                        startLocationService();
+                        locationProviderClient.requestLocationUpdates(locationRequest,locationCallback,Looper.getMainLooper());
                     }
                 });
 
     }
 
-    private void startLocationService() {
-        startService(new Intent(this, LocationService.class));
+    protected void createLocationRequest() {
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
     }
 
-    private void stopLocationService() {
-        stopService(new Intent(this, LocationService.class ));
-    }
+    private LocationCallback locationCallback = new LocationCallback(){
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            if (locationResult == null) {
+                return;
+            }
+            for (Location location : locationResult.getLocations()) {
+                if (location != null) {
+                    currentLocation = location;
+                   // Toast.makeText(OutletDetailActivity.this, "Location Received!", Toast.LENGTH_SHORT).show();
+                    if (locationProviderClient != null) {
+                        locationProviderClient.removeLocationUpdates(locationCallback);
+                    }
+                    updateBtn(true);
+                }
+            }
+
+        }
+    };
+
     @Override
     public void onStart() {
         super.onStart();
@@ -179,8 +198,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()){
-
-                            startLocationService();
+                            locationProviderClient.requestLocationUpdates(locationRequest,locationCallback,Looper.getMainLooper());
                         }
                         else{
                             if(report.isAnyPermissionPermanentlyDenied())
@@ -193,17 +211,9 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
                         token.continuePermissionRequest();
                     }
                 }).check();
-        LocalBroadcastManager.getInstance(this).registerReceiver(locationBroadcastReceiver, new IntentFilter(ACTION));
 
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(locationBroadcastReceiver);
-        stopLocationService();
-
-    }
 
 
     @Override
@@ -251,7 +261,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
 
     @OnClick(R.id.btnOk)
     public void onOkClick(){
-            viewModel.onNextClick(currentLocation,outletVisitStartTime);
+        viewModel.onNextClick(currentLocation,outletVisitStartTime);
     }
 
     @Override
@@ -261,7 +271,7 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
             switch (requestCode){
                 case GPS_REQUEST:
                     isGPS = true; // flag maintain before get location
-                    startLocationService();
+                    locationProviderClient.requestLocationUpdates(locationRequest,locationCallback,Looper.getMainLooper());
                     break;
                 case REQUEST_CODE:
                     setResult(RESULT_OK);
@@ -272,10 +282,10 @@ public class OutletDetailActivity extends BaseActivity implements AdapterView.On
         } if(resultCode == RESULT_FIRST_USER){
             switch (requestCode){
                 case REQUEST_CODE:
-                boolean noOrderFromOrderBooking = data.getBooleanExtra(EXTRA_PARAM_NO_ORDER_FROM_BOOKING,false);
-                reasonForNoSale = String.valueOf(data.getLongExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER,1L));
-                viewModel.postEmptyCheckout(noOrderFromOrderBooking,outletVisitStartTime,Calendar.getInstance().getTimeInMillis());
-                break;
+                    boolean noOrderFromOrderBooking = data.getBooleanExtra(EXTRA_PARAM_NO_ORDER_FROM_BOOKING,false);
+                    reasonForNoSale = String.valueOf(data.getLongExtra(EXTRA_PARAM_OUTLET_REASON_N_ORDER,1L));
+                    viewModel.postEmptyCheckout(noOrderFromOrderBooking,outletVisitStartTime,Calendar.getInstance().getTimeInMillis());
+                    break;
             }
         }
     }

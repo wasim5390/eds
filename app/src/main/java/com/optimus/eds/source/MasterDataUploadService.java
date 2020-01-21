@@ -80,28 +80,29 @@ public class MasterDataUploadService extends JobService implements Constant {
      * Handle action Foo in the provided background thread with the provided
      * parameters.
      */
-    private void uploadMasterData(MasterModel masterModel) {
+    private void uploadMasterData(MasterModel orderModel) {
 
-       OrderStatus status= statusRepository.findOrderStatus(masterModel.getOutletId())
+       OrderStatus status= statusRepository.findOrderStatus(orderModel.getOutletId())
                .observeOn(Schedulers.io())
                .subscribeOn(Schedulers.io()).blockingGet();
        if(status!=null) {
-           masterModel.setOutletVisitTime(status.getOutletVisitStartTime());
-           masterModel.setOutletEndTime(status.getOutletVisitEndTime());
+           orderModel.setOutletVisitTime(status.getOutletVisitStartTime());
+           orderModel.setOutletEndTime(status.getOutletVisitEndTime());
+
        }
-        RetrofitHelper.getInstance().getApi().saveOrder(masterModel,token)
-                .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(masterModel1 -> {
-            onUpload(masterModel1,masterModel.getOutletId(),masterModel.getOutletStatus(),masterModel.getOutletVisitTime(),masterModel.getOutletEndTime());
+        RetrofitHelper.getInstance().getApi().saveOrder(orderModel,token)
+                .observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(masterModel -> {
+            onUpload(masterModel,orderModel);
         },this::error);
     }
 
-    private void onUpload(BaseResponse baseResponse,Long outletId,Integer status,Long visitStartTime,Long visitEndTime) {
+    private void onUpload(BaseResponse baseResponse,MasterModel orderModel) {
         if(baseResponse.isSuccess()) {
             Log.i(iTAG, "File Uploaded");
-            outletDetailRepository.updateOutletVisitStatus(outletId,status,1);
-            statusRepository.updateStatus(new OrderStatus(outletId,status,1,0.0));
-            statusRepository.updateStatusOutletStartTime(visitStartTime,outletId);
-            statusRepository.updateStatusOutletEndTime(visitEndTime,outletId);
+            outletDetailRepository.updateOutletVisitStatus(orderModel.getOutletId(),orderModel.getOutletStatus(),1);
+            statusRepository.updateStatus(new OrderStatus(orderModel.getOutletId(),orderModel.getOutletStatus(),1,0.0));
+            statusRepository.updateStatusOutletStartTime(orderModel.getOutletVisitTime(),orderModel.getOutletId());
+            statusRepository.updateStatusOutletEndTime(orderModel.getOutletEndTime(),orderModel.getOutletId());
             Intent intent = new Intent();
             intent.setAction(Constant.ACTION_ORDER_UPLOAD);
             intent.putExtra("Response", baseResponse);

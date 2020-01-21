@@ -143,6 +143,8 @@ public class OrderBookingRepository {
     }
 
     protected List<PackageModel> packageModel(List<Package> packages, List<Product> _products) {
+        if(packages==null)
+            return null;
         List<PackageModel> packageModels = new ArrayList<>(packages.size());
 
         for(Package _package: packages)

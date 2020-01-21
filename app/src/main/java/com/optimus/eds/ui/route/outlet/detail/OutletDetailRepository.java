@@ -10,10 +10,12 @@ import com.optimus.eds.db.AppDatabase;
 
 import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
+import com.optimus.eds.db.entities.Configuration;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.model.PackageProductResponseModel;
 import com.optimus.eds.source.API;
 import com.optimus.eds.source.RetrofitHelper;
+import com.optimus.eds.utils.PreferenceUtil;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;
@@ -29,16 +31,21 @@ public class OutletDetailRepository {
     private final  static  String TAG = OutletDetailRepository.class.getName();
     private final RouteDao routeDao;
     private final ProductsDao productsDao;
-
+    private final PreferenceUtil preferenceUtil;
     private final API webservice;
 
     public OutletDetailRepository(Application application) {
         AppDatabase appDatabase = AppDatabase.getDatabase(application);
+        preferenceUtil = PreferenceUtil.getInstance(application);
         webservice = RetrofitHelper.getInstance().getApi();
         routeDao = appDatabase.routeDao();
         productsDao = appDatabase.productsDao();
     }
 
+
+    public Configuration getConfiguration(){
+        return preferenceUtil.getConfig();
+    }
 
     public LiveData<Outlet> getOutletById(Long outletId){
         return routeDao.findOutletById(outletId);

@@ -13,18 +13,21 @@ import com.optimus.eds.db.dao.PricingDao;
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
 import com.optimus.eds.db.entities.OrderDetail;
 import com.optimus.eds.db.entities.UnitPriceBreakDown;
+import com.optimus.eds.db.entities.pricing.PriceAccessSequence;
 import com.optimus.eds.db.entities.pricing.PriceConditionClass;
 import com.optimus.eds.db.entities.pricing.PriceConditionDetail;
 import com.optimus.eds.db.entities.pricing.PriceConditionEntities;
 import com.optimus.eds.db.entities.pricing.PriceConditionScale;
 import com.optimus.eds.db.entities.pricing.PriceConditionType;
-import com.optimus.eds.db.entities.pricing_models.PcClassWithPcType;
 import com.optimus.eds.db.entities.pricing_models.PriceConditionDetailsWithScale;
 import com.optimus.eds.model.OrderResponseModel;
+import com.optimus.eds.ui.order.free_goods.FreeGoodOutputDTO;
+import com.optimus.eds.ui.order.free_goods.prGetFreeGoods;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +35,6 @@ import java.util.Map;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class PricingManager {
@@ -166,7 +168,9 @@ public class PricingManager {
                 }
             }
 
-            Completable.create(e -> pricingDao.deleteAllTempQty()).andThen(addProductQty(productQuantityDTOList)).subscribeOn(Schedulers.io());
+            Completable.fromAction(() -> pricingDao.deleteAllTempQty())
+                    .andThen(addProductQty(productQuantityDTOList))
+                    .subscribeOn(Schedulers.io()).blockingAwait();
 
 
             for(Map.Entry<OrderDetail,List<OrderDetail>> orderDetailHashMap:orderItems.entrySet())
@@ -517,7 +521,7 @@ public class PricingManager {
         BigDecimal returnAmount = BigDecimal.ZERO;
         if (scaleBasisId == Enums.ScaleBasis.Quantity || scaleBasisId == Enums.ScaleBasis.Total_Quantity)
         {
-            Collections.sort(scaleList, (o1, o2) -> o1.getFrom().compareTo(o2.getFrom()));
+            Collections.sort(scaleList, (o1, o2) -> o2.getFrom().compareTo(o1.getFrom()));
             for(PriceConditionScale conditionScale:scaleList){
 
                 if(conditionScale.getPriceConditionDetailId()==priceConditionDetailId && conditionScale.getFrom()<=quantity){
@@ -586,7 +590,7 @@ public class PricingManager {
 
                     PromoLimitDTO limitDTO = GetPriceAgainstPriceCondition( prAccSeqDetail.getPriceConditionId(), prAccSeqDetail.getSequenceCode(),
                             outletId, productDefinitionId, quantity, totalPrice, conditionType.getPriceScaleBasisId(), routeId,
-                            distributionId, null);
+                            distributionId, prAccSeqDetail.getBundleId());
 
 
                     if (limitDTO != null && limitDTO.getUnitPrice().doubleValue() > -1) {
@@ -649,14 +653,14 @@ public class PricingManager {
 
 
             }
-       /*     if (!isPriceFound && !TextUtils.isEmpty(priceConditionClass.getSeverityLevelMessage())
-                    && priceConditionClass.getSeverityLevel() != (int)enumMessageSeverityLevel.MESSAGE)
+           if (!isPriceFound && !TextUtils.isEmpty(conditionClass.getSeverityLevelMessage())
+                    && conditionClass.getSeverityLevel() !=  Enums.MessageSeverityLevel.MESSAGE)
             {
                 Message message = new Message();
-                message.MessageSeverityLevel = priceConditionClass.getSeverityLevel();
-                message.MessageText = priceConditionClass.getSeverityLevelMessage();
-                objPriceOutputDTO.Messages.Add(message);
-            }*/
+                message.MessageSeverityLevel = conditionClass.getSeverityLevel();
+                message.MessageText = conditionClass.getSeverityLevelMessage();
+                objPriceOutputDTO.Messages.add(message);
+            }
 
 
 
@@ -709,7 +713,6 @@ public class PricingManager {
         ItemAmountDTO objReturnPrice = new ItemAmountDTO();
         double blockPrice = 0;
         int actualQuantity = quantity;
-        //decimal actualAmount = amount;
         if(limitBy==null){
             limitBy = 0;
         }
@@ -822,8 +825,59 @@ public class PricingManager {
         return amount;
     }
 
-    interface IPromoLimitDTO{
-        void onPriceFound(PromoLimitDTO limitDTO);
+
+
+    // region "Free Goods"
+
+    public List<FreeGoodOutputDTO> GetFreeGoods(int outletId, int routeId, int channelId, int distributionId, int productDefinitionId, Date OrderDate, List<ProductQuantity> productList, List<Integer> appliedFreeGoodGroupIds, int orderId) {
+        String predicate = "PricingTypeId = 2";
+        List<PriceAccessSequence> accessSequenceList = pricingDao.getAccessSequence().blockingGet();
+        List<FreeGoodOutputDTO > freeGoodDTOList = new ArrayList<>();
+        List<prGetFreeGoods> prfreeGoodsList = new ArrayList<>();
+        List<ProductQuantity> udtProductList = new ArrayList<>(productList);
+
+
+     /*   for (PriceAccessSequence sequence : accessSequenceList) {
+            if (sequence.getSequenceCode().equalsIgnoreCase(Enums.AccessSequenceCode.OUTLET_PRODUCT.toString())) {
+                prfreeGoodsList = _freeGoodMasterRepository.prGetFreeGoods(outletId, 0, 0, 0, productDefinitionId, OrderDate, udtProductList, sequence.getPriceAccessSequenceId());
+
+            } else if (sequence.getSequenceCode().equalsIgnoreCase(Enums.AccessSequenceCode.ROUTE_PRODUCT.toString())) {
+                prfreeGoodsList = _freeGoodMasterRepository.prGetFreeGoods(0, routeId, 0, 0, productDefinitionId, OrderDate, udtProductList, sequence.getPriceAccessSequenceId());
+            } else if (sequence.getSequenceCode().equalsIgnoreCase(Enums.AccessSequenceCode.DISTRIBUTION_PRODUCT.toString())) {
+                prfreeGoodsList = _freeGoodMasterRepository.prGetFreeGoods(0, 0, 0, distributionId, productDefinitionId, OrderDate, udtProductList, sequence.getPriceAccessSequenceId());
+            } else if (sequence.getSequenceCode().equalsIgnoreCase(Enums.AccessSequenceCode.PRODUCT.toString())) {
+                prfreeGoodsList = _freeGoodMasterRepository.prGetFreeGoods(0, 0, 0, 0, productDefinitionId, OrderDate, udtProductList, sequence.getPriceAccessSequenceId());
+            }
+            if (prfreeGoodsList.size() > 0) {
+                //check if the FreeGoodGroup already applied
+                var alreadyApplied = prfreeGoodsList.Where(x = > x.FreeGoodGroupId == appliedFreeGoodGroupIds.Where(y = > y == x.FreeGoodGroupId).
+                FirstOrDefault()).Count();
+
+                if (alreadyApplied == 0) {
+                    prGetFreeGoods promo = new prGetFreeGoods();
+
+                    var bundles = prfreeGoodsList.Where(x = > x.IsBundle == true)
+                    ; //if there exist bundle in the freegoodsList than only apply the single/First bundle offer and do not apply the remaining freegoods/Promos.
+                    if (bundles.Count() > 0) {
+                        promo = bundles.FirstOrDefault();
+                    } else {
+                        promo = prfreeGoodsList.FirstOrDefault();
+                    }
+
+
+                    var freeGoodOutputList = this.GetAvailableFreeGoods(promo, productList, outletId, orderId);
+
+                    freeGoodDTOList.AddRange(freeGoodOutputList);
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+*/
+        return freeGoodDTOList;
     }
+
+
 
 }

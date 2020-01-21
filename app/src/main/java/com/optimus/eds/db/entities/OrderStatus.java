@@ -32,12 +32,12 @@ public class OrderStatus {
 
     public OrderStatus() {
     }
-  /*  @Ignore
+    @Ignore
     public OrderStatus(long outletId, int status, Integer synced) {
         this.outletId = outletId;
         this.status = status;
         this.synced = synced;
-    }*/
+    }
 
     @Ignore
     public OrderStatus(long outletId, int status, Integer synced,Double orderAmount) {

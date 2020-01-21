@@ -11,6 +11,17 @@ public class PriceConditionWithAccessSequence extends PriceCondition {
     private Integer order;
     private Integer pricingLevelId;
 
+    public Integer getBundleId() {
+        return bundleId;
+    }
+
+    public void setBundleId(Integer bundleId) {
+        this.bundleId = bundleId;
+    }
+
+    private Integer bundleId;
+
+
     public void setSequenceCode(String sequenceCode) {
         this.sequenceCode = sequenceCode;
     }

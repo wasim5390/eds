@@ -33,18 +33,21 @@ import com.google.android.material.tabs.TabLayout;
 import com.optimus.eds.BaseActivity;
 import com.optimus.eds.Constant;
 import com.optimus.eds.R;
+import com.optimus.eds.db.entities.Configuration;
 import com.optimus.eds.db.entities.Outlet;
 import com.optimus.eds.db.entities.Route;
 import com.optimus.eds.model.MasterModel;
 import com.optimus.eds.model.WorkStatus;
 import com.optimus.eds.ui.cash_memo.CashMemoActivity;
 import com.optimus.eds.ui.route.outlet.detail.OutletDetailActivity;
+import com.optimus.eds.utils.CollectionUtil;
 import com.optimus.eds.utils.PreferenceUtil;
 import com.optimus.eds.utils.Util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -88,12 +91,14 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
         viewModel = ViewModelProviders.of(this).get(OutletListViewModel.class);
 
 
-        viewModel.getRouteList().observe(this, routes -> {
+        viewModel.getRoutes().observe(this, routes -> {
             onRouteListLoaded(routes);
         });
 
         viewModel.getOutletList().observe(this, outlets -> {
+            Collections.sort(outlets,(o1, o2) -> o1.getSequenceNumber().compareTo(o2.getSequenceNumber()));
             updateOutletsList(outlets);
+
         });
 
         viewModel.isLoading().observe(this,aBoolean -> {
@@ -116,6 +121,7 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
         outletListAdapter = new OutletListAdapter(new ArrayList<>(),this);
         recyclerView.setAdapter(outletListAdapter);
         recyclerView.setNestedScrollingEnabled(false);
+
         tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -181,6 +187,13 @@ public class OutletListActivity extends BaseActivity implements OutletListAdapte
                 SELECTED_ROUTE_INDEX=position;
                 route = ((Route)(parent.getSelectedItem()));
                 viewModel.loadOutletsFromDb(route.getRouteId(),SELECTED_TAB<1);
+                AsyncTask.execute(() -> {
+                    if(!viewModel.nonPjpExist(route.getRouteId())){
+                        if(tabLayout.getChildCount()>1)
+                            tabLayout.removeTabAt(1);
+                    }
+                });
+
 
             }
 
