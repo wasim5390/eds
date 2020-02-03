@@ -58,7 +58,7 @@ import com.optimus.eds.ui.order.pricing.ProductQuantity;
         PriceConditionDetail.class, PriceConditionEntities.class,
         PriceConditionScale.class, PriceConditionType.class, PriceScaleBasis.class,
         PricingLevels.class, ProductQuantity.class
-}, version =4, exportSchema = false)
+}, version =6, exportSchema = false)
 @TypeConverters({MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
 
 public abstract class AppDatabase extends RoomDatabase {

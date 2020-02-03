@@ -369,8 +369,8 @@ public class OrderBookingViewModel extends AndroidViewModel {
             responseModel.setDistributionId(distributionId);
             NetworkManager.getInstance().isOnline().subscribe((aBoolean, throwable) -> {
                 if (!aBoolean) {
-                  //  msg.postValue(Constant.NETWORK_ERROR);
-                    disposable.add(calculateLocally(responseModel));
+                    msg.postValue(Constant.NETWORK_ERROR);
+                  //  disposable.add(calculateLocally(responseModel));
                 } else {
                     disposable.add(calculateFromServer(responseModel));
                 }

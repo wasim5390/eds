@@ -18,6 +18,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import com.optimus.eds.Constant;
+import com.optimus.eds.db.entities.Configuration;
 import com.optimus.eds.db.entities.Order;
 import com.optimus.eds.db.entities.OrderStatus;
 import com.optimus.eds.db.entities.Outlet;
@@ -123,10 +124,11 @@ public class OutletDetailViewModel extends AndroidViewModel {
         outletLocation.setLongitude(outlet.getLongitude());
         double distance = currentLocation.distanceTo(outletLocation);
         // TODO enable this distance calculation check for live build
-        Long minReqDistance = repository.getConfiguration().getGeoFenceMinRadius();
-        /*if(distance>=minReqDistance && outletStatus<=2)
+        Configuration configuration = repository.getConfiguration();
+        Integer minReqDistance = configuration.getGeoFenceMinRadius();
+        if(configuration.getGeoFenceRequired() && distance>=minReqDistance && outletStatus<=2)
             outletNearbyPos.postValue(outletLocation);
-        else*/
+        else
         {
             outlet.setVisitTimeLat(currentLocation.getLatitude());
             outlet.setVisitTimeLng(currentLocation.getLongitude());

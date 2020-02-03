@@ -8,7 +8,7 @@ public class Configuration {
     @Expose
     private Boolean endDayOnPjpCompletion;
     @Expose
-    private Long geoFenceMinRadius;
+    private Integer geoFenceMinRadius;
     @Expose
     private Boolean geoFenceRequired;
 
@@ -19,7 +19,7 @@ public class Configuration {
         this.endDayOnPjpCompletion = endDayOnPjpCompletion;
     }
 
-    public void setGeoFenceMinRadius(Long geoFenceMinRadius) {
+    public void setGeoFenceMinRadius(Integer geoFenceMinRadius) {
         this.geoFenceMinRadius = geoFenceMinRadius;
     }
 
@@ -31,12 +31,12 @@ public class Configuration {
         return endDayOnPjpCompletion==null?false:endDayOnPjpCompletion;
     }
 
-    public Long getGeoFenceMinRadius() {
+    public Integer getGeoFenceMinRadius() {
         return geoFenceMinRadius==null?20:geoFenceMinRadius;
     }
 
     public Boolean getGeoFenceRequired() {
-        return geoFenceRequired;
+        return geoFenceRequired==null?false:geoFenceRequired;
     }
 
 }

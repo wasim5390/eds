@@ -143,7 +143,7 @@ public class HomeRepository {
                 Response<RouteOutletResponseModel> response = webService.loadTodayRouteOutlets().execute();
                 if(response.isSuccessful()){
                     //
-                    preferenceUtil.saveDistributionId(response.body().getDistributionId());
+                    preferenceUtil.saveDistributionId(response.body() != null ? response.body().getDistributionId() : null);
                     preferenceUtil.saveConfig(response.body().getConfiguration());
                     deleteAllRoutesAssets()
                             .andThen(deleteAllOutlets(onDayStart))
