@@ -70,6 +70,8 @@ public class PricingManager {
         //decimal totalPrice = 0; //input price for every condition class
         totalPrice = orderTotalAmount; //input price for every condition class
         isPriceFound = false;
+        // TODO we have to apply another outer loop on PriceConditionClass for filtering and applying ConditionClass on pricingAreaId field
+        // TODO areas of pricing organizationPricing , promoAndDiscount, distributionDiscount
         List<PriceConditionClass> conditionClasses = pricingDao.findPriceConditionClasses(2).subscribeOn(Schedulers.io()).blockingGet();
         for (PriceConditionClass conditionClass : conditionClasses)
         {

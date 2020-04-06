@@ -22,6 +22,7 @@ public class PriceConditionClass {
     @NonNull
     private int severityLevel;
     private String severityLevelMessage;
+    private int pricingAreaId;
 
     @Ignore
     private List<PriceConditionType> priceConditionTypes = null;
