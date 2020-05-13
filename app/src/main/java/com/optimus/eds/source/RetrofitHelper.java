@@ -64,12 +64,7 @@ public class RetrofitHelper implements Constant {
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
             PreferenceUtil preferenceUtil = PreferenceUtil.getInstance(EdsApplication.getContext());
-            //String token = Util.getAuthorizationHeader(EdsApplication.getInstance());
-/*
-            if (token!=null) {
 
-                request = originalRequest.newBuilder()
-                        .header("Authorization", "Bearer " + token).build();*/
 
             if(request.headers().get("Authorization")==null || request.headers().get("Authorization").isEmpty()){
                 String token = Util.getAuthorizationHeader(EdsApplication.getContext());
@@ -85,10 +80,11 @@ public class RetrofitHelper implements Constant {
                     TokenResponse tokenResponseObj=tokenResponse.body();
 
                     try {
-                        request= response.request().newBuilder()
+                        response.close();
+                        request= request.newBuilder()
                                 .header("Authorization", "Bearer " + tokenResponseObj.getAccessToken()).build();
                         response = chain.proceed(request);
-                        PreferenceUtil.getInstance(EdsApplication.getContext()).saveToken(tokenResponseObj.getAccessToken());
+                       preferenceUtil.saveToken(tokenResponseObj.getAccessToken());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -100,21 +96,15 @@ public class RetrofitHelper implements Constant {
 
             return response;
         }
-           /* else {
-                return chain.proceed(originalRequest);
-            }*/
 
-
-
-        // }
     }
 
     private Retrofit getRetrofit(){
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder()
-                .readTimeout(30, TimeUnit.SECONDS)
-                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
                 .addInterceptor(httpLoggingInterceptor)
                 .addInterceptor(new AuthorizationInterceptor());
         Gson builder = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).create();

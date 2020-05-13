@@ -287,8 +287,8 @@ public class HomeRepository {
         });
     }
     public Completable deleteAllPricing(){
-        return   Completable.fromAction(()-> pricingDao.deleteAllPriceConditionClasses());
-               // .andThen(Completable.fromAction(()->pricingDao.deleteAllPriceConditionEntities()));
+        return   Completable.fromAction(()-> pricingDao.deleteAllPriceConditionClasses())
+                .andThen(Completable.fromAction(()->pricingDao.deleteAllPricingAreas()));
 
     }
 

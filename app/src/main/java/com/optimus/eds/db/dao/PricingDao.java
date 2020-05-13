@@ -10,6 +10,7 @@ import com.optimus.eds.db.entities.pricing.PriceConditionDetail;
 import com.optimus.eds.db.entities.pricing.PriceConditionEntities;
 import com.optimus.eds.db.entities.pricing.PriceConditionScale;
 import com.optimus.eds.db.entities.pricing.PriceConditionType;
+import com.optimus.eds.db.entities.pricing.PricingArea;
 import com.optimus.eds.db.entities.pricing_models.PcClassWithPcType;
 import com.optimus.eds.ui.order.pricing.PriceConditionWithAccessSequence;
 import com.optimus.eds.ui.order.pricing.ProductQuantity;
@@ -33,6 +34,9 @@ public interface PricingDao {
 
     @Query("SELECT * FROM PriceConditionClass Where PriceConditionClass.pricingLevelId=:pricingLevel Order By `order`")
     Single<List<PriceConditionClass>> findPriceConditionClasses(int pricingLevel);
+
+    @Query("SELECT * FROM PricingArea Order By `order`")
+    Single<List<PricingArea>> findPricingArea();
 
     @Query("SELECT * FROM PriceConditionType Where priceConditionClassId=:priceConditionClassId")
     Single<List<PriceConditionType>> findPriceConditionTypes(int priceConditionClassId);
@@ -115,6 +119,9 @@ public interface PricingDao {
 
     @Query("DELETE FROM Bundle")
     void deleteAllPriceBundles();
+
+    @Query("DELETE FROM PricingArea")
+    void deleteAllPricingAreas();
 
     @Query("DELETE FROM ProductQuantity")
     void deleteAllTempQty();

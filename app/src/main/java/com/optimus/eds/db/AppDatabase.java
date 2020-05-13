@@ -8,7 +8,6 @@ import androidx.room.TypeConverters;
 import android.content.Context;
 
 import com.optimus.eds.db.converters.AssetConverter;
-import com.optimus.eds.db.converters.DecimalConverter;
 import com.optimus.eds.db.converters.MerchandiseItemConverter;
 import com.optimus.eds.db.converters.ProductConverter;
 import com.optimus.eds.db.dao.CustomerDao;
@@ -21,7 +20,6 @@ import com.optimus.eds.db.dao.ProductsDao;
 import com.optimus.eds.db.dao.RouteDao;
 import com.optimus.eds.db.entities.Asset;
 import com.optimus.eds.db.entities.CartonPriceBreakDown;
-import com.optimus.eds.db.entities.Configuration;
 import com.optimus.eds.db.entities.CustomerInput;
 import com.optimus.eds.db.entities.Merchandise;
 import com.optimus.eds.db.entities.Order;
@@ -38,13 +36,12 @@ import com.optimus.eds.db.entities.pricing.PriceBundle;
 import com.optimus.eds.db.entities.pricing.PriceCondition;
 import com.optimus.eds.db.entities.pricing.PriceConditionAvailed;
 import com.optimus.eds.db.entities.pricing.PriceConditionClass;
-import com.optimus.eds.db.entities.pricing.PriceConditionClassPriceAccessSequences;
 import com.optimus.eds.db.entities.pricing.PriceConditionDetail;
 import com.optimus.eds.db.entities.pricing.PriceConditionEntities;
 import com.optimus.eds.db.entities.pricing.PriceConditionScale;
 import com.optimus.eds.db.entities.pricing.PriceConditionType;
 import com.optimus.eds.db.entities.pricing.PriceScaleBasis;
-import com.optimus.eds.db.entities.pricing.PricingGroups;
+import com.optimus.eds.db.entities.pricing.PricingArea;
 import com.optimus.eds.db.entities.pricing.PricingLevels;
 import com.optimus.eds.ui.order.pricing.ProductQuantity;
 
@@ -54,11 +51,11 @@ import com.optimus.eds.ui.order.pricing.ProductQuantity;
         OrderDetail.class, CartonPriceBreakDown.class,
         UnitPriceBreakDown.class, CustomerInput.class, PriceAccessSequence.class,
         PriceBundle.class, PriceCondition.class, PriceConditionAvailed.class,
-        PriceConditionClass.class, PriceConditionClassPriceAccessSequences.class,
+        PriceConditionClass.class,
         PriceConditionDetail.class, PriceConditionEntities.class,
         PriceConditionScale.class, PriceConditionType.class, PriceScaleBasis.class,
-        PricingLevels.class, ProductQuantity.class
-}, version =7, exportSchema = false)
+        PricingLevels.class, ProductQuantity.class, PricingArea.class
+}, version =1, exportSchema = false)
 @TypeConverters({MerchandiseItemConverter.class, AssetConverter.class, ProductConverter.class})
 
 public abstract class AppDatabase extends RoomDatabase {

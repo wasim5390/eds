@@ -22,6 +22,7 @@ public class PriceConditionClass {
     @NonNull
     private int severityLevel;
     private String severityLevelMessage;
+
     private int pricingAreaId;
 
     @Ignore
@@ -34,6 +35,10 @@ public class PriceConditionClass {
 
     public void setPriceConditionClassId(int priceConditionClassId) {
         this.priceConditionClassId = priceConditionClassId;
+    }
+
+    public int getPricingAreaId() {
+        return pricingAreaId;
     }
 
     public String getName() {
@@ -84,7 +89,9 @@ public class PriceConditionClass {
     public void setPriceConditionTypes(List<PriceConditionType> priceConditionTypes) {
         this.priceConditionTypes = priceConditionTypes;
     }
-
+    public void setPricingAreaId(int pricingAreaId) {
+        this.pricingAreaId = pricingAreaId;
+    }
 
    /* @ForeignKey(
             entity = PricingLevels.class,
